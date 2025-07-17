@@ -1,0 +1,2 @@
+snowflake locator formats
+https://docs.snowflake.com/en/user-guide/admin-account-identifier#non-vps-account-locator-formats-by-cloud-platform-and-region

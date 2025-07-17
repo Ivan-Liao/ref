@@ -1,0 +1,13 @@
+dbt_demo:
+  outputs:
+    dev:
+      account: IEC89416.us-east-1
+      database: ANALYTICS
+      password: K862KteZAmQgYzZ
+      role: ACCOUNTADMIN
+      schema: DBT_SCHEMA
+      threads: 1
+      type: snowflake
+      user: ivanhliao
+      warehouse: DEMO_DEFAULT
+  target: dev

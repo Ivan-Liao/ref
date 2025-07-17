@@ -1,0 +1,14 @@
+Install
+- VS Code
+  - Extensions
+    - Python
+      - Ctrl + Shift + P for Python Intepreter
+- Git Bash
+- Python
+  - path setup for pip 
+    - Win + S for environment variables
+    - add the following path C:\Users\<USERNAME>\AppData\Local\Programs\Python\Python313\Scripts
+  - venv setup
+    - py -m venv <venv name>
+      - activate (with git bash source <path to activate file in venv folder>)
+

@@ -1,0 +1,5 @@
+# initialize dbt
+dbt init
+Select adapter and locator name (PCC92864)
+
+dbt run --full-refresh sometimes necessary for clouds like GCP
