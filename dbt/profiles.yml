@@ -3,7 +3,7 @@ dbt_demo:
     dev:
       account: IEC89416.us-east-1
       database: ANALYTICS
-      password: K862KteZAmQgYzZ
+      password: <*>
       role: ACCOUNTADMIN
       schema: DBT_SCHEMA
       threads: 1
