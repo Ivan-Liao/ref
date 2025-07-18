@@ -39,3 +39,15 @@ models:
           - relationships:
               to: ref('stg_customers')
               field: customer_id
+              
+  - name: orders_monthly
+    description: One record per month
+    columns:
+      - name: order_month
+        description: Count of orders per month
+        tests:
+          - unique
+          - not_null
+      - name: num_orders
+        description: 0 if no orders that month 
+            
