@@ -11,3 +11,5 @@ Install
   - venv setup
     - py -m venv <venv name>
       - activate (with git bash source <path to activate file in venv folder>)
+- AHK
+  - download and run general.ahk
