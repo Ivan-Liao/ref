@@ -10,7 +10,7 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 
 
 ::rungen::
-    Run, "C://Users/Ivan Liao/Documents/general.ahk"
+    Run, "C:\Users\ivanh\OneDrive\Desktop"
     return
 
 
@@ -25,19 +25,11 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 
 ;# string shortcuts
 ;## emails and passwords
-::eap::
+::emp::
     SendInput, ivanhliao@gmail.com
     return
-::xxe::
-    SendInput, ivan.liao@xselltechnologies.com
-    return
-::xxp::
-    Sendinput, eggSeLL3781*t
-    return
-::xxpt::
-    SendInput, eggSeLL3781*tt
-    return
-    ;## date and time strings
+
+;# datetimes
 F1 & F2::
     FormatTime, xx,, yyyy-MM-dd
     SendInput, %xx%
@@ -54,20 +46,20 @@ F2 & F1::
 
 ;# Emojis
 ;## Table flip
-F5 & F1::
-    SendInput, (╯°□°）╯︵ ┻━┻
+::tableflip::
+    Send ({U+256F}{U+00B0}{U+25A1}{U+00B0}{U+FF09}{U+256F}{U+FE35} {U+253B}{U+2501}{U+253B}
     return
 ;## Shrug
-F5 & F2::
-    SendInput, ¯\_(ツ)_/¯
+::itswe::
+    Send {U+00AF}\_({U+30C4})_/{U+00AF}
     return
 ;## Happy
-F5 & F3::
-    SendInput, (づ｡◕‿‿◕｡)づ
+::letsgo::
+    Send ({U+3065}{U+FF61}{U+25D5}{U+203F}{U+203F}{U+25D5}{U+FF61}){U+3065}
     return
 ;## Annoyed
-F5 & F4::
-    SendInput, (ಠ_ಠ)
+::sus::
+    Send ({U+0CA0}_{U+0CA0})
     return
 
 ;# SQL shortcuts
