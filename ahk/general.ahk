@@ -29,6 +29,10 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
     SendInput, ivanhliao@gmail.com
     return
 
+::addy:: 
+    Send 7443 Pensacola Pl Gainesville, VA 20155
+    return
+
 ;# datetimes
 F1 & F2::
     FormatTime, xx,, yyyy-MM-dd
