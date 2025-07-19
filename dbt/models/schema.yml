@@ -11,6 +11,9 @@ models:
           - not_null
       - name: first_order_date
         description: NULL when a customer has not yet placed an order.
+      - name: amount
+        description: total amount of money spent by this customer
+        
 
   - name: stg_customers
     description: This model cleans up customer data
@@ -50,4 +53,17 @@ models:
           - not_null
       - name: num_orders
         description: 0 if no orders that month 
+          - not null
+
+  # - name: top_customers
+  #   description: list of top paying customers
+  #   columns:
+  #     - name: customer_id
+  #       description: id of customer
+  #       tests:
+  #         - unique
+  #         - not_null
+  #     - name: amount
+  #       description: total amount of money spent by this customer id
+          
             

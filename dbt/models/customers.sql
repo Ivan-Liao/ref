@@ -6,7 +6,11 @@ with customers as (
 
 orders as (
 
-    select * from {{ ref('stg_orders') }}
+    select orders.*,
+        stripe.amount
+    from {{ ref('stg_orders') }} as orders
+    left join {{ source('stripe','payment') }} as stripe
+        on orders.order_id = stripe.orderid
 
 ),
 
@@ -18,7 +22,8 @@ customer_orders as (
 
         min(order_date) as first_order_date,
         max(order_date) as most_recent_order_date,
-        count(order_id) as number_of_orders
+        count(order_id) as number_of_orders,
+        sum(amount) as total_amount
 
     from orders
 
@@ -33,9 +38,10 @@ final as (
         customers.customer_id,
         customers.first_name,
         customers.last_name,
+        customer_orders.total_amount,
+        coalesce(customer_orders.number_of_orders, 0) as number_of_orders,
         customer_orders.first_order_date,
-        customer_orders.most_recent_order_date,
-        coalesce(customer_orders.number_of_orders, 0) as number_of_orders
+        customer_orders.most_recent_order_date
 
     from customers
 
