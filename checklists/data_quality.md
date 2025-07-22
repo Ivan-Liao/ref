@@ -1,0 +1,6 @@
+- [ ] nulls
+- [ ] unique
+- [ ] expected categorical
+- [ ] unexpected special characters
+- [ ] duplication
+- [ ] relational integrity (no orphaned ids)

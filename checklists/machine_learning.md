@@ -1,0 +1,3 @@
+- [ ] one hot encode
+- [ ] train/test split
+- [ ] balance data (oversample minority classification values)

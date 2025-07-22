@@ -1,0 +1,9 @@
+- [ ] purpose
+- [ ] stakeholders
+- [ ] refresh schedule, other time-based factors
+- [ ] scope/requirements (make sure it's defined and limited)
+- [ ] resource estimation (cost, time, manpower, etc.)
+- [ ] overview
+- [ ] roadmap
+- [ ] success metrics
+- [ ] out of scope / nice to haves / future build
