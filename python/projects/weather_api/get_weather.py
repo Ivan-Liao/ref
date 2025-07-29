@@ -10,7 +10,7 @@ import sys
 import os
 import pendulum
 
-APPID = "2017186b6381716b71b296c531d522c3"
+APPID = "*"
 LAT = '38.795300'
 LONG = '-77.639680'
 UNITS = 'imperial'
