@@ -1,9 +1,0 @@
-/* This command initializes dbt and sets up a connection */
-dbt init
-Select adapter and locator name (PCC92864)
-
-/* This command runs dbt and builds the defined models */
-dbt run --full-refresh sometimes necessary for clouds like GCP
-
-/* This command runs queries for all dbt test (e.g. not null, unique) */
-dbt test
