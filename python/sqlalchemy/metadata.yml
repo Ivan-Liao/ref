@@ -1,0 +1,7 @@
+tutorial_1: 
+  description: "Short scripts showing SQLite database creation, insertion, querying with a simple filter.  No SQL involved."
+tutorial_2:
+  description: "official SQLAlchemy tutorial"
+  links: 
+    - "https://docs.sqlalchemy.org/en/20/"
+    - "https://www.youtube.com/watch?v=1Va493SMTcY&list=PL527EQxUmbuL-eL-1qNvvnTZ_Ja5j-rcu&index=1&t=272s"
