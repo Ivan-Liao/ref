@@ -1,0 +1,152 @@
+// Place your key bindings in this file to override the defaultsauto[]
+[
+    {
+        "key": "ctrl+alt+w",
+        "command": "editor.emmet.action.wrapWithAbbreviation"
+    },
+    {
+        "key": "ctrl+c",
+        "command": "-extension.vim_ctrl+c",
+        "when": "editorTextFocus && vim.active && vim.overrideCtrlC && vim.use<C-c> && !inDebugRepl"
+    },
+    {
+        "key": "ctrl+j",
+        "command": "selectNextSuggestion",
+        "when": "suggestWidgetMultipleSuggestions && suggestWidgetVisible && textInputFocus"
+    },
+    {
+        "key": "ctrl+down",
+        "command": "-selectNextSuggestion",
+        "when": "suggestWidgetMultipleSuggestions && suggestWidgetVisible && textInputFocus"
+    },
+    {
+        "key": "ctrl+k",
+        "command": "selectPrevSuggestion",
+        "when": "suggestWidgetMultipleSuggestions && suggestWidgetVisible && textInputFocus"
+    },
+    {
+        "key": "ctrl+up",
+        "command": "-selectPrevSuggestion",
+        "when": "suggestWidgetMultipleSuggestions && suggestWidgetVisible && textInputFocus"
+    },
+    {
+        "key": "ctrl+alt+g",
+        "command": "python.execInTerminal"
+    },
+    {
+        "key": "shift+alt+down",
+        "command": "-extension.vim_cmd+alt+down",
+        "when": "editorTextFocus && vim.active && !inDebugRepl"
+    },
+    {
+        "key": "ctrl+alt+r",
+        "command": "-extension.snippetSearch",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "alt+shift+p",
+        "command": "python.execInTerminal"
+    },
+    {
+        "key": "alt+s alt+c",
+        "command": "sqltools.executeCurrentQuery"
+    },
+    {
+        "key": "alt+m alt+p",
+        "command": "markdown.showPreview",
+        "when": "!notebookEditorFocused && editorLangId == 'markdown'"
+    },
+    {
+        "key": "alt+s alt+h",
+        "command": "sqltools.executeQuery",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "shift+alt+k",
+        "command": "workbench.debug.viewlet.action.removeAllBreakpoints"
+    },
+    {
+        "key": "shift+cmd+z",
+        "command": "redo"
+    },
+    {
+        "key": "cmd+y",
+        "command": "redo"
+    },
+    {
+        "key": "shift+cmd+z",
+        "command": "-redo"
+    },
+    {
+        "key": "alt+shift+r",
+        "command": "workbench.action.closeEditorsToTheRight"
+    },
+    {
+        "key": "alt+shift+c",
+        "command": "workbench.files.action.collapseExplorerFolders"
+    },
+    {
+        "key": "shift+alt+n",
+        "command": "explorer.newFile"
+    },
+    {
+        "key": "alt+shift+p",
+        "command": "python.execInTerminal"
+    },
+    {
+        "key": "alt+s alt+c",
+        "command": "sqltools.executeCurrentQuery"
+    },
+    {
+        "key": "alt+m alt+p",
+        "command": "markdown.showPreview",
+        "when": "!notebookEditorFocused && editorLangId == 'markdown'"
+    },
+    {
+        "key": "alt+s alt+h",
+        "command": "sqltools.executeQuery",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "shift+alt+k",
+        "command": "workbench.debug.viewlet.action.removeAllBreakpoints"
+    },
+    {
+        "key": "shift+cmd+z",
+        "command": "redo"
+    },
+    {
+        "key": "cmd+y",
+        "command": "redo"
+    },
+    {
+        "key": "shift+cmd+z",
+        "command": "-redo"
+    },
+    {
+        "key": "alt+shift+r",
+        "command": "workbench.action.closeEditorsToTheRight"
+    },
+    {
+        "key": "alt+shift+c",
+        "command": "workbench.files.action.collapseExplorerFolders"
+    },
+    {
+        "key": "shift+alt+n",
+        "command": "explorer.newFile"
+    },
+    {
+        "key": "shift+alt+m",
+        "command": "workbench.action.toggleMaximizedPanel"
+    },
+    {
+        "key": "alt+i alt+p",
+        "command": "extension.pasteImage",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+alt+v",
+        "command": "-extension.pasteImage",
+        "when": "editorTextFocus"
+    }
+]
