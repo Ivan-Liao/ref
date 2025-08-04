@@ -38,3 +38,9 @@ FROM (
 	GROUP BY passenger_user_id
 	HAVING COUNT(DISTINCT DATE(created_at)) > 1
 ) as t
+
+--#5 Update
+UPDATE table
+SET column = value
+-- OPTIONAL WHERE
+;

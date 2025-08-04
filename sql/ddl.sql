@@ -10,7 +10,6 @@ CREATE TABLE authors (
 	author_pay int
 )
 
--- example 2
 USE playground;
 CREATE TABLE bookings (
 	id int,
@@ -20,3 +19,9 @@ CREATE TABLE bookings (
     date_check_out date,
     ds_book text
 )
+
+ALTER TABLE table_name RENAME new_table_name
+ALTER TABLE "table_name" RENAME COLUMN <column_1> TO <column_2>;
+ALTER TABLE "table_name" DROP COLUMN <column_1>; 
+ALTER TABLE table_name ADD COLUMN column data_type;
+ALTER TABLE table_name ALTER COLUMN column SET DATA TYPE data_type;
