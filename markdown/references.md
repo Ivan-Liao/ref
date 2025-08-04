@@ -20,6 +20,8 @@ Well, do I have [the website for you][another fun place]!
 [another fun place]: www.stumbleupon.com
 
 # (3) Code Blocks
+- 3 backticks
+- example:
 ```
 SELECT *
 FROM tmp_table
