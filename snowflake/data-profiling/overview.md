@@ -1,9 +1,9 @@
 # TODO
 1. averages
-2. most frequent value
-3. number of nulls
-4. null percentage 
-5. categorical values
+2. number of nulls
+3. null percentage 
+4. categorical values
+5. naming convention changes
 
 # extras
 1. correlation
