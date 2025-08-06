@@ -1,9 +1,7 @@
 # TODO
-1. averages
-2. number of nulls
-3. null percentage 
-4. categorical values
-5. naming convention changes
+1. naming convention changes
+2. custom category to denote which profiling techniques to use on which columns, likely a custom mapping table 
+   1. useful to optimize resource spending as profiling techniques like category extraction is resource heavy
 
 # extras
 1. correlation
