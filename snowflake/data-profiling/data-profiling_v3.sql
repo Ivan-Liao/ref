@@ -1,4 +1,5 @@
 -- information schema
+-- max min
 CREATE OR REPLACE PROCEDURE ANALYTICS.PROCEDURES.profile_table(DATABASE_NAME varchar, SOURCE_TABLE_NAME varchar)
 RETURNS STRING
 LANGUAGE javascript
