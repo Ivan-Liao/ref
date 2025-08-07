@@ -7,8 +7,12 @@ RETURNS VARCHAR
 LANGUAGE javascript
 AS
 $$
+
+// constants for conditionals
 const NUMERIC_TYPES = ['NUMBER', 'DECIMAL', 'NUMERIC', 'INT', 'INTEGER', 'BIGINT', 'SMALLINT', 'FLOAT', 'DOUBLE', 'REAL'];
 const ORDERABLE_TYPES = ['DATE', 'DATETIME', 'TIMESTAMP', 'TIMESTAMP_LTZ', 'TIMESTAMP_NTZ', 'TIMESTAMP_TZ', 'TIME', 'TEXT', 'VARCHAR', 'CHAR', 'STRING'];
+
+// information schema query
 var columns_full_path = DATABASE_NAME + ".information_schema.columns";
 var info_schema_query = `SELECT table_schema, table_name, column_name, data_type, :3 as database_name
                             FROM identifier(:1)
@@ -19,6 +23,7 @@ var info_schema_statement = snowflake.createStatement({
     binds: [columns_full_path, SOURCE_TABLE_NAME, DATABASE_NAME]});
 var result_set = info_schema_statement.execute();
 
+// drop temp table
 var drop_profile_query = `
                             DROP TABLE if exists ANALYTICS.DBT_SCHEMA.TEMP_PROFILE
                             `;
@@ -26,6 +31,7 @@ var drop_profile_statement = snowflake.createStatement({
     sqlText: drop_profile_query});
 drop_profile_statement.execute();
 
+// create temp table
 var create_profile_query = `
                             CREATE TABLE ANALYTICS.DBT_SCHEMA.TEMP_PROFILE (
                                 table_schema varchar,
@@ -44,6 +50,7 @@ var create_profile_statement = snowflake.createStatement({
     sqlText: create_profile_query});
 create_profile_statement.execute();
 
+// loop through columns and perform data profiling
 var results = [];
 try {
     while (result_set.next()) {
