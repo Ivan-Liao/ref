@@ -1,3 +1,4 @@
+# This belongs in ~/.dbt
 dbt_demo:
   outputs:
     dev:
