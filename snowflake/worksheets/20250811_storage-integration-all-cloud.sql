@@ -1,9 +1,12 @@
 /*--
 In this Worksheet we will walk through templated SQL for the end to end process required
-to load data from Amazon S3 into a table.
+to load data from Amazon S3, Microsoft Azure and Google Cloud into a table.
 
-Snowflake Documentation on bulk loading from Amazon S3 - https://docs.snowflake.com/en/user-guide/data-load-s3
-      --*/
+    Helpful Snowflake Documentation:
+        1. Bulk Loading from Amazon S3 - https://docs.snowflake.com/en/user-guide/data-load-s3
+        2. Bulk Loading from Microsoft Azure - https://docs.snowflake.com/en/user-guide/data-load-azure
+        3. Bulk Loading from Google Cloud Storage - https://docs.snowflake.com/en/user-guide/data-load-gcs
+--*/
 
 
 -------------------------------------------------------------------------------------------
@@ -26,7 +29,7 @@ USE DATABASE SNOWFLAKE_LEARNING_DB;
 
 ---> set the Schema
 SET user_name = current_user();
-SET schema_name = CONCAT($user_name, '_LOAD_DATA_FROM_AMAZON_AWS');
+SET schema_name = CONCAT($user_name, '_LOAD_DATA_FROM_CLOUD');
 USE SCHEMA IDENTIFIER($schema_name);
 
 
@@ -36,7 +39,7 @@ USE SCHEMA IDENTIFIER($schema_name);
 -------------------------------------------------------------------------------------------
 
 ---> create the Table
-CREATE TABLE testtable
+CREATE [ OR REPLACE ] TABLE [ IF NOT EXISTS ] <table_name>
     (
     <col1_name> <COL1_TYPE>
     ,<col2_name> <COL2_TYPE>
@@ -82,6 +85,51 @@ CREATE [ OR REPLACE ] STORAGE INTEGRATION [ IF NOT EXISTS ] <s3_integration_name
     -- DESCRIBE INTEGRATIONS: https://docs.snowflake.com/en/sql-reference/sql/desc-integration
 DESCRIBE INTEGRATION <s3_integration_name>;
 
+---> Create the Microsoft Azure Storage Integration
+    -- Configuring an Azure Container for Loading Data: https://docs.snowflake.com/en/user-guide/data-load-azure-config
+
+CREATE [ OR REPLACE ] STORAGE INTEGRATION [ IF NOT EXISTS ] <azure_integration_name>
+  TYPE = EXTERNAL_STAGE
+  STORAGE_PROVIDER = 'AZURE'
+  AZURE_TENANT_ID = '<tenant_id>'
+  ENABLED = { TRUE | FALSE }
+  STORAGE_ALLOWED_LOCATIONS = ('azure://<bucket>/<path>/' [ , 'azure:://<bucket>/<path>/' ... ] )
+  [ STORAGE_BLOCKED_LOCATIONS = ('azure:://<bucket>/<path>/' [ , 'azure:://<bucket>/<path>/' ... ] ) ]
+  [ COMMENT = '<string_literal>' ];
+
+    /*--
+      Execute the command below to retrieve the AZURE_CONSENT_URL and AZURE_MULTI_TENANT_APP_NAME for the client application created
+      automatically for your Snowflake account. You’ll use these values to configure permissions for Snowflake in your Azure Management Console:
+          https://docs.snowflake.com/en/user-guide/data-load-azure-config#step-2-grant-snowflake-access-to-the-storage-locations
+    --*/
+
+---> Describe our Integration
+    -- DESCRIBE INTEGRATIONS: https://docs.snowflake.com/en/sql-reference/sql/desc-integration
+
+DESCRIBE INTEGRATION <azure_integration_name>;
+
+---> Create the Google Cloud Storage Integration
+    -- Configuring an Integration for Google Cloud Storage: https://docs.snowflake.com/en/user-guide/data-load-gcs-config
+
+CREATE [ OR REPLACE ] STORAGE INTEGRATION [ IF NOT EXISTS ] <gcs_integration_name>
+  TYPE = EXTERNAL_STAGE
+  STORAGE_PROVIDER = 'GCS'
+  ENABLED = { TRUE | FALSE }
+  STORAGE_ALLOWED_LOCATIONS = ('gcs://<bucket>/<path>/' [ , 'gcs://<bucket>/<path>/' ... ] )
+  [ STORAGE_BLOCKED_LOCATIONS = ('gcs://<bucket>/<path>/' [ , 'gcs://<bucket>/<path>/' ... ] ) ]
+  [ COMMENT = '<string_literal>' ];
+
+    /*--
+      Execute the command below to retrive the ID for the Cloud Storage Service Account that was created automatically for your Snowflake account.
+      You’ll use these values to configure permissions for Snowflake in your GCP Management Console:
+          https://docs.snowflake.com/en/user-guide/data-load-gcs-config#step-2-retrieve-the-cloud-storage-service-account-for-your-snowflake-account
+    --*/
+
+---> Describe our Integration
+    -- DESCRIBE INTEGRATIONS: https://docs.snowflake.com/en/sql-reference/sql/desc-integration
+DESCRIBE INTEGRATION <gcs_integration_name>;
+
+
 ---> View our Storage Integrations
     -- SHOW INTEGRATIONS: https://docs.snowflake.com/en/sql-reference/sql/show-integrations
 
@@ -106,6 +154,27 @@ STORAGE_INTEGRATION = <s3_integration_name> -- created in previous step
 [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name>' | TYPE = { CSV | JSON | AVRO | ORC | PARQUET | XML } [ formatTypeOptions ] } ) ]
 [ COMMENT = '<string_literal>' ];
 
+
+---> Create the Microsoft Azure Stage
+    -- Creating an Azure Stage: https://docs.snowflake.com/en/user-guide/data-load-azure-create-stage
+
+CREATE [ OR REPLACE ] STAGE [ IF NOT EXISTS ] <azure_stage_name>
+URL = { 'azure://<bucket>[/<path>/]' | 'azure://<bucket>[/<path>/]' }
+STORAGE_INTEGRATION = <azure_integration_name> -- created in previous step
+[ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name>' | TYPE = { CSV | JSON | AVRO | ORC | PARQUET | XML } [ formatTypeOptions ] } ) ]
+[ COMMENT = '<string_literal>' ];
+
+
+---> Create the Google Cloud Storage Stage
+    -- Create a Google Cloud Stage: https://docs.snowflake.com/en/user-guide/data-load-gcs-config#create-an-external-stage-using-sql
+
+CREATE [ OR REPLACE ] STAGE [ IF NOT EXISTS ] <gcp_stage_name>
+URL = { 'gcs://<bucket>[/<path>/]' | 'gcs://<bucket>[/<path>/]' }
+STORAGE_INTEGRATION = <gcp_integration_name> -- created in previous step
+[ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name>' | TYPE = { CSV | JSON | AVRO | ORC | PARQUET | XML } [ formatTypeOptions ] } ) ]
+[ COMMENT = '<string_literal>' ];
+
+
 ---> View our Stages
     -- SHOW STAGES: https://docs.snowflake.com/en/sql-reference/sql/show-stages
 
@@ -126,6 +195,29 @@ COPY INTO <table_name>
     [ PATTERN = '<regex_pattern>' ]
     [ FILE_FORMAT = ( { FORMAT_NAME = '[<namespace>.]<file_format_name>' |
                         TYPE = { CSV | JSON | AVRO | ORC | PARQUET | XML } [ formatTypeOptions ] } ) ];
+
+---> Load data from the Azure Stage into the Table
+    -- Copying Data from an Azure Stage: https://docs.snowflake.com/en/user-guide/data-load-azure-copy
+    -- COPY INTO <table>: https://docs.snowflake.com/en/sql-reference/sql/copy-into-table
+
+COPY INTO <table_name>
+  FROM @<azure_stage_name>
+    [ FILES = ( '<file_name>' [ , '<file_name>' ] [ , ... ] ) ]
+    [ PATTERN = '<regex_pattern>' ]
+    [ FILE_FORMAT = ( { FORMAT_NAME = '[<namespace>.]<file_format_name>' |
+                        TYPE = { CSV | JSON | AVRO | ORC | PARQUET | XML } [ formatTypeOptions ] } ) ];
+
+---> Load data from the Google Cloud Stage into the Table
+    -- Copying Data from a Google Cloud Storage Stage: https://docs.snowflake.com/en/user-guide/data-load-gcs-copy
+    -- COPY INTO <table>: https://docs.snowflake.com/en/sql-reference/sql/copy-into-table
+
+COPY INTO <table_name>
+  FROM @<gcp_stage_name>
+    [ FILES = ( '<file_name>' [ , '<file_name>' ] [ , ... ] ) ]
+    [ PATTERN = '<regex_pattern>' ]
+    [ FILE_FORMAT = ( { FORMAT_NAME = '[<namespace>.]<file_format_name>' |
+                        TYPE = { CSV | JSON | AVRO | ORC | PARQUET | XML } [ formatTypeOptions ] } ) ];
+
 
 -------------------------------------------------------------------------------------------
     -- Step 8: Start querying your Data!
