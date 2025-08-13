@@ -13,5 +13,6 @@
       4. venv setup
          1. py -m venv <venv name>
          2. activate (with git bash source <path to activate file in venv folder>)
+   2. .bashrc and .bashprofile setup in ~ directory
 3. AHK
    1. download and run general.ahk
