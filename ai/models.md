@@ -1,5 +1,20 @@
-# GPT 3
-## Architecture
+# Leaderboards
+1. Contestants
+   1. Gemini Pro (Google)
+   2. ChatGPT (OpenAI)
+   3. Llama (Meta)
+   4. Grok
+   5. Claude (Anthropic)
+   6. Nova (Amazon)
+   7. Deepseek
+2. 202508
+   1. Gemini Pro
+   2. GPT5
+   3. Claude
+   4. Llama
+   
+# Architecture
+## GPT3
 1. Embeddings matrix
    1. config 
       1. 12288 dimensions
