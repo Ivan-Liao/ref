@@ -5,7 +5,7 @@ from pathlib import Path
 from faker import Faker
 
 
-def generate_employee_csv(file_name: str, num_employees: int) -> None:
+def generate_employee_csv(file_full_path: str, num_employees: int) -> None:
     # Initialize Faker
     fake = Faker()
 
@@ -19,15 +19,15 @@ def generate_employee_csv(file_name: str, num_employees: int) -> None:
     ]
 
     # Create Path object with full path file_name
-    output_file = Path(file_name)
+    output_file_pathlib_path = Path(file_full_path)
     file_exists_flag = 0
-    if output_file.is_file():
-        print(f"✅ File '{file_name}' already exists. Appending to file.")
+    if output_file_pathlib_path.is_file():
+        print(f"✅ File '{file_full_path}' already exists. Appending to file.")
         file_exists_flag = 1
     # make sure parent directories are created
-    output_file.parent.mkdir(parents=True, exist_ok=True)
+    output_file_pathlib_path.parent.mkdir(parents=True, exist_ok=True)
 
-    with output_file.open(mode="a", newline="") as csvfile:
+    with output_file_pathlib_path.open(mode="a", newline="") as csvfile:
         fieldnames = ["name", "job_title", "salary"]
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
@@ -46,7 +46,7 @@ def generate_employee_csv(file_name: str, num_employees: int) -> None:
                     ),  # Salary range between 50,000 and 150,000
                 }
             )
-    print(f"Generated {num_employees} employee records in '{file_name}'.")
+    print(f"Generated {num_employees} employee records in '{output_file_pathlib_path}'.")
 
 
 def main() -> None:

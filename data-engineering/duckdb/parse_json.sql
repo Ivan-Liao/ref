@@ -1,1 +1,0 @@
-create table duck as select 3 as age, 'mandarin' as breed;

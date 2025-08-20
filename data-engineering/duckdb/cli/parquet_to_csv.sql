@@ -9,7 +9,7 @@ where Type='TV Show'
 GROUP BY Title
 ORDER BY max("Days In Top 10") desc
 limit 5;
--- Display the most popular TV Shows
+-- Display the most popular Movies 
 SELECT Title, max("Days In Top 10") from netflix
 where Type='Movie'
 GROUP BY Title
