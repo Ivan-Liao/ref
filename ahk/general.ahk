@@ -84,3 +84,16 @@ F2 & F1::
     SendInput, {Shift Down}{Tab}{Shift Up}
     SendInput, `n`;
     return
+::seljoin::
+    Sleep, 100
+    SendInput, SELECT *
+    SendInput, `nFROM 
+    SendInput, `nLEFT JOIN 
+    SendInput, `n{space 4}ON A = B
+    SendInput, `nWHERE 1 = 1
+    SendInput, `n{space 4}AND 
+    SendInput, `nLIMIT 20
+    Sleep, 50 ;needed for shift tab to register below
+    SendInput, {Shift Down}{Tab}{Shift Up}
+    SendInput, `n`;
+    return
