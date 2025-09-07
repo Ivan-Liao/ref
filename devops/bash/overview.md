@@ -27,8 +27,10 @@ Here are 20 of the most commonly used bash commands.
        1. `find . -name "*.py"`
     2. Find a type of file like human readable
        1. `find . -type f -exec sh -c 'file -b "{}" | grep -q text' \; -print`
-    3. human readable, certain size, non executable
+    3. human readable, certain size in bytes, non executable
        1. `find . -size 1033c -type f ! -perm /0111 -exec sh -c 'file -b "{}" | grep -q text' \; -print`
+    4. standard error file descriptor 2, users, groups
+       1. `find / -size 33c -user bandit7 -group bandit6 -type f -exec sh -c 'file -b "{}" | grep -q text' \; -print 2>/dev/null`
 9. `grep`
    1. `grep "<pattern>" <filename>`
        1. `grep "error" server.log`
