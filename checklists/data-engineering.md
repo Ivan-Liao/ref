@@ -1,29 +1,10 @@
+- [Cache / Real Time](#cache--real-time)
+- [Database](#database)
 - [Storage](#storage)
+- [Streaming / Near Real Time](#streaming--near-real-time)
 - [Transformation](#transformation)
 - [Misc Concepts](#misc-concepts)
   - [The 4 Vs](#the-4-vs)
-
-
-# Storage
-1. Tools
-   1. AWS S3
-   2. Azure Blob
-   3. GCP GCS (Google Cloud Storage)
-2. Formats
-   1. csv
-   2. json
-   3. parquet
-
-# Transformation
-1. Tools
-   1. DBT
-   2. Matillion
-   3. SSIS
-   4. AWS Lambda
-2. Orchestration Layer
-   1. Airflow
-   2. Dagster
-   3. Tool native (Snowflake tasks, Databricks jobs/workflows)
 
 # Misc Concepts 
 ## The 4 Vs

@@ -65,5 +65,95 @@ Here are the 20 most important concepts for data modeling in the context of data
 1. S3 path
 2. https://raw.githubusercontent.com
 
+# Storage
+1. Cache / Real Time
+2. Data Lake
+   1. Tools
+      1. AWS S3
+      2. Azure Blob
+      3. GCP GCS (Google Cloud Storage)
+   2. Formats
+      1. csv
+      2. json
+      3. parquet
+      4. image (binary, .png, .jpg)
+      5. audio (.wav, .mp3)
+3. Document
+   1. Tools
+      1. MongoDB
+      2. Firestore (Google)
+      3. DynamoDB (AWS)
+      4. CouchDB (Apache)
+   2. Uses
+      1. Apps
+      2. Games
+      3. IOT
+   3. Documents grouped in collections and sub collections
+   4. No joins
+   5. Fast reads, slow writes
+4. Graph
+   1. Tools
+      1. neo4j
+      2. Dgraph
+   2. Uses
+      1.   Fraud detection
+      2.   Internal Knowledge Graph
+      3.   Recommendation Engine
+      4.   Reduces complex joins
+5. Key-Value 
+   1. Tools
+      1. Redis
+      2. Memcached
+   2. Uses
+      1. Caching
+      2. Pub/Sub
+      3. Leaderboards
+6. Relational
+   1. Tools
+      1. MySQL
+      2. Postgres
+      3. SQL Server
+   2. Uses
+      1. Analytical
+   3. ACID compliant
+      1. atomicity, consistency,  isolation, durability
+7. Search
+   1. Tools
+      1. Elasticsearch
+      2. Algolia
+      3. Meilisearch
+   2. Uses
+      1. Search
+   3. Like document db but creates an index
+8. Wide Column
+   1. Tools
+      1. Cassandra
+      2. Apacha Hbase
+   2. Uses
+      1. Time-series
+      2. Historical records
+      3. high-write, low-read
+   3. Rows with key and column family (columns do not have to be the same between rows
+9. Vector
+   1. Tools
+      1. Pinecone
+      2. pgvector (Postgres)
+      3. Redis vector database (fastest)
+   2. Uses
+
+# Streaming / Near Real Time
+
+# Transformation
+1. Tools
+   1. AWS Glue
+   2. AWS Lambda
+   3. DBT
+   4. Matillion
+   5. SSIS
+2. Orchestration Layer
+   1. Airflow
+   2. Dagster
+   3. Platform / Framework native tools (Snowflake tasks, Databricks jobs/workflows)
+
 # Trends
 1. 2025 - 2030 data migrations from legacy systems to modern data stacks
