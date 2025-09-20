@@ -16,6 +16,19 @@ select distinct num as ConsecutiveNums
 from flags
 where consec_flag = 1
 
+-- without second CTE, simpler if only one flag is needed, using where instead
+With comparisons as (
+    select 
+        id,
+        num,
+        lead(num,1) over(order by id) as nextnum,
+        lead(num,2) over(order by id) as next2num
+    from Logs
+)
+select distinct num as ConsecutiveNums
+from comparisons
+where num = nextnum and nextnum = next2num
+
 -- Alternate solution, simpler code, worse performance
 SELECT DISTINCT l1.num AS ConsecutiveNums
 FROM Logs l1, Logs l2, Logs l3
