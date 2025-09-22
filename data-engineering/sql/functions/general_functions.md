@@ -4,8 +4,12 @@
 - [LAG](#lag)
 - [LEFT / RIGHT](#left--right)
 - [LENGTH](#length)
+- [RANKINGS](#rankings)
+  - [ROW\_NUMBER](#row_number)
+  - [RANK](#rank)
+  - [DENSE\_RANK](#dense_rank)
 - [ROUND](#round)
-- [ROW\_NUMBER](#row_number)
+- [ROW\_NUMBER](#row_number-1)
 - [SUM](#sum)
 
 
@@ -75,6 +79,14 @@ WHERE LENGTH(name) = LENGTH(capital)
 ;
 ```
 
+# RANKINGS
+## ROW_NUMBER
+-- unique sequential integer doesn't account for ties
+## RANK
+-- assigns ordered integer value, skips rank after a tie
+## DENSE_RANK
+-- assigns ordered integer value, doesn't skip rank after a tie
+
 # ROUND
 ```
 -- syntax
@@ -111,5 +123,4 @@ SUM(<column_name>)
 SELECT continent
 FROM world
 GROUP BY continent
-HAVING SUM(population) >= 100000000;
-```
+HAVING SUM(population) >= 100000000
