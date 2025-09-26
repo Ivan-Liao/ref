@@ -1,3 +1,10 @@
+--#1 Group by with aggregate functions
+select
+    player_id,
+    min(event_date) as first_login
+from Activity
+group by player_id
+
 --#4 Group by Having
 SELECT COUNT(*)
 FROM (
@@ -6,3 +13,4 @@ FROM (
 	GROUP BY passenger_user_id
 	HAVING COUNT(DISTINCT DATE(created_at)) > 1
 ) as t
+
