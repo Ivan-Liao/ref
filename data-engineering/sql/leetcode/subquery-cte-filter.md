@@ -1,3 +1,12 @@
+
+
+# customers-all-products_subquery-filter
+select customer_id
+from Customer
+group by customer_id
+    having count(distinct product_key) = (select count(distinct product_key) from Product)
+
+# same investments cte filter
 with same_investment2015 as (
     select tiv_2015
     from Insurance
