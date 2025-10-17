@@ -1,4 +1,28 @@
+# Product sales analysis earliest year sales
+select product_id,
+    year as first_year, 
+    quantity, 
+    price
+from Sales
+where (product_id, year) in (select  product_id, min(year) from Sales group by product_id)
 
+-- if tuple filtering not supported
+with cte_earliest_year as (
+    select product_id,
+        min(year) as first_year
+    from Sales
+    group by product_id
+)
+select s.product_id,
+    s.year as first_year,
+    quantity,
+    price
+from Sales s
+join cte_earliest_year cey
+    on s.product_id = cey.product_id
+    and s.year = cey.first_year
+
+-- snowflake solution uses array_contains and array_constructs functions
 
 # customers-all-products_subquery-filter
 select customer_id
