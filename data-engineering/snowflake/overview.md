@@ -1,5 +1,13 @@
 # Admin
 
+# API
+Key Characteristics:
+Client-Server Architecture: The client (e.g., web browser, mobile app) and server operate independently. 
+Statelessness: Each request from the client to the server contains all the information needed to understand the request; the server does not store any client context between requests. 
+Cacheability: Responses can be explicitly marked as cacheable or non-cacheable to improve performance. 
+Uniform Interface: A consistent way of interacting with resources, including standardized HTTP methods and self-descriptive messages.
+Layered System: Components can be organized in a hierarchy, invisible to the client, for scalability and security.
+
 # Architecture
 
 # DDL

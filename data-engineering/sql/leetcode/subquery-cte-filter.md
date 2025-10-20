@@ -1,4 +1,5 @@
 # Product sales analysis earliest year sales
+-- non ansi MySQL solution
 select product_id,
     year as first_year, 
     quantity, 
