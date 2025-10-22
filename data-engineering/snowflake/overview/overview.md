@@ -5,11 +5,12 @@
   - [Roles](#roles)
 - [Billing](#billing)
 - [Data Types](#data-types)
-- [Load and Export](#load-and-export)
+- [Load](#load)
 - [Export](#export)
   - [File Formats](#file-formats)
-  - [Loading non Snowpipe](#loading-non-snowpipe)
-  - [Loading Snowpipe](#loading-snowpipe)
+- [Load](#load-1)
+  - [Non Snowpipe](#non-snowpipe)
+  - [Snowpipe](#snowpipe)
   - [Stages](#stages)
 - [Performance](#performance)
   - [Caching](#caching)
@@ -25,6 +26,17 @@
   - [Object Tagging (Governance)](#object-tagging-governance)
   - [Row Access Policies (Governance)](#row-access-policies-governance)
   - [Secure Views](#secure-views)
+- [Sharing](#sharing)
+  - [Exchange](#exchange)
+  - [Marketplace](#marketplace)
+  - [Secure Data Sharing](#secure-data-sharing)
+- [Storage](#storage)
+  - [Cloning](#cloning)
+  - [Fail-safe](#fail-safe)
+  - [Micropartition](#micropartition)
+  - [Replication](#replication)
+  - [Time Travel](#time-travel)
+- [Transformations](#transformations)
 - [Virtual Warehouse](#virtual-warehouse)
   - [Resource Monitors](#resource-monitors)
   - [Scaling](#scaling)
@@ -32,9 +44,9 @@
 
 
 
+
 # Access Control
 1. Privileges assigned to Roles assigned to Users (RBAC)
-   1. privileges
 2. Discretionary Access Control (DAC)
    1. objects have an role owner
    2. owners can grant other roles access to that object 
@@ -136,7 +148,13 @@
       1. Must be assigned to SYSADMIN or SYSADMIN will not be able to manage
 
 # Billing
-1. Virtual Warehouses
+1. Storage
+   1. Current Data Storage
+   2. Time Travel Retention
+   3. Fail-Safe
+   4. Internal Stages
+   5. Flat rate per TB
+2. Virtual Warehouses
    1. SMALL - 2 
    2. MEDIUM - 4
    3. LARGE - 8
@@ -161,7 +179,8 @@
       1. shorthand double colon
          1. src:employee.joined_on::DATE
 4. Formats
-   1. JSON
+   1. CSV
+   2. JSON
       1. ELT approach load into a single variant column
       2. ETL approach extract keys from json into different columns
       3. Automatic Schema Detection
@@ -170,13 +189,13 @@
             1. Needs to match exactly with or without case sensitivity
       4. Copy Options
          1. STRIP_OUTER_BRACKETS ... flattens the outer list if there is one
-   2. AVRO ... hadoop
-   3. ORC ... hive
-   4. PARQUET
-   5. XLM
-   6. Only 1 and 4 support unload
+   3. AVRO ... hadoop
+   4. ORC ... hive
+   5. PARQUET
+   6. XLM
+   7. Only 1,2,5 support unload
 5. Functions
-   1. PARSE_JSON
+   1. PARSE_JSON ... parse json string into variant object
    2. LATERAL FLATTEN
       1. ```
             SELECT
@@ -194,7 +213,7 @@
    4. GET
    5. AS_VARCHAR
 
-# Load and Export
+# Load
 
 # Export
 1. Example code
@@ -207,12 +226,8 @@ COPY INTO @%T1
 FROM T1
 PARTITION BY ('DATE=' || TO_VARCHAR(DT))
 FILE_FORMAT=MY_CSV_FILE_FORMAT;
-
-COPY INTO 'S3://MYBUCKET/UNLOAD/'
-FROM T1
-STORAGE_INTEGRATION = MY_INT
-FILE_FORMAT=MY_CSV_FILE_FORMAT;
 ```
+
 2. Copy options
    1. OVERWRITE default 'ABORT_STATEMENT' ... boolean whether or not COPY command overwrite existing files with matching names
    2. SINGLE default FALSE ... boolean generate single or multiple files
@@ -228,9 +243,16 @@ FILE_FORMAT=MY_CSV_FILE_FORMAT;
    4. SKIP_BLANK_LINES default false
    5. SKIP_HEADER default 0
    6. TYPE default "CSV"
-3. 
 
-## Loading non Snowpipe
+# Load
+```
+COPY INTO 'S3://MYBUCKET/UNLOAD/'
+FROM T1
+STORAGE_INTEGRATION = MY_INT
+FILE_FORMAT=MY_CSV_FILE_FORMAT;
+```
+
+## Non Snowpipe
 1. Insert 
    1. Insert from select statement
    2. Insert values statement
@@ -261,7 +283,7 @@ FILE_FORMAT=MY_CSV_FILE_FORMAT;
          4. RETURN_ALL_ERRORS
       2. VALIDATE table function takes job id as parameter
 
-## Loading Snowpipe
+## Snowpipe
 1. Intended for many small files quickly and frequently
 2. Serverless feature not requireing a VW
 3. Snowpipe load history is stored for 14 days to prevent reloading
@@ -327,6 +349,11 @@ FILE_FORMAT=MY_CSV_FILE_FORMAT;
    1. Cannot be executed within worksheets
    2. Duplicate files are ignored by default
    3. Uploaded files are automatically encrypted with 128-bit key
+5. Directory tables
+   1. Queryable dataset with file_url to staged files
+6. File Support REST API
+   1. GET /api/files
+      1. Either scoped url or file url, not presigned url
 
 # Performance 
 
@@ -349,7 +376,7 @@ FILE_FORMAT=MY_CSV_FILE_FORMAT;
 
 ## Clustering
 1. Default clustering by order of loading
-2. Clustering by alphabetical order
+2. Example clustering by alphabetical order
 3. Clustering metadata
 4. system$clustring_information Attributes
    1. total_partition_count ... Total number of micro partitions
@@ -414,7 +441,7 @@ FILE_FORMAT=MY_CSV_FILE_FORMAT;
 1. Use cases
    1.  Credits use by warehouse
    2. How many queries executed in past hour
-2. ~2 hour latency
+2. ~2 hour latency ... 45 -180 minutes
 3. Retention period is 1 year
 
 ## Column level security (Governance)
@@ -476,6 +503,147 @@ ALTER TABLE ACCOUNTS ADD ROW ACCESS POLICY RAP_IT ON (ACC_ID);
 ## Secure Views
 1. All view types can be secured
 2. DDL is restricted to only the object owner, denies inference attacks
+
+# Sharing
+
+## Exchange
+1. Not available to VPS uses secure data sharing under the hood
+2. Snowflake request
+3. Think of it as a private marketplace
+
+## Marketplace
+1. Standard listing
+2. Personalized listing
+   1. Providers can charge for data
+
+## Secure Data Sharing
+1. Data provider only pays for storage, Data consumer pays only for compute
+2. Share supports
+   1. objects
+      1. Tables
+      2. External tables
+      3. Secure view
+      4. Secure materialized views
+      5. Secure UDFs
+   2. 1 database per share
+   3. no limits on number of shares
+3. Share limitations
+   1. No future privileges
+   2. Share must be in same data region, else replication must be used
+   3. No time travel or cloning
+   4. No resharing
+   5. No object creation inside shared database
+4. VPS does not support
+5. Snowflake reader accounts
+   1. cannot insert or copy data into account
+   2. 1 provider account per reader account
+   3. provider accounts take responsibility for read account costs
+
+# Storage
+
+## Cloning
+1. Cloneable objects
+   1. Databases
+   2. Schemas
+   3. Tables
+   4. Streams
+   5. Stages
+   6. File Formats
+   7. Sequences
+   8. Tasks
+   9. Pipes (reference external stage only)
+2.  Zero copy cloning
+    1.  Metadata stored only referencing existing micro partitions
+    2.  Does not retain privileges of the source object with exception of tables
+    3.  Cloning is recursive for databases and schemas
+    4.  External tables and internal named stages are never cloned
+    5.  Cloned table does not contain the load history of the source table
+    6.  temporary and transient tables cannot be cloned as permanent tables
+3.  CLONE with Time travel
+
+
+## Fail-safe
+1. Copy of data for 7 days and require Snowflake request to restore
+
+## Micropartition
+1. 50-500 MB of uncompressed data
+2. write once, read many
+3. Pruning based on MIN, MAX from micropartition metadata
+4. Insert statement can add micro-partitions without locking existing micro-partitions
+
+## Replication
+1. Between account
+2. Data is physically copied and moved
+3. Not replicated ... external tables, event tables, temporary stages, class instances
+   1. Will result in error
+4. Refresh can e automated by configuring a task
+5. Privileges not replicated
+
+## Time Travel
+1. DATA_RETENTION_TIME_IN_DAYS -- ACCOUNT, DATABASE, SCHEMA, or TABLE level with child level taking precedence
+2. Default 1, Enterprise or Higher editions up to 90 days
+3. 0 or 1 for temporary or transient
+4. AT keyword
+   1. TIMESTAMP, OFFSET, STATEMENT
+5. BEFORE
+   1. STATEMENT
+6. UNDROP 
+   1. named object must not have been recreated before undrop
+
+
+# Transformations
+
+1. Returns one value per vcall
+2. Categories
+   1. Aggregate
+      1. AVG()
+      2. COUNT()
+      3. SUM()
+      4. MAX()
+      5. MIN()
+   2. Data Generation
+      1. UUID_STRING()
+   3. Estimation
+      1. HLL() -- hyperloglog, APPROX_COUNT_DISTINCT()
+         1. Alternative to COUNT DISTINCT
+      2. Similarity
+         1. Run MINHASH(K, <col_1>) -- K max 1024
+         2. Run APROXIMATE_SIMILARITY(MH) from MINHASH union between two tables
+         3. Alternative to Jaccard Similarity Coefficient (Needs intersect and unions between 2 sets)
+      3. Frequency
+         1. APPROX_TOP_K
+            1. APPROX_TOP_K(<input_col>, <num_values>, <max_distinct_parameter>>)
+            2. Alternative to group by
+      4. Percentile Estimation
+         1. APPROX_PERCENTILE -- implemented t-digest algorithm
+   4. File
+      1. build_scoped_file_url( @<stage_name> , '<relative_file_path>') -- 24 hours only
+      2. SELECT build_stage_file_url(@images_stage, 'prod_z1c.jpg');
+      3. GET_PRESIGNED_URL
+         1. Like others but manually set expiration on data access
+         2. Use case presenting pdf links with metadata
+      4. Troubleshooting
+         1. All require privileges on associated stage
+         2. Set server side encryption ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE')
+   5. System
+      1. system$cancel_query
+      2. system$json_explain_plan
+      3. system$pipe_status
+   6. Table 
+      1. TABLE(GENERATOR(ROWCOUNT => 3))
+   7. Table Sampling
+      1. Fraction-based 
+         1. SELECT * FROM LINEITEM TABLESAMPLE/SAMPLE [samplingMethod] (<probability>); 
+         2. SELECT * FROM LINEITEM SAMPLE BERNOULLI/ROW (50);
+      2. Block size less random
+         1. SELECT * FROM LINEITEM SAMPLE SYSTEM/BLOCK (50); 
+      3. Deterministic sampling ... SELECT * FROM LINEITEM SAMPLE (50) REPEATABLE/SEED (765);  
+      4. Fixed size
+         1. SELECT * FROM LINEITEM TABLESAMPLE/SAMPLE (<num> ROWS);
+         2. SELECT L_TAX, L_SHIPMODE FROM LINEITEM SAMPLE BERNOULLI/ROW (3 rows);
+   8. Window
+      1. MAX(col<A>) OVER(PARTITION BY <colB> ORDER BY <colC>)
+
 
 # Virtual Warehouse 
 1. Named abstraction for MPP (Massively parallel processing) compute clusters
