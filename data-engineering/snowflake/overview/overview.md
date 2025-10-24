@@ -5,13 +5,12 @@
   - [Roles](#roles)
 - [Billing](#billing)
 - [Data Types](#data-types)
-- [Load](#load)
-- [Export](#export)
+- [Export and Load](#export-and-load)
   - [File Formats](#file-formats)
-- [Load](#load-1)
-  - [Non Snowpipe](#non-snowpipe)
-  - [Snowpipe](#snowpipe)
-  - [Stages](#stages)
+  - [Load](#load)
+    - [Non Snowpipe](#non-snowpipe)
+    - [Snowpipe](#snowpipe)
+    - [Stages](#stages)
 - [Performance](#performance)
   - [Caching](#caching)
   - [Clustering](#clustering)
@@ -79,6 +78,7 @@
            6.  ENABLED
 4.  Key Pair Authentication
     1.  Generate Key-Pair using OpenSSL (like 2048-bit RSA key pair)
+        1.  Minimum 2048-bit
     2.  Assign Public Key to user, user keeps private key safe on local machine
     3.  Configure Snowflake Client
         1.  SnowSQL
@@ -86,6 +86,7 @@
         3.  Kafka connector
         4.  Others (Go, JDBC, ODBC, .NET, Node.js, SPark)
     4.  Optional Configure Key-Pair Rotation
+        1.  Periodic rekeying default 12 months
 5.  OAuth 2.0
 6.  SCIM (system for cross-domain identity management), manages user and groups using RESTful APIs
 
@@ -210,12 +211,11 @@
     5.   SEQ, KEY, PATH, INDEX, VALUE, THIS
     6.   1, NULL, 0, 0, 1, [1,45,34]
     7.   1, NULL, [1],1, 45, [1,45,34]
+    8.   RECURSIVELY option for lower level elements or false flatten first level elements only 
    4. GET
    5. AS_VARCHAR
 
-# Load
-
-# Export
+# Export and Load
 1. Example code
 ```
 COPY INTO @MY_STAGE/RESULT/DATA_
@@ -244,7 +244,7 @@ FILE_FORMAT=MY_CSV_FILE_FORMAT;
    5. SKIP_HEADER default 0
    6. TYPE default "CSV"
 
-# Load
+## Load
 ```
 COPY INTO 'S3://MYBUCKET/UNLOAD/'
 FROM T1
@@ -252,7 +252,7 @@ STORAGE_INTEGRATION = MY_INT
 FILE_FORMAT=MY_CSV_FILE_FORMAT;
 ```
 
-## Non Snowpipe
+### Non Snowpipe
 1. Insert 
    1. Insert from select statement
    2. Insert values statement
@@ -276,26 +276,27 @@ FILE_FORMAT=MY_CSV_FILE_FORMAT;
       4. ENFORCE_LENGTH default true
       5. FORCE default FALSE .. boolean to load duplicate filenames with same contents
    4. Copy validations
-      1. VALIDATION_MODE
+      1. VALIDATION_MODE dry run
          1. RETURN_ROWS
          2. RETURN_N_ROWS
          3. RETURN_ERRORS
          4. RETURN_ALL_ERRORS
       2. VALIDATE table function takes job id as parameter
 
-## Snowpipe
+### Snowpipe
 1. Intended for many small files quickly and frequently
 2. Serverless feature not requireing a VW
-3. Snowpipe load history is stored for 14 days to prevent reloading
-4. PIPE
+3. Can be paused and resumed using ALTER PIPE command
+4. Snowpipe load history is stored for 14 days to prevent reloading
+5. PIPE
    1. AUTOINGEST = TRUE ... Snowpipe with cloud messaging (e.g. AWS SQS)
    2. AUTOINGEST = FALSE ... Send API call to Snowflake yourself
-5. Versus bulk loading
+6. Versus bulk loading
    1. Authentication ... requires JWT for REST endpoints (json web token) vs security options supported by client for user session
    2. Load history ... 14 days vs 64 days
    3. Compute resources ... Snowflake serverless vs VW
    4. Billing ... per-second/per-core granularity and overhead 0.06 credits per 1000 files vs VW active time
-6. Best practices
+7. Best practices
    1. 100-250 MB compressed
    2. IF > 100 GB should be split
    3. Organize Data by path (date, other low to medium cardinality grouping)
@@ -303,8 +304,9 @@ FILE_FORMAT=MY_CSV_FILE_FORMAT;
    5. Pre-sort data
    6. Once per minute frequency at the fastest
    
-## Stages
-1. Internal stages ... area to temporarily store data used in data loading process
+### Stages
+1. table stage for 1 table load only
+2. Internal stages ... area to temporarily store data used in data loading process
    1. User stage
       1. PUT and GET command
       2. ls @~;
@@ -321,7 +323,7 @@ FILE_FORMAT=MY_CSV_FILE_FORMAT;
       3. ls @MY_STAGE
       4. Securable object, privileges can be granted
    4. Automatically gzipped
-2. External stages
+3. External stages
    1. Named stages
       1. Cloud Utilities
       2. ls @MY_STAGE
@@ -340,18 +342,22 @@ FILE_FORMAT=MY_CSV_FILE_FORMAT;
         ENABLED=TRUE
         STORAGE_ALLOWED_LOCATIONS=(‘S3://MY_BUCKET/PATH/’);
         ```
-3. Stage Helper Commands
+4. Stage Helper Commands
    1. LIST
+      1. lists contents of stages
    2. SELECT
       1. metadata$filename, metadata$file_row_number
-   3. REMOVE
-4. PUT
+   3. SHOW
+      1. lists stages
+   4. REMOVE
+5. PUT
    1. Cannot be executed within worksheets
    2. Duplicate files are ignored by default
    3. Uploaded files are automatically encrypted with 128-bit key
-5. Directory tables
+6. Directory tables
    1. Queryable dataset with file_url to staged files
-6. File Support REST API
+   2. ALTER STAGE <stage_HERE> REFRESH is needed to make existing files available immediately
+7. File Support REST API
    1. GET /api/files
       1. Either scoped url or file url, not presigned url
 
@@ -369,16 +375,19 @@ FILE_FORMAT=MY_CSV_FILE_FORMAT;
    2. Underlying table data is not changed
    3. Same role is used
    4. No time context function like CURRENT_TIME() are used
-   5. Can be disabled in session parameter USE_CACHED_RESULT
+   5. no UDF is used
+   6. no reclustering has been done
+   7. Can be disabled in session parameter USE_CACHED_RESULT
 3. Warehouse cache / SSD cache / Data Cache / Raw Data Cache
    1. Purged when VW is resized, suspended, or dropped
    2. Does not need exact query match
 
 ## Clustering
 1. Default clustering by order of loading
-2. Example clustering by alphabetical order
-3. Clustering metadata
-4. system$clustring_information Attributes
+2. Clustering reorganizes micro partitions or rather updates metadata referencing micropartitions
+3. Example clustering by alphabetical order
+4. Clustering metadata
+5. system$clustring_information Attributes
    1. total_partition_count ... Total number of micro partitions
    2. total_constant_partition_count ... number of micro-partitions for which value of specified column have reached a constant state, no more benefits from reclustering
       1. higher is better
@@ -390,8 +399,9 @@ FILE_FORMAT=MY_CSV_FILE_FORMAT;
    6. Once > 1TB
    7. Infrequent updates
    8.  The correct clustering key (max 3-4)
-   9.  Low cardinality first
-   10. Shouldn't be too low cardinality or there are not much benefits like < 10
+   9.  Lower cardinality first
+   10. Shouldn't be too low cardinality or there are not much benefits like < 10 (binary values)
+   11. Should be extreme high cardinality or not much benefits (like timstamps)
 
 ## History
 1. History Tab
@@ -411,8 +421,10 @@ FILE_FORMAT=MY_CSV_FILE_FORMAT;
 
 ## Search Optimization Service
 1. Turned on at table level
-2. Can be expensive
-3. Speed benefits on = or IN SQL operator filters
+2. Requires ownership of table or ADD SEARCH OPTIMIZATION privilege on schema level
+3. Serverless feature incurs additional compute and storage costs
+4. Speed benefits on = or IN SQL operator filters
+   1.  selective point lookups
 
 ## Tuning
 1. Rows > Groups > Result
@@ -436,6 +448,7 @@ FILE_FORMAT=MY_CSV_FILE_FORMAT;
          3. Larger local disk
 
 # Security
+1. hierarchical key model rooted in a hardware key
 
 ## Account Usage
 1. Use cases
@@ -464,11 +477,12 @@ ALTER TABLE IF EXISTS EMP_INFO MODIFY COLUMN USER_EMAIL SET MASKING POLICY EMAIL
    1. Not even snowflake or cloud platform can read without external detokenization API
 
 ## Encryption
-1. Encryption at rest
+1. Tri-secret secure ... compositive encryption key made up of a user provider key and a snowflake key
+2. Encryption at rest
    1. AES-256 strong encryption on Table data and internal stage data
-2. Encryption in transit
+3. Encryption in transit
    1. HTTPS TLS 1.2 via ODBC, JDBC, Web UI, SnowSQL
-3. Hierarchical key model using AWS CloudHSM (hardware security module)
+4. Hierarchical key model using AWS CloudHSM (hardware security module)
    1. Root > Account Master > Table Master > File Key
    2. Key rotation
    3. Periodic Re-Keying
@@ -480,6 +494,12 @@ ALTER TABLE IF EXISTS EMP_INFO MODIFY COLUMN USER_EMAIL SET MASKING POLICY EMAIL
    1. Does not include dropped objects
    2. No latency vs 45 - 180 minutes
    3. retention of historical data 7 days - 6 months (most often 7-14 days) vs 1 year
+4. Common tables and views
+   1. TABLE_STORAGE_METRICS view
+      1. table level storage utilization used to calculate storage billing
+         1. contains information about deleted tables still viable for use in time travel or fail safe
+      2. compression ratios 
+      3. partitioning
 
 ## Object Tagging (Governance)
 1. Use case
@@ -543,33 +563,34 @@ ALTER TABLE ACCOUNTS ADD ROW ACCESS POLICY RAP_IT ON (ACC_ID);
 
 ## Cloning
 1. Cloneable objects
-   1. Databases
-   2. Schemas
-   3. Tables
-   4. Streams
-   5. Stages
-   6. File Formats
-   7. Sequences
-   8. Tasks
-   9. Pipes (reference external stage only)
+   1. Databases (usage)
+   2. Schemas (usage)
+   3. Tables (select privs)
+   4. Streams (ownership privs)
+   5. Stages (usage)
+   6. File Formats (usage)
+   7. Sequences (usage)
+   8. Tasks (ownership privs)
+   9. Pipes (reference external stage only, ownership privs)
 2.  Zero copy cloning
     1.  Metadata stored only referencing existing micro partitions
-    2.  Does not retain privileges of the source object with exception of tables
-    3.  Cloning is recursive for databases and schemas
-    4.  External tables and internal named stages are never cloned
-    5.  Cloned table does not contain the load history of the source table
-    6.  temporary and transient tables cannot be cloned as permanent tables
-3.  CLONE with Time travel
+3.  Does not retain privileges of the source object with exception of tables
+4.  Cloning is recursive for databases and schemas
+5.  External tables and internal named stages are never cloned
+6.  Cloned table does not contain the load history of the source table
+7.  temporary and transient tables cannot be cloned as permanent tables
+8.  CLONE with Time travel is useful for retrieving lost or uncorrupted data
 
 
 ## Fail-safe
 1. Copy of data for 7 days and require Snowflake request to restore
 
 ## Micropartition
-1. 50-500 MB of uncompressed data
-2. write once, read many
-3. Pruning based on MIN, MAX from micropartition metadata
-4. Insert statement can add micro-partitions without locking existing micro-partitions
+1. Immutable
+2. 50-500 MB of uncompressed data
+3. write once, read many
+4. Pruning based on MIN, MAX from micropartition metadata
+5. Insert statement can add micro-partitions without locking existing micro-partitions
 
 ## Replication
 1. Between account
@@ -594,7 +615,7 @@ ALTER TABLE ACCOUNTS ADD ROW ACCESS POLICY RAP_IT ON (ACC_ID);
 # Transformations
 
 1. Returns one value per vcall
-2. Categories
+2. Categories of functions
    1. Aggregate
       1. AVG()
       2. COUNT()
@@ -616,7 +637,9 @@ ALTER TABLE ACCOUNTS ADD ROW ACCESS POLICY RAP_IT ON (ACC_ID);
             2. Alternative to group by
       4. Percentile Estimation
          1. APPROX_PERCENTILE -- implemented t-digest algorithm
-   4. File
+   4. ETL
+      1. VALIDATE ... views all error encountered during a previous copy into execution
+   5. File
       1. build_scoped_file_url( @<stage_name> , '<relative_file_path>') -- 24 hours only
       2. SELECT build_stage_file_url(@images_stage, 'prod_z1c.jpg');
       3. GET_PRESIGNED_URL
@@ -625,23 +648,25 @@ ALTER TABLE ACCOUNTS ADD ROW ACCESS POLICY RAP_IT ON (ACC_ID);
       4. Troubleshooting
          1. All require privileges on associated stage
          2. Set server side encryption ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE')
-   5. System
+   6. System
       1. system$cancel_query
-      2. system$json_explain_plan
-      3. system$pipe_status
-   6. Table 
+      2. system$clustering_depth
+      3. system$clustering_information
+      4. system$json_explain_plan
+      5. system$pipe_status
+   7. Table 
       1. TABLE(GENERATOR(ROWCOUNT => 3))
-   7. Table Sampling
+   8. Table Sampling
       1. Fraction-based 
          1. SELECT * FROM LINEITEM TABLESAMPLE/SAMPLE [samplingMethod] (<probability>); 
          2. SELECT * FROM LINEITEM SAMPLE BERNOULLI/ROW (50);
-      2. Block size less random
+      2. Block size less random, more efficient for large datasets since at micro partition level
          1. SELECT * FROM LINEITEM SAMPLE SYSTEM/BLOCK (50); 
       3. Deterministic sampling ... SELECT * FROM LINEITEM SAMPLE (50) REPEATABLE/SEED (765);  
       4. Fixed size
          1. SELECT * FROM LINEITEM TABLESAMPLE/SAMPLE (<num> ROWS);
          2. SELECT L_TAX, L_SHIPMODE FROM LINEITEM SAMPLE BERNOULLI/ROW (3 rows);
-   8. Window
+   9.  Window
       1. MAX(col<A>) OVER(PARTITION BY <colB> ORDER BY <colC>)
 
 
@@ -671,6 +696,7 @@ ON 100 PERCENT DO SUSPEND_IMMEDIATE;
 
 ALTER ACCOUNT SET RESOURCE_MONITOR = ANALYSIS_RM; -- or single virtual warehouse 
 ```
+1. Account admin only
 
 ## Scaling
 1. Scaling up/down by increasing warehouse_size
