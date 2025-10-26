@@ -59,3 +59,5 @@
    2. STRIP_OUTER_ARRAY, STRIP_NULL_VALUES 
       1. both json specific
       2. STRIP_NULL_VALUES equivalent is SKIP_BLANK_LINES
+2. What happens if data is loaded using the COPY command from a stage located in a different cloud region or provider than the Snowflake account?
+   1. Data transfer costs may apply, depending on the region or cloud provider.

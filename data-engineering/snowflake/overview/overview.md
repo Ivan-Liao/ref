@@ -384,10 +384,11 @@ FILE_FORMAT=MY_CSV_FILE_FORMAT;
 
 ## Clustering
 1. Default clustering by order of loading
-2. Clustering reorganizes micro partitions or rather updates metadata referencing micropartitions
-3. Example clustering by alphabetical order
-4. Clustering metadata
-5. system$clustring_information Attributes
+2. Can be clustered on expression like date functions to reduce column cardinality
+3. Clustering reorganizes micro partitions or rather updates metadata referencing micropartitions
+4. Example clustering by alphabetical order
+5. Clustering metadata
+6. system$clustring_information Attributes
    1. total_partition_count ... Total number of micro partitions
    2. total_constant_partition_count ... number of micro-partitions for which value of specified column have reached a constant state, no more benefits from reclustering
       1. higher is better
@@ -396,6 +397,8 @@ FILE_FORMAT=MY_CSV_FILE_FORMAT;
    4. average_depth
       1. lower is better (need to consider reclustering between 5 - 100 and size of table)
    5. Automatic clustering
+      1. Not started immediately, only if it will benefit from operation
+      2. alter table suspend OR resume recluster
    6. Once > 1TB
    7. Infrequent updates
    8.  The correct clustering key (max 3-4)
@@ -414,10 +417,16 @@ FILE_FORMAT=MY_CSV_FILE_FORMAT;
       4. Bytes scanned
       5. Rows
    4. Query Details (shows results for owned queries)
+      1. Execution Plan Tree. The Execution Plan Tree (or Execution Graph) in the Query Profile displays each step or operator in the query execution plan, along with metrics such as execution time and resource usage.
    5. Query Profile (EXPLAIN command)
-2. Query History Tables and Views
-   1. ACCOUNT_USAGE.QUERY_HISTORY
+2. Query History 
+   1. Tables and Views
+      1. ACCOUNT_USAGE.QUERY_HISTORY
+   2. Query history pane
+      1. Provides a high-level summary of query executions (such as start time, duration, and status) 
 3. Query profile
+4. Query Compilation Metrics
+   1. Query Compilation Metrics focus solely on the time spent during the query compilation phase. They do not offer insights into the execution phase, where the operator-level details are crucial for identifying performance bottlenecks.
 
 ## Search Optimization Service
 1. Turned on at table level
@@ -551,7 +560,7 @@ ALTER TABLE ACCOUNTS ADD ROW ACCESS POLICY RAP_IT ON (ACC_ID);
    1. No future privileges
    2. Share must be in same data region, else replication must be used
    3. No time travel or cloning
-   4. No resharing
+   4. No resharing to other consumers
    5. No object creation inside shared database
 4. VPS does not support
 5. Snowflake reader accounts
@@ -568,10 +577,11 @@ ALTER TABLE ACCOUNTS ADD ROW ACCESS POLICY RAP_IT ON (ACC_ID);
    3. Tables (select privs)
    4. Streams (ownership privs)
    5. Stages (usage)
+      1. Cannot clone internal named stages individually, only as part of larger container object (in this case you need to enable directory table, refresh directory table, and include internal stages option in clone schema/database statement)
    6. File Formats (usage)
    7. Sequences (usage)
    8. Tasks (ownership privs)
-   9. Pipes (reference external stage only, ownership privs)
+   9.  Pipes (reference external stage only, ownership privs)
 2.  Zero copy cloning
     1.  Metadata stored only referencing existing micro partitions
 3.  Does not retain privileges of the source object with exception of tables
