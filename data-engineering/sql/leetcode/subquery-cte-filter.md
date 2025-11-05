@@ -1,4 +1,40 @@
+# current price of change tracking table
+```
+with num_list as (
+    select row_number() over (partition by product_id order by change_date desc) as row_num,
+        product_id,
+        new_price
+    from Products
+    where change_date < '2019-08-17'
+)
+select product_id,
+    new_price as price
+from num_list
+where row_num = 1
+```
+
+-- worst case senario where default case is not in initial data
+# Write your MySQL query statement below
+```
+with num_list as (
+    select row_number() over (partition by product_id order by change_date desc) as row_num,
+        product_id,
+        new_price
+    from Products
+    where change_date < '2019-08-17'
+)
+select product_id,
+    new_price as price
+from num_list
+where row_num = 1
+UNION
+select product_id, 10 as price
+from Products 
+where product_id not in (select distinct product_id from num_list)
+```
+
 # Product sales analysis earliest year sales
+```
 -- non ansi MySQL solution
 select product_id,
     year as first_year, 
@@ -24,14 +60,18 @@ join cte_earliest_year cey
     and s.year = cey.first_year
 
 -- snowflake solution uses array_contains and array_constructs functions
+```
 
 # customers-all-products_subquery-filter
+```
 select customer_id
 from Customer
 group by customer_id
     having count(distinct product_key) = (select count(distinct product_key) from Product)
+```
 
 # same investments cte filter
+```
 with same_investment2015 as (
     select tiv_2015
     from Insurance
@@ -63,3 +103,4 @@ AND (lat, lon) IN (
     GROUP BY lat, lon
     HAVING COUNT(*) = 1
 )
+```
