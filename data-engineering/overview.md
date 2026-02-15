@@ -1,3 +1,11 @@
+- [Data Modeling](#data-modeling)
+- [Security](#security)
+- [Sources](#sources)
+- [Storage](#storage)
+- [Streaming / Near Real Time](#streaming--near-real-time)
+- [Transformation](#transformation)
+- [Trends](#trends)
+
 # Data Modeling
 Here are the 20 most important concepts for data modeling in the context of data engineering, with detailed descriptions.
 
@@ -60,6 +68,14 @@ Here are the 20 most important concepts for data modeling in the context of data
 11. Validation
    1. Referential Integrity (foreign key exists in associated entity table)
    2. Entity Integrity (no null primary key)
+
+# Security
+1. Redaction methods
+   1. Manually filter or delete sensitive columns (columns name may not be specific, comments/notes columns may contain sensitive info)
+   2. Regular expressions (tedious and less accurate)
+   3. Fuzzy matching
+   4. Services
+      1. Google DLP API
 
 # Sources
 1. S3 path
