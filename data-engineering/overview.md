@@ -133,6 +133,7 @@ Here are the 20 most important concepts for data modeling in the context of data
       1. Analytical
    3. ACID compliant
       1. atomicity, consistency,  isolation, durability
+   4. Sharding when larger database is sharded into smaller, faster, manageable chunks by rows
 7. Search
    1. Tools
       1. Elasticsearch
