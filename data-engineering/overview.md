@@ -1,4 +1,5 @@
 - [Data Modeling](#data-modeling)
+- [Dataset Types](#dataset-types)
 - [Security](#security)
 - [Sources](#sources)
 - [Storage](#storage)
@@ -69,6 +70,11 @@ Here are the 20 most important concepts for data modeling in the context of data
    1. Referential Integrity (foreign key exists in associated entity table)
    2. Entity Integrity (no null primary key)
 
+# Dataset Types
+1. Geospatial
+   1. use cases
+      1. Patient routing
+
 # Security
 1. Redaction methods
    1. Manually filter or delete sensitive columns (columns name may not be specific, comments/notes columns may contain sensitive info)
@@ -78,8 +84,10 @@ Here are the 20 most important concepts for data modeling in the context of data
       1. Google DLP API
 
 # Sources
-1. S3 path
-2. https://raw.githubusercontent.com
+1. Federated queries
+   1. queries connected to distinct external data sources
+2. S3 path
+3. https://raw.githubusercontent.com
 
 # Storage
 1. Cache / Real Time
