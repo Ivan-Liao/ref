@@ -25,6 +25,7 @@ print(df.isnull().sum())
 df = df.dropna()  
 
 
+# outliers
 sns.boxplot(x=df['Price'])
 sns.boxplot(x=df['HP'])
 sns.boxplot(x=df['Cylinders'])
