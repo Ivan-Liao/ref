@@ -1,7 +1,7 @@
 import duckdb
 # Connect to a database (or in-memory) and create a dummy table
 db_path = "./cleveland_clinic_db.duckdb"
-table_name = 'Encounter'
+table_name = 'Provider_LOS'
 
 with duckdb.connect(database=db_path, read_only=False) as con:
     # Query the column names and types from the metadata function
@@ -14,8 +14,8 @@ with duckdb.connect(database=db_path, read_only=False) as con:
     print(columns_info)
 
     # Construct the 'CREATE TABLE' part
-    columns_definition = ', \n'.join([f"{col[0]} {col[1]}" for col in columns_info])
-    create_statement = f"CREATE TABLE {table_name} ({columns_definition});"
+    columns_definition = ', \n'.join([f"    {col[0]} {col[1]}" for col in columns_info])
+    create_statement = f"CREATE TABLE {table_name} (\n{columns_definition}\n);"
 
     # Alternatively, construct a CTAS statement for an empty copy (schema only)
     ctas_schema_only = f"CREATE TABLE {table_name}_schema_only AS FROM {table_name} WHERE 1=0;"
