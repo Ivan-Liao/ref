@@ -17,50 +17,83 @@
    3. access control and monetization settings
 3. Batch
    1. Designed for multi day batch jobs, managed service
-4. Bigquery
+4. Biglake
+   1. Can query data across Cloud Storage, and even other cloud object stores
+   2. Tables are more capable than bigquery external tables
+      1. Streamlined security management through service accounts
+      2. Connects to external cloud providers like AWS S3
+      3. Iceberg, Delta, Hudi support
+      4. Column-level security
+      5. Data masking
+   3. Metadata caching behind the scenes
+      1. Freshness set between 30 minutes and 7 days
+   4. Built on Apache arrow
+5. Bigquery
    1. Cloud serverless data warehouse
-   2. Federated queries (for data outside of Bigquery)
-      1. query data in-place (use case for small changing dataset that augments a larger more static dataset)\
-   3. Flex slots, short burst demand
-   4. Materialized Views for precomputed views that are cached
-      1. user defined schedule (default 30 min) possible
-      2. typically updates within 5 min of base table change
-   5. Object tables (for unstructured data)
-   6. Paritioning and clustering (clustering is within partitions by key)
-      1. Common partition is by ingestion-time or timestamp
-   7. Policy tags for fine grained column access
-   8. views
+   2. views
       1. use case for frequently used query
       2. authorized views
-5. Bigtable 
-   1. low-latency, high-throughput access
-   2. excels at single row lookup
-   3. no support for SQL or complex aggregation
-   4. Can handle terabytes of data if key-value pairs like time series financial data
-6. Catalog
+   3. UDFs
+      1. SQL
+      2. Javascript
+   4. Query management
+      1. save, version, schedule, share
+   5. Dataform
+      1. Complex SQL workflows
+      2. Running other SQL scripts, data quality tests, configuring security
+      3. sqlx file (config, js [local js functions and constraints], pre_operations, SQL body, post_operations)
+         1. use case like reusable js functions (e.g. mapping countries to categorical list instead of long case statement)
+         2. config types (declaration, table, incremental, view, assertion, operations)
+   6. External tables
+      1. Cloud Storage, Google Sheets, and Bigtable
+      2. For less frequent access and no data movement
+      3. Slower performance, unknown cost estimation, no table preview, no query caching
+   7. Federated queries (for data outside of Bigquery)
+      1. query data in-place (use case for small changing dataset that augments a larger more static dataset)\
+   8. Materialized Views for precomputed views that are cached
+      1. user defined schedule (default 30 min) possible
+      2. typically updates within 5 min of base table change
+   9.  Object tables (for unstructured data)
+   10. Paritioning and clustering (clustering is within partitions by key)
+      1. Common partition is by ingestion-time or timestamp
+   11. Policy tags for fine grained column access
+   12. Flex slots, short burst demand
+6. Bigtable 
+   1. low-latency (millisecond level), high-throughput access
+   2. wide column, with column family
+   3. excels at single row lookup
+   4. no support for SQL or complex aggregation
+   5. Can handle terabytes of data if key-value pairs like time series financial data
+7. Catalog
    1. Can tag data entries to give more transparency to data origin and descriptions
-7. Cloud Build
+8. Cloud Build
    1. CI/CD pipeline creation (can monitor updates in a source repository)
-8. Cloud Composer
+9.  Cloud Composer
    1. Managed Apache Airflow
    2. Orchestrates a series of data pipelines tasks, allocates resources
    3. Tasks should be one task per operation
-9.  Cloud KMS (key management service)
-10. Cloud monitoring
+10. Cloud KMS (key management service)
+11. Cloud monitoring
    1.  Can set up alerts for dataflow system lag
-11. Cloud Run
-   1. Deploying and running containerized applications (Caas)
-   2. Often paired with Cloud Tasks to rate limit and control scheduling
-12. Cloud Scheduler
+12. Cloud Run
+   1. Execute code based on Google Cloud events
+      1.  Triggers include HTTP/S calls, Pub/Sub messages, Cloud storage changes, Firestore updates, custom Eventarc events
+   2. Deploying and running containerized applications (Caas)
+   3. Often paired with Cloud Tasks to rate limit and control scheduling
+13. Cloud Scheduler
    1. Allows scheduling for future events, does not allocate resources
-13. Cloud SQL
-   1. Does not scale well for high velocity operational data
-14. Connected Sheets
+      1. Frequency and precise time of day
+      2. Triggers include HTTP/S calls, App Engine HTTP calls, Pub/Sub messages, Workflows
+14. Cloud SQL
+   1. Can be suitable for > 20 CCU (concurrent users)
+   2. Does not scale well for very high velocity operational data, use AlloyDB instead
+15. Compute Engine (AWS EC2)
+16. Connected Sheets
     1.  Bigquery to google sheets connection
-15. Data Access Audit Logs
+17. Data Access Audit Logs
     1.  Must be enabled first, used for analyzing object access records
-16. Dataflow
-   1. Data transformation pipelines
+18. Dataflow
+   1. Data transformation pipelines, templates, notebooks
    2. requires schema definition
    3. side output (Tag) can rerout invalid records to a seperate PCollection (Dead Letter file in GCS)
    4. Windows
@@ -68,18 +101,18 @@
       2. fixed window (tumbling e.g. 10-11 am, 11-12 pm, etc.)
       3. session window (group by activity)
    5. Dataflow snapshots to plan for disaster recovery
-17. Data Fusion
+19. Data Fusion
    1. no/low code complex, enterprise-grade ETL pipelines
    2. Powered by dataproc and generally a monthly cost for instance
-18. Dataplex
+20. Dataplex
    1. For different types of data with many producers
    2. raw and curated zones (unprocessed and process data)
    3. exclude patterns
    4. data lakes
-19. Dataprep
+21. Dataprep
    1. Low code for data transformation, free for UI, costs based on Dataflow jobs
    2. runs on Dataflow and connects to more destinations like Oracle, SAP, Salesforce
-20. Dataproc
+22. Dataproc
    1. Managed Hadoop/Spark service
    2. ephemeral clusters spin up and shut down with demand (useful for prioritizing jobs)
    3. master nodes set on creation of cluster
@@ -88,35 +121,50 @@
    5. Has a serverless version
    6. autoscaling
       1. suggested use case is with single job clusters since there will be no overlap with other job scaling
-21. Datastore
+   7. Connectors to Bigquery and Bigtable
+   8. Workflow templates specified in YAML files (order of execution, required parameters)
+   9. Spark SQL for structured data (batch processing, interactive notebooks), Spark streaming for real time, MLlib for ML (VertexAI), GraphX for graph data
+23. Datastore
    1. NoSQL database
-22. Datastream
-23. DLP (Data Loss Prevention) API
+24. Datastream
+    1.  Datastream enables continuous replication of on-premises or multi-cloud relational databases such as Oracle, MySQL, PostgresSQ,L or SQL Server into Google Cloud, Bigquery, or Dataflow
+    2.  Datastream events
+        1.  Metadata provides context about the data, like source table, timestamps, and related information.
+        2.  Payload contains the actual data changes in a key-value format, reflecting column names and their corresponding values.
+    3.  Taps into the source database's write-ahead log (WAL)
+    4.  Flexibility in connectivity options and can selectively replicate data at the schema, table, or column level.
+25. DLP (Data Loss Prevention) API
    1. Identifies and redacts data that matches infoTypes like credit card numbers, phone, numbers, email IDs
-24. Firestore 
+26. Eventarc
+27. Firestore 
     1.  NoSQL document database for app development and smaller-scare structures vs Bigtable
-25. IAM (Identity and Access Management)
+28. IAM (Identity and Access Management)
     1.  Related to ACLS (access control list on the resource level)
-26. Logging (GCL)
-27. Looker
+29. Logging (GCL)
+30. Looker
     1.  Has modeling tools to abstract data sources
-28. Looker Studio (prev. Data Studio)
+31. Looker Studio (prev. Data Studio)
     1.  Vizualization tool
-29. PubSub
+32. PubSub
    1. streaming data
-30. Spanner
-    1.  RDS high availability and horizontal scalability globally
+33. Spanner
+    1.  RDS high availability and horizontal scalability globally, best function rds
     2.  Automatic sharding and scaling
-31. Storage (GCS)
+34. Storage (GCS)
    1. Equivalent to AWS S3
    2. HTTPS requests including ranged GETS to get a portion of data
    3. Lifecycle policy for moving data between storage classes on a schedule
    4. Retention period can be set
    5. Size limits 5 TB per object
    6. Storage classes ... standards (none minimum days), nearline (30 days), coldline (90 days), archive (365 days)
-32. Storage Transfer Service
-    1.  Connects from HTTPS endpoint to Google Cloud (used to transfer TBs of data)
-33. Workflows
+35. Storage Transfer
+    1.  gloud storage command (typically 100 MB/sec)
+        1.  from file systems, object stores, HDFS
+    2.  Storage Transfer Service (up to 10GB/sec)
+        1.  Connects from HTTPS endpoint to Google Cloud (used to transfer TBs of data)
+    3.  Transfer Appliance service (offline)
+    4.  
+36. Workflows
     1. Connects a series of shorter tasks
 
 # Use Cases

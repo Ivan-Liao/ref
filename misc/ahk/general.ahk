@@ -97,3 +97,7 @@ F2 & F1::
     SendInput, {Shift Down}{Tab}{Shift Up}
     SendInput, `n`;
     return
+::bktk::
+    SendInput, ``````
+    SendInput, `n
+    SendInput, ``````
