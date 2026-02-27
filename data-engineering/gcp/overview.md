@@ -58,6 +58,8 @@
       1. Common partition is by ingestion-time or timestamp
    11. Policy tags for fine grained column access
    12. Flex slots, short burst demand
+   13. Misc
+       1.  10 GB streaming API limit
 6. Bigtable 
    1. low-latency (millisecond level), high-throughput access
    2. wide column, with column family
@@ -69,7 +71,7 @@
 8. Cloud Build
    1. CI/CD pipeline creation (can monitor updates in a source repository)
 9.  Cloud Composer
-   1. Managed Apache Airflow
+   1. Managed Apache Airflow (not serverless)
    2. Orchestrates a series of data pipelines tasks, allocates resources
    3. Tasks should be one task per operation
 10. Cloud KMS (key management service)
@@ -81,9 +83,10 @@
    2. Deploying and running containerized applications (Caas)
    3. Often paired with Cloud Tasks to rate limit and control scheduling
 13. Cloud Scheduler
-   1. Allows scheduling for future events, does not allocate resources
+   1. Allows scheduling for future events with YAML
       1. Frequency and precise time of day
       2. Triggers include HTTP/S calls, App Engine HTTP calls, Pub/Sub messages, Workflows
+      3. does not allocate resources
 14. Cloud SQL
    1. Can be suitable for > 20 CCU (concurrent users)
    2. Does not scale well for very high velocity operational data, use AlloyDB instead
@@ -101,8 +104,10 @@
       2. fixed window (tumbling e.g. 10-11 am, 11-12 pm, etc.)
       3. session window (group by activity)
    5. Dataflow snapshots to plan for disaster recovery
+   6. Misc
+      1. Max limit 10 TB per day per job
 19. Data Fusion
-   1. no/low code complex, enterprise-grade ETL pipelines
+   1. no/low code drag and drop for complex, enterprise-grade ETL pipelines, not serverless
    2. Powered by dataproc and generally a monthly cost for instance
 20. Dataplex
    1. For different types of data with many producers
@@ -110,10 +115,10 @@
    3. exclude patterns
    4. data lakes
 21. Dataprep
-   1. Low code for data transformation, free for UI, costs based on Dataflow jobs
+   1. Low code for data transformation (recipes), free for UI, costs based on Dataflow jobs
    2. runs on Dataflow and connects to more destinations like Oracle, SAP, Salesforce
 22. Dataproc
-   1. Managed Hadoop/Spark service
+   1. Managed Hadoop/Spark service, Jupyter integration
    2. ephemeral clusters spin up and shut down with demand (useful for prioritizing jobs)
    3. master nodes set on creation of cluster
       1. HA (high availability) 3 masters mode is a common pattern
@@ -136,6 +141,10 @@
 25. DLP (Data Loss Prevention) API
    1. Identifies and redacts data that matches infoTypes like credit card numbers, phone, numbers, email IDs
 26. Eventarc
+    1.  Connects event sources via Pub/Sub
+        1.  Google Cloud services, third-party, custom events, Cloud Run
+    2.  Use cases
+        1.  BQ insert operation >> Cloud Audit Log event >> Eventarc >> (rebuild dashboard, train ML model, etc.)
 27. Firestore 
     1.  NoSQL document database for app development and smaller-scare structures vs Bigtable
 28. IAM (Identity and Access Management)
