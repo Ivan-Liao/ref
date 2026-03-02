@@ -22,14 +22,19 @@ Here are 20 of the most commonly used bash commands.
 7. `cp`
    1. `cp <source_file> <destination_file>`
        1. `cp data.csv data_backup.csv`
-8. `df # Details on disk usage`
+8. `cut`
+    1. extracts specific sections from each line of input
+    2. `cut -d ',' -f 2 data.csv`
+       1. uses comma as delimiter (-d ',') and selects the second field (-f 2)
+    3. can be piped into
+9. `df # Details on disk usage`
    1. `df [options]`
        1. `df -h`
-9.  `echo`
-   1. `echo "<text_to_display>"`
+10. .  `echo`
+   1.  `echo "<text_to_display>"`
        1. `echo "Hello World"`
        2. `echo "Hello, world!" > hello.txt`
-10. `find`
+11. `find`
    1. `find <starting_directory> -name "<filename_pattern>"`
        1. `find . -name "*.py"`
     2. Find a type of file like human readable
@@ -38,45 +43,45 @@ Here are 20 of the most commonly used bash commands.
        1. `find . -size 1033c -type f ! -perm /0111 -exec sh -c 'file -b "{}" | grep -q text' \; -print`
     4. standard error file descriptor 2, users, groups
        1. `find / -size 33c -user bandit7 -group bandit6 -type f -exec sh -c 'file -b "{}" | grep -q text' \; -print 2>/dev/null`
-11. `grep`
+12. `grep`
    1. `grep "<pattern>" <filename>`
        1. `grep "error" server.log`
-12. `kill`
+13. `kill`
     1. `kill <process_id>`
         1. `kill 12345`
-13. `ls`
+14. `ls`
     1. `ls [options] [directory]`
         1. `ls -la` (l is for detailed list, a is to show hidden files)
-14. `man # windows git bash equivalent is <command> --help`
+15. `man # windows git bash equivalent is <command> --help`
     1. `man <command_name>`
         1. `man grep`
-15. `mkdir`
+16. `mkdir`
     1. `mkdir <directory_name>`
         1. `mkdir project_files`
-16. `mv`
+17. `mv`
     1. `mv <source> <destination_or_new_name>` (move or rename)
         1. `mv old_name.txt new_name.txt`
-17. `ps # Details on running processes`
+18. `ps # Details on running processes`
     1. `ps [options]`
         1. `ps aux`
-18. `pwd`
+19. `pwd`
     1. present working directory
-19. `rm`
+20. `rm`
     1. `rm [options] <filename>`
         1. `rm temporary_file.tmp`
     2. `rm -r <directory_name>` (remove recursively)
     3. `rm -r ./mydir1/mydir2`
-20. `ssh`
+21. `ssh`
     1. `ssh -p 2210 username@remote_host_or_ip`
     2. `ssh -i /path/to/your/private_key username@remote_host_or_ip`
     3. `ssh -L local_port:remote_host:remote_port username@remote_host_or_ip`
         1. `ssh -L 8080:localhost:80 username@example.com`
-21. `sudo`
+22. `sudo`
     1. `sudo <command>`
         1. `sudo apt-get update`
-22. `tail`
+23. `tail`
     1. `tail [options] <filename>`
         1. `tail -f /var/log/syslog`
-23. `touch`
+24. `touch`
     1. `touch <filename_to_create>`
         1. `touch new_script.sh`
