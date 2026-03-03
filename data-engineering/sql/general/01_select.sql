@@ -19,5 +19,5 @@ HAVING
 SELECT
 ORDER BY
 LIMIT / OFFSET:
--- FWGH SOL
+-- FW GH SOL
 -- Fred wears golden hats, Susan only lavender

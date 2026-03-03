@@ -1,3 +1,11 @@
+<!-- 
+    ROW_NUMBER(): Assigns a unique, consecutive number to each row (1, 2, 3, 4...).
+Best for: Pagination, identifying the single top record, or when you just need a unique identifier.
+    RANK(): Assigns the same rank to ties but skips the next ranking values (1, 2, 2, 4).
+Best for: Competitive standings where you want to show that two people tied for 2nd place, but the next person is 4th.
+    DENSE_RANK(): Assigns the same rank to ties but does not skip the next ranking value (1, 2, 2, 3).
+Best for: Leaderboards or reporting where you need consecutive ranking, such as finding the top 3 highest-paid employees regardless of ties. 
+-->
 # dense rank
 ## Department Top Three Salaries
 ```
