@@ -1,3 +1,10 @@
+- [metaphor](#metaphor)
+    - [1. IP Addresses: The "Mailing Address"](#1-ip-addresses-the-mailing-address)
+    - [2. Port Forwarding: The "Internal Extension"](#2-port-forwarding-the-internal-extension)
+    - [3. Proxies: The "Front Desk / Security Guard"](#3-proxies-the-front-desk--security-guard)
+    - [4. URL Map: The "Building Directory"](#4-url-map-the-building-directory)
+    - [How they connect in a real-world request:](#how-they-connect-in-a-real-world-request)
+
 # metaphor
 In networking, these components work together like a postal system to ensure a request from a user's browser reaches the correct application on a server. Think of it as a journey from the **General Location (IP)** to the **Specific Building (Proxy/URL Map)** and finally the **Exact Room (Port).**
 
@@ -10,6 +17,24 @@ An **IP Address** is a unique identifier for a device on a network.
 * **Public IP:** The address of your entire house or office building as seen by the world.
 * **Private IP:** The address of a specific device (like a laptop or server) *inside* that building.
 * **The Relation:** Every request starts by looking up an IP address via DNS. Without the IP, the packet has no destination.
+
+1. IP address standard conventions
+   1. <8 bit>.<8 bit>.<8 bit>.<8 bit>/<0-32 int>
+      1. e.g. 192.168.1.0/24
+   2. the /<0-32 int> means how many bits are reserved for the network and how many are available for the host
+      1. /24 means the last 8 bits are available for the hosts, which is actually 254 since .0 is the network id and .255 is the broadcast ip (sends message to all devices at the same time)
+      2. 192.168.1.1 (Typically the Default Gateway/Router)
+      3. 192.168.1.2 (Secondary Router or Switch)
+      4. 192.168.1.10 (Static IP for a Database Server)
+      5. 192.168.1.11 (Static IP for a Load Balancer)
+      6. 192.168.1.20 (Network Printer)
+      7. 192.168.1.30 (NAS / Storage Server)
+      8. 192.168.1.50 (VPN Gateway)
+      9. 192.168.1.250 (Management Interface for an ESXi host)
+      10. 192.168.1.253 (Intrusion Detection System)
+      11. 192.168.1.254 (Backup Gateway)
+      12. 192.168.1.101 (User Laptop)
+
 
 ### 2. Port Forwarding: The "Internal Extension"
 

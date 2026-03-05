@@ -1,4 +1,34 @@
-1. GCS
+# Artifact Registry
+```
+gcloud auth configure-docker us-central1-docker.pkg.dev
+gcloud artifacts repositories create my-repository --repository-format=docker --location=us-central1 --description="Docker repository"
+# Build to the AR repo
+docker build -t us-central1-docker.pkg.dev/qwiklabs-gcp-04-aca6299d4f5b/my-repository/node-app:0.2 .
+docker push us-central1-docker.pkg.dev/qwiklabs-gcp-04-aca6299d4f5b/my-repository/node-app:0.2
+```
+# Compute
+1. Creating an instance
+```
+INSTANCE_NAME=YOUR_INSTANCE_NAME
+LOCATION_ZONE = YOUR_LOCATION_ZONE
+MACHINE_TYPE=YOUR_MACHINE_TYPE
+SUBNET_NAME=YOUR_SUBNET_NAME
+IMAGE_FAMILY=YOUR_IMAGE_FAMILY
+IMAGE_PROJECT=YOUR_IMAGE_PROJECT
+BOOT_DISK_SIZE=YOUR_BOOT_DISK_SIZE
+BOOT_DISK_TYPE=YOUR_BOOT_DISK_TYPE
+BOOT_DISK_DEVICE_NAME=YOUR_BOOK_DIST_DEVICE_NAME
+gcloud compute instances create $INSTANCE_NAME --zone $LOCATION_ZONE \
+    --machine-type $MACHINE_TYPE --subnet $SUBNET_NAME \
+    --image-family $IMAGE_FAMILY --image-project $IMAGE_PROJECT --boot-disk-size $BOOT_DISK_SIZE \
+    --boot-disk-type $BOOT_DISK_TYPE --boot-disk-device-name $BOOT_DISK_DEVICE_NAME
+```
+2. Instance Management
+```
+# ssh into instance
+gcloud compute ssh YOUR_INSTANCE_NAME
+```
+# GCS
    1. Create bucket
 ```
 # GCS
@@ -7,7 +37,7 @@ gcloud storage buckets create gs://qwiklabs-gcp-01-83c4633b6cba-bucket --locatio
 # with uniform bucket access (no acl) and default storage specified and public access prevention 
 gcloud storage buckets create gs://qwiklabs-gcp-01-83c4633b6cba-bucket --location=$REGION --project=$(gcloud config get-value project) --default-storage-class=standard --uniform-bucket-level-access --public-access-prevention
 ```
-2. Permissions
+1. Permissions
 ```
 # list permissions
 gcloud projects get-iam-policy YOUR_PROJECT_ID --filter="bindings.members:<YOUR_USER_ID>"
@@ -89,3 +119,7 @@ gcloud config set compute/region europe-west1
 gcloud services enable appengine.googleapis.com
 gcloud services disable appengine.googleapis.com
 ```
+
+
+# Networking
+1. VPNs see labs\arcade\march_holistic\12_vpn.md

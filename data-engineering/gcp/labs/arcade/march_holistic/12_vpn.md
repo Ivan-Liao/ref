@@ -3,7 +3,7 @@
 gcloud compute networks create cloud --subnet-mode custom
 gcloud compute firewall-rules create cloud-fw --network cloud --allow tcp:22,tcp:5001,udp:5001,icmp
 gcloud compute networks subnets create cloud-east --network cloud \
-    --range 10.0.1.0/24 --region REGION2
+    --range 10.0.1.0/24 --region us-central1
 
 
 # network, firewall, subnets
@@ -42,29 +42,29 @@ gcloud compute forwarding-rules create cloud-fr-1-udp4500 --ip-protocol UDP \
 gcloud compute forwarding-rules create on-prem-fr-esp --ip-protocol ESP \
     --address $on_prem_gw_ip --target-vpn-gateway on-prem-gw1 --region REGION
 gcloud compute forwarding-rules create on-prem-fr-udp500 --ip-protocol UDP --ports 500 \
-    --address $on_prem_gw_ip --target-vpn-gateway on-prem-gw1 --region REGION
+    --address $on_prem_gw_ip --target-vpn-gateway on-prem-gw1 --region us-west1
 gcloud compute forwarding-rules create on-prem-fr-udp4500 --ip-protocol UDP --ports 4500 \
-    --address $on_prem_gw_ip --target-vpn-gateway on-prem-gw1 --region REGION
+    --address $on_prem_gw_ip --target-vpn-gateway on-prem-gw1 --region us-west1
 
 
 # VPN tunneling
 gcloud compute vpn-tunnels create on-prem-tunnel1 --peer-address $cloud_gw1_ip \
     --target-vpn-gateway on-prem-gw1 --ike-version 2 --local-traffic-selector 0.0.0.0/0 \
-    --remote-traffic-selector 0.0.0.0/0 --shared-secret=[MY_SECRET] --region REGION
+    --remote-traffic-selector 0.0.0.0/0 --shared-secret="shared-secret" --region us-west1
 gcloud compute vpn-tunnels create cloud-tunnel1 --peer-address $on_prem_gw_ip \
     --target-vpn-gateway cloud-gw1 --ike-version 2 --local-traffic-selector 0.0.0.0/0 \
-    --remote-traffic-selector 0.0.0.0/0 --shared-secret=[MY_SECRET] --region REGION2
+    --remote-traffic-selector 0.0.0.0/0 --shared-secret="shared-secret" --region us-central1
 gcloud compute routes create on-prem-route1 --destination-range 10.0.1.0/24 \
     --network on-prem --next-hop-vpn-tunnel on-prem-tunnel1 \
-    --next-hop-vpn-tunnel-region REGION
+    --next-hop-vpn-tunnel-region us-west1
 gcloud compute routes create cloud-route1 --destination-range 192.168.1.0/24 \
-    --network cloud --next-hop-vpn-tunnel cloud-tunnel1 --next-hop-vpn-tunnel-region REGION2
+    --network cloud --next-hop-vpn-tunnel cloud-tunnel1 --next-hop-vpn-tunnel-region us-central1
 ```
 
 
 2. Load testing
 ```
-gcloud compute instances create "cloud-loadtest" --zone ZONE2 \
+gcloud compute instances create "cloud-loadtest" --zone us-central1-f \
     --machine-type "e2-standard-4" --subnet "cloud-east" \
     --image-family "debian-11" --image-project "debian-cloud" --boot-disk-size "10" \
     --boot-disk-type "pd-standard" --boot-disk-device-name "cloud-loadtest"
