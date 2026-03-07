@@ -1,7 +1,7 @@
 1. Setup
 ```
 gcloud compute instances create lamp-1-vm \
-    --zone=<ZONE> \
+    --zone=$ZONE \
     --machine-type=e2-medium \
     --image-family=debian-12 \
     --image-project=debian-cloud \

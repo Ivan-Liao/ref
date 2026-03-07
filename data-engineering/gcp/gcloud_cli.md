@@ -8,6 +8,7 @@
 - [Kubernetes](#kubernetes)
 - [Monitoring](#monitoring)
 - [Networking](#networking)
+- [Run](#run)
 
 # AI
 1. gcloud ml
@@ -83,11 +84,23 @@ gcloud compute instances create lamp-1-vm \
     --image-family=debian-12 \
     --image-project=debian-cloud \
     --tags=http-server
+
+
+# firewall rule
+gcloud compute firewall-rules create default-allow-http \
+    --direction=INGRESS \
+    --priority=1000 \
+    --network=default \
+    --action=ALLOW \
+    --rules=tcp:80 \
+    --source-ranges=0.0.0.0/0 \
+    --target-tags=http-server
 ```
 2. Instance Management
 ```
 # ssh into instance
 gcloud compute ssh YOUR_INSTANCE_NAME
+gcloud compute instances list
 ```
 
 
@@ -267,3 +280,22 @@ kubectl rollout undo deployment/fortune-app-blue
 
 # Networking
 1. VPNs see labs\arcade\march_holistic\12_vpn.md
+
+
+# Run
+```
+gcloud functions deploy nodejs-pubsub-function \
+  --gen2 \
+  --runtime=nodejs20 \
+  --region=us-east1 \
+  --source=. \
+  --entry-point=helloPubSub \
+  --trigger-topic cf-demo \
+  --stage-bucket qwiklabs-gcp-00-d302f4ad2671-bucket \
+  --service-account cloudfunctionsa@qwiklabs-gcp-00-d302f4ad2671.iam.gserviceaccount.com \
+  --allow-unauthenticated
+gcloud functions describe nodejs-pubsub-function \
+  --region=us-east1 
+gcloud functions logs read nodejs-pubsub-function \
+  --region=us-east1 
+```
