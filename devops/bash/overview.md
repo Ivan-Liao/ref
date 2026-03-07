@@ -46,42 +46,52 @@ Here are 20 of the most commonly used bash commands.
 12. `grep`
    1. `grep "<pattern>" <filename>`
        1. `grep "error" server.log`
-13. `kill`
+13. `js`
+    1.  jq is a powerful command-line tool used in Bash and other shells to parse, filter, and transform JSON data
+```
+echo '{"name": "Alice", "age": 30}' | jq '.name'
+# Output: "Alice"
+name=$(echo '{"name": "Alice"}' | jq -r '.name') # raw output
+echo '[1, 2, 3]' | jq '.[]' # iterate over arrays
+USER="Alice"
+jq -n --arg name "$USER" '{user: $name}' # prevent injection issues
+```
+14. `kill`
     1. `kill <process_id>`
         1. `kill 12345`
-14. `ls`
+15. `ls`
     1. `ls [options] [directory]`
         1. `ls -la` (l is for detailed list, a is to show hidden files)
-15. `man # windows git bash equivalent is <command> --help`
+16. `man # windows git bash equivalent is <command> --help`
     1. `man <command_name>`
         1. `man grep`
-16. `mkdir`
+17. `mkdir`
     1. `mkdir <directory_name>`
         1. `mkdir project_files`
-17. `mv`
+18. `mv`
     1. `mv <source> <destination_or_new_name>` (move or rename)
         1. `mv old_name.txt new_name.txt`
-18. `ps # Details on running processes`
+19. `ps # Details on running processes`
     1. `ps [options]`
         1. `ps aux`
-19. `pwd`
+20. `pwd`
     1. present working directory
-20. `rm`
+21. `rm`
     1. `rm [options] <filename>`
         1. `rm temporary_file.tmp`
     2. `rm -r <directory_name>` (remove recursively)
     3. `rm -r ./mydir1/mydir2`
-21. `ssh`
+22. `ssh`
     1. `ssh -p 2210 username@remote_host_or_ip`
     2. `ssh -i /path/to/your/private_key username@remote_host_or_ip`
     3. `ssh -L local_port:remote_host:remote_port username@remote_host_or_ip`
         1. `ssh -L 8080:localhost:80 username@example.com`
-22. `sudo`
+23. `sudo`
     1. `sudo <command>`
         1. `sudo apt-get update`
-23. `tail`
+24. `tail`
     1. `tail [options] <filename>`
         1. `tail -f /var/log/syslog`
-24. `touch`
+25. `touch`
     1. `touch <filename_to_create>`
         1. `touch new_script.sh`
