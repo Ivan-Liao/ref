@@ -16,6 +16,39 @@
 gcloud ml language analyze-entities --content="Michelangelo Caravaggio, Italian painter, is known for 'The Calling of Saint Matthew'." > result.json
 # The entity name and type, a person, location, event, etc...metadata, an associated Wikipedia URL if there is one... salience, and the indices of where this entity appeared in the text. Salience is a number in the [0,1] range that refers to the centrality of the entity to the text as a whole... mentions, which is the same entity mentioned in different ways.
 ```
+2. curl
+```
+curl -X POST \
+    -H "Authorization: Bearer $(gcloud auth print-access-token)" \
+    -H "Content-Type: application/json" \
+    "https://${LOCATION}-aiplatform.googleapis.com/v1/projects/${PROJECT_ID}/locations/${LOCATION}/publishers/google/models/${MODEL_ID}:generateContent" \
+    -d '{
+          "contents": [
+            {
+              "role": "USER",
+              "parts": [
+                {
+                  "fileData": {
+                    "mimeType": "image/jpeg",
+                    "fileUri": "gs://your-bucket-name/path/to/your-file.jpg"
+                  }
+                },
+                {
+                  "text": "What is in this image?"
+                }
+              ]
+            }
+          ],
+          "generationConfig": {
+            "temperature": 0.4,
+            "topP": 1,
+            "topK": 32,
+            "maxOutputTokens": 2048
+          }
+        }'
+
+
+```
 # Artifact Registry
 ```
 gcloud auth configure-docker us-central1-docker.pkg.dev
@@ -38,22 +71,17 @@ bq mk \
 --schema ride_id:string,\
 point_idx:integer,\
 latitude:float,\
-timestamp:timestamp,\
+timestamp:timestamp\
  -t YOUR_DATASET_NAME.YOUR_TABLE_NAME
-
-# example
-bq mk \
---time_partitioning_field timestamp \
---schema ride_id:string,\
-point_idx:integer,\
-latitude:float,\
-longitude:float,\
-timestamp:timestamp,\
-meter_reading:float,\
-meter_increment:float,\
-ride_status:string,\
-passenger_count:integer\
- -t YOUR_DATASET_NAME.YOUR_TABLE_NAME
+```
+2. Load data
+```
+bq load \
+--source_format=CSV \
+--autodetect \
+--noreplace  \
+nyctaxi.2018trips \
+gs://cloud-training/OCBL013/nyc_tlc_yellow_trips_2018_subset_2.csv
 ```
 
 # Compute
@@ -270,10 +298,15 @@ kubectl rollout undo deployment/fortune-app-blue
 
 # Monitoring
 1. Cloud Monitoring lets you define and monitor groups of resources, such as VM instances, databases, and load balancers. Groups can be based on names, tags, regions, applications, and other criteria. You can also create subgroups, up to six levels deep, within groups
-   1. Uptime checks
+   1. Uptime checks (sensor)
       1. Frequency
    2. Alerts
       1. Network traffic threshold MB/sec
+      2. Alert condition (logic to check for) 
+         1. e.g. If the success rate is < 100%
+      3. Alert policy is the alarm system
+      4. Threshold
+         1. e.g.  Only if this condition persists for 2 minutes.
    3. Dashboards
 2. Cloud overview audit logs
 

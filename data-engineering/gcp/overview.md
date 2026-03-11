@@ -67,7 +67,16 @@
       1. Common partition is by ingestion-time or timestamp
    11. Policy tags for fine grained column access
    12. Flex slots, short burst demand
-   13. Misc
+   13. AI integration
+       1. (20260311, can only run on one table at a time)
+       2.  Table Explorer
+           1.  Select fields and bq will generate interactive cards that create queries
+       3.  Insights
+           1.  Generates automatic queries
+       4.  Code assist
+       5.  Data Canvas
+           1.  Low code, prompt based, supports dashboarding
+   14. Misc
        1.  10 GB streaming API limit
 8. Bigtable 
    1. low-latency (millisecond level), high-throughput access

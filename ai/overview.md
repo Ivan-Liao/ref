@@ -20,3 +20,19 @@
 3. token
    1. A simple, common word like "the" or "cat" is usually 1 token. A more complex word like "language" might be broken into two tokens (e.g., "lang" + "uage"). Punctuation marks like periods and commas are also tokens.
    2. A useful rule of thumb for English text is that 1 token is approximately 0.75 words or about 4 characters.
+4. Temperature (0-2)
+   1. temperature parameter controls the diversity and randomness of generated outputs
+   2. Low (0.1): "The capital of France is Paris." (Predictable, conservative).
+   3. High (1.5): "Paris, that city of, well, lights and, uh, croissants, is surely, arguably, France's, you know, capital." (Creative, random)
+5. Top_p (0-1)
+   1. Limits options to only the most likely, cutting off the "tail" of unpredictable words.  Keeping 0-100% of the probability mass of tokens
+6. Top_k=20 (x)
+   1. chooses from top x most probable next tokens
+7. Candidate_count (x)
+   1. Chooses x distinct complete answers instead of just 1
+8. Seed (x)
+   1. Helps keep a deterministic output
+9.  Frequency penalty (-2 to 2)
+   1. Frequency Penalty controls how much the model avoids repeating the same words or phrases in its output.
+10. Presence penalty (-2 to 2)
+   1. not cumulative like frequency penalty
