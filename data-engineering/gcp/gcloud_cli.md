@@ -1,5 +1,6 @@
 - [AI](#ai)
 - [Artifact Registry](#artifact-registry)
+- [Biglake](#biglake)
 - [Bigquery](#bigquery)
 - [Compute](#compute)
 - [GCS](#gcs)
@@ -57,6 +58,25 @@ gcloud artifacts repositories create my-repository --repository-format=docker --
 docker build -t us-central1-docker.pkg.dev/qwiklabs-gcp-04-aca6299d4f5b/my-repository/node-app:0.2 .
 docker push us-central1-docker.pkg.dev/qwiklabs-gcp-04-aca6299d4f5b/my-repository/node-app:0.2
 ```
+
+
+# Biglake
+1. Table creation
+```
+bq --project_id=PROJECT_ID mk \
+    --table \
+    --file_format=PARQUET \
+    --table_format=ICEBERG \
+    --connection_id=CONNECTION_NAME \
+    --storage_uri=STORAGE_URI \
+    --schema=COLUMN_NAME:DATA_TYPE[, ...] \
+    --clustering_fields=CLUSTER_COLUMN_LIST \
+    DATASET_ID.MANAGED_TABLE_NAME
+
+# updating columns
+bq query --use_legacy_sql=false 'ALTER TABLE `PROJECT_ID.DATASET_NAME.TABLE_NAME` ADD COLUMN new_column STRING'
+```
+
 
 # Bigquery
 1. Object management

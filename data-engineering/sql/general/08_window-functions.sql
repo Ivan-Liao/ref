@@ -1,3 +1,4 @@
+-- ranked salaries
 with rankings as (
 select name,
     salary,
@@ -27,7 +28,46 @@ ORDER BY
   order_id,
   order_item_id;
 
+-- business aggregate queries
+-- Create a query to give a daily overview of significant business kpis and metrics
+SELECT
+  DATE(orders.order_datetime) AS order_date,
+  COUNT(DISTINCT orders.order_id) AS total_orders,
+  SUM(order_item.item_total) AS total_revenue,
+  SUM(order_item.item_total) / COUNT(DISTINCT orders.order_id) AS average_order_value,
+  COUNT(DISTINCT orders.customer_id) AS unique_customers,
+  SUM(order_item.quantity) AS total_items_sold
+FROM
+  `qwiklabs-gcp-04-e6dbb323ed4c`.`coffee_on_wheels`.`order` AS orders
+INNER JOIN
+  `qwiklabs-gcp-04-e6dbb323ed4c`.`coffee_on_wheels`.`order_item` AS order_item
+ON
+  orders.order_id = order_item.order_id
+GROUP BY
+  order_date
+ORDER BY
+  order_date;
+-- monthly business aggregate
+SELECT
+  FORMAT_TIMESTAMP('%Y-%m', orders.order_datetime) AS order_month,
+  COUNT(DISTINCT orders.order_id) AS total_orders,
+  SUM(order_item.item_total) AS total_revenue,
+  SUM(order_item.item_total) / COUNT(DISTINCT orders.order_id) AS average_order_value,
+  COUNT(DISTINCT orders.customer_id) AS unique_customers,
+  SUM(order_item.quantity) AS total_items_sold
+FROM
+  `qwiklabs-gcp-04-e6dbb323ed4c`.`coffee_on_wheels`.`order` AS orders
+INNER JOIN
+  `qwiklabs-gcp-04-e6dbb323ed4c`.`coffee_on_wheels`.`order_item` AS order_item
+ON
+  orders.order_id = order_item.order_id
+GROUP BY
+  order_month
+ORDER BY
+  order_month;
 
+
+-- first_value, last_value, nth_value
 SELECT
   order_id,
   order_item_id,
@@ -42,3 +82,15 @@ FROM
 ORDER BY
   order_id,
   item_price DESC;
+
+
+SELECT
+    product_name,
+    NTH_VALUE(product_name, 2) OVER (
+        ORDER BY price DESC
+        ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
+    ) AS second_most_expensive_product
+FROM
+    products;
+
+

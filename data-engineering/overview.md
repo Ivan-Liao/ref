@@ -91,7 +91,7 @@ Here are the 20 most important concepts for data modeling in the context of data
 
 # Storage
 1. Cache / Real Time
-2. Data Lake
+2. Data Lake (schema on read)
    1. Tools
       1. AWS S3
       2. Azure Blob
@@ -102,7 +102,31 @@ Here are the 20 most important concepts for data modeling in the context of data
       3. parquet
       4. image (binary, .png, .jpg)
       5. audio (.wav, .mp3)
-3. Document
+   3. Pros 
+      1. fast to ingest, flexible, scalable, cost effective
+   4. Cons
+      1. Risk of becoming data swamp, management complexity, time consuming analysis, security risks
+3. Data Lakehouse
+   1. Metadata and governance layer on top of data lake
+   2. Pros
+      1. More flexibility and cost effectiveness than data warehouse
+      2. schema on read or write 
+      3. ACID tranasction support like data warehouse
+   3. Iceberg
+      1. Schema evolution
+      2. Hidden partitioning
+      3. Time travel
+      4. Atomic transactions
+4. Data Warehouse (schema on write)
+   1. Tools
+      1. Snowflake
+      2. AWS Redshift
+      3. Databricks
+   2. Pros
+      1. fast to query, high-quality data
+   3. Cons
+      1. inflexible, costly, limited data types, long development time
+5. Document
    1. Tools
       1. MongoDB
       2. Firestore (Google)
@@ -115,7 +139,7 @@ Here are the 20 most important concepts for data modeling in the context of data
    3. Documents grouped in collections and sub collections
    4. No joins
    5. Fast reads, slow writes
-4. Graph
+6. Graph
    1. Tools
       1. neo4j
       2. Dgraph
@@ -124,7 +148,7 @@ Here are the 20 most important concepts for data modeling in the context of data
       2.   Internal Knowledge Graph
       3.   Recommendation Engine
       4.   Reduces complex joins
-5. Key-Value 
+7. Key-Value 
    1. Tools
       1. Redis
       2. Memcached
@@ -132,7 +156,7 @@ Here are the 20 most important concepts for data modeling in the context of data
       1. Caching
       2. Pub/Sub
       3. Leaderboards
-6. Relational
+8. Relational
    1. Tools
       1. MySQL
       2. Postgres
@@ -142,7 +166,7 @@ Here are the 20 most important concepts for data modeling in the context of data
    3. ACID compliant
       1. atomicity, consistency,  isolation, durability
    4. Sharding when larger database is sharded into smaller, faster, manageable chunks by rows
-7. Search
+9.  Search
    1. Tools
       1. Elasticsearch
       2. Algolia
@@ -150,7 +174,7 @@ Here are the 20 most important concepts for data modeling in the context of data
    2. Uses
       1. Search
    3. Like document db but creates an index
-8. Wide Column
+10. Wide Column
    1. Tools
       1. Cassandra
       2. Apacha Hbase
@@ -159,7 +183,7 @@ Here are the 20 most important concepts for data modeling in the context of data
       2. Historical records
       3. high-write, low-read
    3. Rows with key and column family (columns do not have to be the same between rows
-9. Vector
+11. Vector
    1. Tools
       1. Pinecone
       2. pgvector (Postgres)

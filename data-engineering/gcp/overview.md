@@ -37,6 +37,8 @@
    3. Metadata caching behind the scenes
       1. Freshness set between 30 minutes and 7 days
    4. Built on Apache arrow
+   5. Use cases
+      1. Biglake tables >> Apache Spark / Trino / Apache Flink / Bigquery
 7. Bigquery
    1. Cloud serverless data warehouse
    2. views
