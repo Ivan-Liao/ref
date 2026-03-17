@@ -94,28 +94,46 @@
    1. Managed Apache Airflow (not serverless)
    2. Orchestrates a series of data pipelines tasks, allocates resources
    3. Tasks should be one task per operation
-12. Cloud KMS (key management service)
-13. Cloud monitoring
+12. Cloud DQ
+    1.  Data quality check defined by yaml
+```
+rules:
+- nonNullExpectation: {}
+  column: id
+  dimension: COMPLETENESS
+  threshold: 1
+- regexExpectation:
+    regex: '^[^@]+[@]{1}[^@]+$'
+  column: email
+  dimension: CONFORMANCE
+  ignoreNull: true
+  threshold: .85
+postScanActions:
+  bigqueryExport:
+    resultsTable: projects/qwiklabs-gcp-01-8543c11be25c/datasets/customers_dq_dataset/tables/dq_results
+```
+13. Cloud KMS (key management service)
+14. Cloud monitoring
    1.  Can set up alerts for dataflow system lag
-14. Cloud Run
+15. Cloud Run
    1. Execute code based on Google Cloud events
       1.  Triggers include HTTP/S calls, Pub/Sub messages, Cloud storage changes, Firestore updates, custom Eventarc events
    2. Deploying and running containerized applications (Caas)
    3. Often paired with Cloud Tasks to rate limit and control scheduling
-15. Cloud Scheduler
+16. Cloud Scheduler
    1. Allows scheduling for future events with YAML
       1. Frequency and precise time of day
       2. Triggers include HTTP/S calls, App Engine HTTP calls, Pub/Sub messages, Workflows
       3. does not allocate resources
-16. Cloud SQL
+17. Cloud SQL
    1. Can be suitable for > 20 CCU (concurrent users)
    2. Does not scale well for very high velocity operational data, use AlloyDB instead
-17. Compute Engine (AWS EC2)
-18. Connected Sheets
+18. Compute Engine (AWS EC2)
+19. Connected Sheets
     1.  Bigquery to google sheets connection
-19. Data Access Audit Logs
+20. Data Access Audit Logs
     1.  Must be enabled first, used for analyzing object access records
-20. Dataflow
+21. Dataflow
    1. Data transformation pipelines, templates, notebooks
    2. requires schema definition
    3. side output (Tag) can rerout invalid records to a seperate PCollection (Dead Letter file in GCS)
@@ -126,18 +144,18 @@
    5. Dataflow snapshots to plan for disaster recovery
    6. Misc
       1. Max limit 10 TB per day per job
-21. Data Fusion
+22. Data Fusion
    1. no/low code drag and drop for complex, enterprise-grade ETL pipelines, not serverless
    2. Powered by dataproc and generally a monthly cost for instance
-22. Dataplex
+23. Dataplex
    1. For different types of data with many producers
    2. raw and curated zones (unprocessed and process data)
    3. exclude patterns
    4. data lakes
-23. Dataprep
+24. Dataprep
    1. Low code for data transformation (recipes), free for UI, costs based on Dataflow jobs
    2. runs on Dataflow and connects to more destinations like Oracle, SAP, Salesforce
-24. Dataproc
+25. Dataproc
    1. Managed Hadoop/Spark service, Jupyter integration
    2. ephemeral clusters spin up and shut down with demand (useful for prioritizing jobs)
    3. master nodes set on creation of cluster
@@ -149,37 +167,37 @@
    7. Connectors to Bigquery and Bigtable
    8. Workflow templates specified in YAML files (order of execution, required parameters)
    9. Spark SQL for structured data (batch processing, interactive notebooks), Spark streaming for real time, MLlib for ML (VertexAI), GraphX for graph data
-25. Datastore
+26. Datastore
    1. NoSQL database
-26. Datastream
+27. Datastream
     1.  Datastream enables continuous replication of on-premises or multi-cloud relational databases such as Oracle, MySQL, PostgresSQ,L or SQL Server into Google Cloud, Bigquery, or Dataflow
     2.  Datastream events
         1.  Metadata provides context about the data, like source table, timestamps, and related information.
         2.  Payload contains the actual data changes in a key-value format, reflecting column names and their corresponding values.
     3.  Taps into the source database's write-ahead log (WAL)
     4.  Flexibility in connectivity options and can selectively replicate data at the schema, table, or column level.
-27. DLP (Data Loss Prevention) API
+28. DLP (Data Loss Prevention) API
    1. Identifies and redacts data that matches infoTypes like credit card numbers, phone, numbers, email IDs
-28. Eventarc
+29. Eventarc
     1.  Connects event sources via Pub/Sub
         1.  Google Cloud services, third-party, custom events, Cloud Run
     2.  Use cases
         1.  BQ insert operation >> Cloud Audit Log event >> Eventarc >> (rebuild dashboard, train ML model, etc.)
-29. Firestore 
+30. Firestore 
     1.  NoSQL document database for app development and smaller-scare structures vs Bigtable
-30. IAM (Identity and Access Management)
+31. IAM (Identity and Access Management)
     1.  Related to ACLS (access control list on the resource level)
-31. Logging (GCL)
-32. Looker
+32. Logging (GCL)
+33. Looker
     1.  Has modeling tools to abstract data sources
-33. Looker Studio (prev. Data Studio)
+34. Looker Studio (prev. Data Studio)
     1.  Vizualization tool
-34. PubSub
+35. PubSub
    1. streaming data
-35. Spanner
+36. Spanner
     1.  RDS high availability and horizontal scalability globally, best function rds
     2.  Automatic sharding and scaling
-36. Storage (GCS)
+37. Storage (GCS)
    1. Equivalent to AWS S3
    2. HTTPS requests including ranged GETS to get a portion of data
    3. Lifecycle policy for moving data between storage classes on a schedule
@@ -187,14 +205,14 @@
    5. Size limits 5 TB per object
    6. Storage classes ... standards (none minimum days), nearline (30 days), coldline (90 days), archive (365 days)
    7. When you "create" a folder in the console or via CLI, you are typically creating a 0-byte object that ends in a slash.
-37. Storage Transfer
+38. Storage Transfer
     1.  gloud storage command (typically 100 MB/sec)
         1.  from file systems, object stores, HDFS
     2.  Storage Transfer Service (up to 10GB/sec)
         1.  Connects from HTTPS endpoint to Google Cloud (used to transfer TBs of data)
     3.  Transfer Appliance service (offline)
     4.  
-38. Workflows
+39. Workflows
     1. Connects a series of shorter tasks
 
 # Use Cases

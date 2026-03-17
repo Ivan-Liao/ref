@@ -3,6 +3,7 @@
 - [Biglake](#biglake)
 - [Bigquery](#bigquery)
 - [Compute](#compute)
+- [Dataplex](#dataplex)
 - [GCS](#gcs)
 - [IAM](#iam)
 - [KMS](#kms)
@@ -151,6 +152,62 @@ gcloud compute ssh YOUR_INSTANCE_NAME
 gcloud compute instances list
 ```
 
+# Dataplex
+1. Create lakes, zones, assets
+```
+gcloud dataplex lakes create ANALYTICS-LAKE-ID \
+    --location=LOCATION \
+    --display-name="Display Name" \
+    --description="Description of the lake" \
+    --labels="key=value,key2=value2"
+
+
+gcloud dataplex zones create your-zone-id \
+    --lake=your-lake-id \
+    --location=us-central1 \
+    --type=RAW \
+    --resource-location-type=SINGLE_REGION \
+    --display-name="Raw Zone" \
+    --description="Raw, unvalidated data from sources"
+
+
+gcloud dataplex assets create my-bucket-asset \
+    --lake=my-lake \
+    --zone=my-zone \
+    --location=us-central1 \
+    --resource-type=STORAGE_BUCKET \
+    --resource-name=projects/my-project/buckets/my-gcs-bucket \
+    --display-name="My GCS Asset" \
+    --discovery-enabled
+
+
+gcloud dataplex assets create customer-details-dataset \
+    --lake=orders-lake \
+    --zone=customer-curated-zone \
+    --location=europe-west4 \
+    --resource-type=BIGQUERY_DATASET \
+    --resource-name="projects/qwiklabs-gcp-00-dee1fb7a1284/datasets/customers" \
+    --display-name="Customer Details Dataset" \
+    --discovery-enabled
+```
+2. Security
+```
+gcloud dataplex assets add-iam-policy-binding customer-online-sessions \
+    --location=europe-west4 \
+    --lake=customer-info-lake \
+    --zone=customer-raw-zone \
+    --member=user:student-03-514f96dc0533@qwiklabs.net \
+    --role=roles/dataplex.dataReader
+```
+3. Data quality
+```
+gcloud dataplex datascans create data-quality customer-orders-data-quality-job \
+    --project=qwiklabs-gcp-01-8543c11be25c \
+    --location=europe-west4 \
+    --data-source-resource="//bigquery.googleapis.com/projects/qwiklabs-gcp-01-8543c11be25c/datasets/customers/tables/contact_info" \
+    --data-quality-spec-file="gs://qwiklabs-gcp-01-8543c11be25c-bucket/dq-customer-raw-data.yaml"
+```
+
 
 # GCS
    1. Create bucket
@@ -193,6 +250,7 @@ gcloud storage ls gs://YOUR_BUCKET_NAME/
 1. Permissions
 ```
 # list permissions
+gcloud iam roles list --filter="role name partial or exact match"
 gcloud projects get-iam-policy YOUR_PROJECT_ID --filter="bindings.members:<YOUR_USER_ID>"
 gcloud projects add-iam-policy-binding $PROJECT --member=serviceAccount:my-account@$PROJECT.iam.gserviceaccount.com --role=roles/bigquery.admin
 gcloud projects add-iam-policy-binding $PROJECT --member=serviceAccount:my-account@$PROJECT.iam.gserviceaccount.com --role=roles/serviceusage.serviceUsageConsumer
