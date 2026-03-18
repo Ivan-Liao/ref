@@ -91,3 +91,6 @@ Quick Ratio: A measure of a company's ability to meet its short-term obligations
 Weighted Average Cost of Capital (WACC): The average rate that a company pays to finance its assets, calculated by averaging the cost of all capital sources.
 
 Free Cash Flow (FCF): The cash a company generates after accounting for cash outflows to support operations and maintain its capital assets.
+
+# Supply Chain
+# Financial reporting

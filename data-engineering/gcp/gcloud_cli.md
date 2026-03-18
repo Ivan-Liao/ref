@@ -119,22 +119,102 @@ gs://cloud-training/OCBL013/nyc_tlc_yellow_trips_2018_subset_2.csv
 # Bigquery ML
 1. Create models
 ```
-SQL
-CREATE OR REPLACE MODEL cymbal_ecommerce.customer_churn_predictor
-OPTIONS(model_type='LOGISTIC_REG') AS
+# Models standardSQL
+CREATE OR REPLACE MODEL `bqml_lab.sample_model`
+OPTIONS(model_type='logistic_reg') AS
 SELECT
-customer_id,
-recency,
-frequency,
-monetary_value,
-(total_purchases > 1) AS will_return -- This is our label
+  IF(totals.transactions IS NULL, 0, 1) AS label,
+  IFNULL(device.operatingSystem, "") AS os,
+  device.isMobile AS is_mobile,
+  IFNULL(geoNetwork.country, "") AS country,
+  IFNULL(totals.pageviews, 0) AS pageviews
 FROM
-cymbal_ecommerce.customer_purchase_summary;
+  `bigquery-public-data.google_analytics_sample.ga_sessions_*`
+WHERE
+  _TABLE_SUFFIX BETWEEN '20160801' AND '20170631'
+LIMIT 100000;
+
+
+# Embeddings
+CREATE OR REPLACE VECTOR INDEX my_index
+ON `bqml_lab.embeddings`(ml_generate_embedding_result)
+OPTIONS(index_type = 'IVF',
+  distance_type = 'COSINE',
+  ivf_options = '{"num_lists":500}');
 ``` 
 2. Common functions
 ```
-ML.EVALUATE
-ML.PREDICT
+# ML.EVALUATE
+#standardSQL
+SELECT
+  *
+FROM
+  ml.EVALUATE(MODEL `bqml_lab.sample_model`, (
+SELECT
+  IF(totals.transactions IS NULL, 0, 1) AS label,
+  IFNULL(device.operatingSystem, "") AS os,
+  device.isMobile AS is_mobile,
+  IFNULL(geoNetwork.country, "") AS country,
+  IFNULL(totals.pageviews, 0) AS pageviews
+FROM
+  `bigquery-public-data.google_analytics_sample.ga_sessions_*`
+WHERE
+  _TABLE_SUFFIX BETWEEN '20170701' AND '20170801'));
+
+
+# ML.PREDICT standardSQL
+SELECT
+  fullVisitorId,
+  SUM(predicted_label) as total_predicted_purchases
+FROM
+  ml.PREDICT(MODEL `bqml_lab.sample_model`, (
+SELECT
+  IFNULL(device.operatingSystem, "") AS os,
+  device.isMobile AS is_mobile,
+  IFNULL(totals.pageviews, 0) AS pageviews,
+  IFNULL(geoNetwork.country, "") AS country,
+  fullVisitorId
+FROM
+  `bigquery-public-data.google_analytics_sample.ga_sessions_*`
+WHERE
+  _TABLE_SUFFIX BETWEEN '20170701' AND '20170801'))
+GROUP BY fullVisitorId
+ORDER BY total_predicted_purchases DESC
+LIMIT 10;
+
+
+# ML.GENERATE_EMBEDDING
+CREATE OR REPLACE TABLE `bqml_lab.embeddings` AS
+SELECT * FROM ML.GENERATE_EMBEDDING( MODEL `bqml_lab.embedding_model`,
+  (    SELECT
+   title,
+   url,
+   abstract AS content
+ FROM
+   `bqml_lab.patent_data`
+ LIMIT 200000))
+WHERE LENGTH(ml_generate_embedding_status) = 0;
+
+
+# Vector search
+SELECT query.query, base.title, base.content
+FROM VECTOR_SEARCH(
+  TABLE `bqml_lab.embeddings`, 'ml_generate_embedding_result',
+  (
+  SELECT ml_generate_embedding_result, content AS query
+  FROM ML.GENERATE_EMBEDDING(
+  MODEL `bqml_lab.embedding_model`,
+  (SELECT 'improving online shopper search results' AS content))
+  ),
+  top_k => 5, options => '{"fraction_lists_to_search": 0.01}');
+# Vector index validation
+SELECT table_name,
+  index_name,
+  index_status,
+  coverage_percentage,
+  last_refresh_time,
+  disable_reason
+FROM `qwiklabs-gcp-04-6fbcbc879003.bqml_lab.INFORMATION_SCHEMA.VECTOR_INDEXES`;
 ```
 
 # Compute
