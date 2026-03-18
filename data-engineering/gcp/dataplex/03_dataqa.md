@@ -42,6 +42,8 @@ rules:
 postScanActions:
   bigqueryExport:
     resultsTable: projects/qwiklabs-gcp-01-8543c11be25c/datasets/customers_dq_dataset/tables/dq_results
+
+Dataplex >> Govern >> Data Profiling & Quality >> Create data quality scan
 ```
    1. Use bigquery to analyze failed rows, query automatically generated in rule_failed_records_query
 ```

@@ -446,6 +446,10 @@ gcloud auth login --no-launch-browser
 gcloud auth activate-service-account --key-file=KEY_FILE.json
 # check active account and project and set region
 gcloud auth list
+
+```
+4. Configuration
+```
 gcloud config set account YOUR_ACCOUNT
 gcloud config list project
 gcloud config set compute/region europe-west1
