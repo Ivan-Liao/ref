@@ -1,7 +1,8 @@
 - [AI](#ai)
 - [Artifact Registry](#artifact-registry)
 - [Biglake](#biglake)
-- [Bigquery](#bigquery)
+- [Bigquery main](#bigquery-main)
+- [Bigquery ML](#bigquery-ml)
 - [Compute](#compute)
 - [Dataplex](#dataplex)
 - [GCS](#gcs)
@@ -74,12 +75,21 @@ bq --project_id=PROJECT_ID mk \
     --clustering_fields=CLUSTER_COLUMN_LIST \
     DATASET_ID.MANAGED_TABLE_NAME
 
+
+# From bigquery ddl
+CREATE TABLE cymbal_lake.iceberg_web_log
+WITH CONNECTION `projects/qwiklabs-gcp-01-af5cf05f36b5/locations/us-west1/connections/gcs-bucket-qwiklabs-gcp-01-af5cf05f36b5_eds`
+OPTIONS (
+ table_format = 'ICEBERG',
+ storage_uri = 'gs://gcs-bucket-qwiklabs-gcp-01-af5cf05f36b5') AS
+SELECT * FROM `cymbal_lake.web_log`;
+
 # updating columns
 bq query --use_legacy_sql=false 'ALTER TABLE `PROJECT_ID.DATASET_NAME.TABLE_NAME` ADD COLUMN new_column STRING'
 ```
 
 
-# Bigquery
+# Bigquery main
 1. Object management
 ```
 # create dataset
@@ -103,6 +113,28 @@ bq load \
 --noreplace  \
 nyctaxi.2018trips \
 gs://cloud-training/OCBL013/nyc_tlc_yellow_trips_2018_subset_2.csv
+```
+
+
+# Bigquery ML
+1. Create models
+```
+SQL
+CREATE OR REPLACE MODEL cymbal_ecommerce.customer_churn_predictor
+OPTIONS(model_type='LOGISTIC_REG') AS
+SELECT
+customer_id,
+recency,
+frequency,
+monetary_value,
+(total_purchases > 1) AS will_return -- This is our label
+FROM
+cymbal_ecommerce.customer_purchase_summary;
+``` 
+2. Common functions
+```
+ML.EVALUATE
+ML.PREDICT
 ```
 
 # Compute
@@ -265,7 +297,13 @@ gcloud projects remove-iam-policy-binding PROJECT_ID \
 gcloud storage buckets add-iam-policy-binding gs://BUCKET_NAME \
     --member="allUsers" \
     --role="roles/storage.objectViewer"
-
+gcloud storage buckets add-iam-policy-binding gs://[BUCKET_NAME] \
+    --member="serviceAccount:[SERVICE_ACCOUNT_EMAIL]" \
+    --role="roles/storage.objectAdmin"
+# user is equivalent to writer
+gcloud storage buckets add-iam-policy-binding gs://gcs-bucket-qwiklabs-gcp-01-af5cf05f36b5 \
+    --member="serviceAccount:bqcx-906205424364-s9ev@gcp-sa-bigquery-condel.iam.gserviceaccount.com" \
+    --role="roles/storage.objectUser"
 
 # Might not be possible objects with roles, use acls instead
 <!-- # Object level

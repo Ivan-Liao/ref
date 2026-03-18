@@ -1,5 +1,6 @@
 - [Data Modeling](#data-modeling)
 - [Dataset Types](#dataset-types)
+- [Optimization](#optimization)
 - [Security](#security)
 - [Sources](#sources)
 - [Storage](#storage)
@@ -75,6 +76,15 @@ Here are the 20 most important concepts for data modeling in the context of data
    1. use cases
       1. Patient routing
 
+
+# Optimization
+1. Partitioning
+   1. Like inserting dividers in a filing cabinet, typically by timestamp or integer id
+   2. Expect 50%+ increase in efficiency
+2. Clustering
+   1. Ordering like by customer_id or name alphabetically
+
+
 # Security
 1. Redaction methods
    1. Manually filter or delete sensitive columns (columns name may not be specific, comments/notes columns may contain sensitive info)
@@ -115,8 +125,12 @@ Here are the 20 most important concepts for data modeling in the context of data
    3. Iceberg
       1. Schema evolution
       2. Hidden partitioning
-      3. Time travel
-      4. Atomic transactions
+      3. Clustering
+         1. Iceberg metadata contains file statistics like maxes and mins
+         2. Efficiency from predicate pushdown (moving the predicate where filter from query engine to source file)
+      4. Time travel
+      5. Atomic transactions
+      6. Certain systems like Biglake allow for Update, Insert, Delete operations on source files
 4. Data Warehouse (schema on write)
    1. Tools
       1. Snowflake
