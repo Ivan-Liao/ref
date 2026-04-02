@@ -401,11 +401,13 @@ gcloud storage objects update gs://YOUR-BUCKET-NAME/ada.jpg --remove-acl-grant=a
 https://storage.googleapis.com/YOUR_FILE_PATH
 https://storage.googleapis.com/qwiklabs-gcp-02-33632c6dfabb-bucket/kitten.png
 ```
-2. Services
+2. Services main
    1. service list
       1. appengine.googleapis.com
       2. vision.googleapis.com
       3. cloudkms.googleapis.com
+      4. dataflow.googleapis.com 
+      5. bigquery.googleapis.com
 ```
 # enable or disable services
 gcloud services enable appengine.googleapis.com
@@ -513,6 +515,8 @@ kubectl rollout undo deployment/fortune-app-blue
 
 # Networking
 1. VPNs see labs\arcade\march_holistic\12_vpn.md
+2. Private IP enable
+   1. `gcloud compute networks subnets update default --region=us-west1 --enable-private-ip-google-access`
 
 
 # Run

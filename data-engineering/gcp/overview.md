@@ -148,6 +148,13 @@ postScanActions:
    5. Dataflow snapshots to plan for disaster recovery
    6. Misc
       1. Max limit 10 TB per day per job
+   7. Dataflow insights automatic detection of performance issues
+   8. Job monitoring interface execution graphs to detect inefficiences and monitor overall health
+   9. Optimization parameters
+      1.  worker machine types and auto scaling limits
+      2.  optimize custom UDFs/transforms
+      3.  Pre-process data to mitigate skew or use Beam's re-partitioning
+      4.  Configure sources and sinks with focus on file size, compression, and data partitioning
 10. Data Fusion
    1. no/low code drag and drop for complex, enterprise-grade ETL pipelines, not serverless
    2. Powered by dataproc and generally a monthly cost for instance
@@ -159,7 +166,7 @@ postScanActions:
 12. Dataprep
    1. Low code for data transformation (recipes), free for UI, costs based on Dataflow jobs
    2. runs on Dataflow and connects to more destinations like Oracle, SAP, Salesforce
-13. Dataproc
+13. Dataproc (Spark serverless)
    1. Managed Hadoop/Spark service, Jupyter integration
    2. ephemeral clusters spin up and shut down with demand (useful for prioritizing jobs)
    3. master nodes set on creation of cluster
@@ -171,6 +178,13 @@ postScanActions:
    7. Connectors to Bigquery and Bigtable
    8. Workflow templates specified in YAML files (order of execution, required parameters)
    9. Spark SQL for structured data (batch processing, interactive notebooks), Spark streaming for real time, MLlib for ML (VertexAI), GraphX for graph data
+   10. Spark History Server (SSUI) with execution graphs and metrics
+   11. Cloud logging and monitoring (custom dashboards and alerts)
+   12. Optimization
+       1.  executor memory/cores, num executers
+       2.  optimize Spark application code (dataframes, SQL, joins, repartitioning)
+       3.  Key salting, custom partitioning, pre-aggregation
+       4.  Configure sources and sinks with focus on file size, compression, and data partitioning
 14. Datastore
    1. NoSQL database
 15. Datastream

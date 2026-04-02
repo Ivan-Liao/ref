@@ -1,5 +1,6 @@
 - [Data Modeling](#data-modeling)
 - [Dataset Types](#dataset-types)
+- [Error Handling](#error-handling)
 - [Optimization](#optimization)
 - [Security](#security)
 - [Sources](#sources)
@@ -76,6 +77,10 @@ Here are the 20 most important concepts for data modeling in the context of data
    1. use cases
       1. Patient routing
 
+# Error Handling
+1. DLQ (dead letter queue)
+   1. industry standard paradigm that allows for uninterrupted processing while errors are rerouted
+2. Logging
 
 # Optimization
 1. Partitioning
@@ -83,6 +88,13 @@ Here are the 20 most important concepts for data modeling in the context of data
    2. Expect 50%+ increase in efficiency
 2. Clustering
    1. Ordering like by customer_id or name alphabetically
+3. Metrics
+   1. CPU usage
+   2. Memory consumption
+   3. I/O rates (read/writes)
+   4. job completion times
+   5. job profiling (bottlenecks)
+   6. data skew detection
 
 
 # Security
@@ -217,6 +229,16 @@ Here are the 20 most important concepts for data modeling in the context of data
    1. Airflow
    2. Dagster
    3. Platform / Framework native tools (Snowflake tasks, Databricks jobs/workflows)
+3. Batch processing
+   1. Error reporting / Logging / Monitoring
+      1. In parallel processing systems, the error can be tied to a subtask or specific worker node
+      2. Skipping if permissible
+      3. Human intervention / data curation
+   2. Hyperparameters
+      1. Optimal batch sizing
+      2. Effective data partitioning
+      3. I/O optimization (efficient file formats and techniques)
 
 # Trends
 1. 2025 - 2030 data migrations from legacy systems to modern data stacks
+
