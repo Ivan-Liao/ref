@@ -95,9 +95,16 @@
 10. Cloud Build
    1. CI/CD pipeline creation (can monitor updates in a source repository)
 11. Cloud Composer
-   1. Managed Apache Airflow (not serverless)
-   2. Orchestrates a series of data pipelines tasks, allocates resources
-   3. Tasks should be one task per operation
+   1. Overview
+      1. Managed Apache Airflow (not serverless)
+      2. Orchestrates a series of data pipelines tasks, allocates resources
+      3. Tasks should be one task per operation
+   2. Use case
+      1. Suitable for complex tasks
+      2. Python based, managed airflow
+      3. Some latency (seconds) between tasks
+      4. Allows retry from a step
+      5. Airflow UI with operational tools, dashboards, logs
 12. Cloud DQ
     1.  Data quality check defined by yaml
 ```
@@ -126,9 +133,10 @@ postScanActions:
    3. Often paired with Cloud Tasks to rate limit and control scheduling
 4.  Cloud Scheduler
    1. Allows scheduling for future events with YAML
-      1. Frequency and precise time of day
-      2. Triggers include HTTP/S calls, App Engine HTTP calls, Pub/Sub messages, Workflows
-      3. does not allocate resources
+      1. Google's equivalent of cron scheduler
+      2. Frequency and precise time of day
+      3. Triggers include HTTP/S calls, App Engine HTTP calls, Pub/Sub messages, Workflows
+      4. does not allocate resources
 5.  Cloud SQL
    1. Can be suitable for > 20 CCU (concurrent users)
    2. Does not scale well for very high velocity operational data, use AlloyDB instead
@@ -235,6 +243,12 @@ postScanActions:
          1.   Can deploy models to endpoints
 28. Workflows
     1. Connects a series of shorter tasks
+    2. Use case
+       1. API chaining
+       2. Declarative YAML/JSON
+       3. lower latency than Composer
+       4. Retry from step not possible
+       5. Google cloud console visualizations and integrated Cloud Logging
 
 # Use Cases
 1. High throughput, low latency data lookup as well as analytical aggregations

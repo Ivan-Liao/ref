@@ -3,6 +3,7 @@
 - [Distributed Processing](#distributed-processing)
 - [Monitoring](#monitoring)
 - [Optimization](#optimization)
+- [Orchestration](#orchestration)
 - [Project management](#project-management)
 - [Sources](#sources)
 - [Storage](#storage)
@@ -92,6 +93,18 @@ Here are the 20 most important concepts for data modeling in the context of data
       1. industry standard paradigm that allows for uninterrupted processing while errors are rerouted
 2. Logging
    1. Where, what, who, when, why, how often
+   2. Structured logs allow for queryable logs and not just grepping or opening individual logs
+3. Metrics
+   1. Orchestration
+      1. DAG run duration
+      2. Task success/failure rate
+      3. Task retry count
+   2. Data health
+      1. Data freshness from source system
+      2. Processed record count
+      3. DLQ count
+   3. Performance
+      1. Resource utilization (vCPU, memory, bq slot usage)
 
 # Optimization
 1. Partitioning
@@ -106,6 +119,13 @@ Here are the 20 most important concepts for data modeling in the context of data
    4. job completion times
    5. job profiling (bottlenecks)
    6. data skew detection
+
+# Orchestration
+1. Dependency Management
+2. Scheduling
+3. Error Handling and retries
+4. Monitoring and Alerting
+5. Idempotency
 
 # Project management
 1. The 4 Vs
