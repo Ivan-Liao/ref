@@ -1,13 +1,15 @@
 - [Data Modeling](#data-modeling)
 - [Dataset Types](#dataset-types)
-- [Error Handling](#error-handling)
+- [Distributed Processing](#distributed-processing)
+- [Monitoring](#monitoring)
 - [Optimization](#optimization)
-- [Security](#security)
+- [Project management](#project-management)
 - [Sources](#sources)
 - [Storage](#storage)
 - [Streaming / Near Real Time](#streaming--near-real-time)
 - [Transformation](#transformation)
 - [Trends](#trends)
+- [Validation](#validation)
 
 # Data Modeling
 Here are the 20 most important concepts for data modeling in the context of data engineering, with detailed descriptions.
@@ -77,10 +79,19 @@ Here are the 20 most important concepts for data modeling in the context of data
    1. use cases
       1. Patient routing
 
-# Error Handling
-1. DLQ (dead letter queue)
-   1. industry standard paradigm that allows for uninterrupted processing while errors are rerouted
+# Distributed Processing
+1. Data shuffle (a notorious bottleneck)
+   1. Mitigation methods
+      1. Broadcast joins
+      2. pre-partitioning/bucketing
+      3. filtering early
+
+# Monitoring
+1. Routing
+   1. DLQ (dead letter queue)
+      1. industry standard paradigm that allows for uninterrupted processing while errors are rerouted
 2. Logging
+   1. Where, what, who, when, why, how often
 
 # Optimization
 1. Partitioning
@@ -96,8 +107,17 @@ Here are the 20 most important concepts for data modeling in the context of data
    5. job profiling (bottlenecks)
    6. data skew detection
 
+# Project management
+1. The 4 Vs
+- [ ] Velocity
+  - [ ] Orchestration (batch with what cadence or stream) 
+- [ ] Variety
+  - [ ] Data Format
+- [ ] Volume
+  - [ ] Limit scope of ingestion
+- [ ] Validity/Veracity
 
-# Security
+
 1. Redaction methods
    1. Manually filter or delete sensitive columns (columns name may not be specific, comments/notes columns may contain sensitive info)
    2. Regular expressions (tedious and less accurate)
@@ -127,7 +147,7 @@ Here are the 20 most important concepts for data modeling in the context of data
    3. Pros 
       1. fast to ingest, flexible, scalable, cost effective
    4. Cons
-      1. Risk of becoming data swamp, management complexity, time consuming analysis, security risks
+      1. Risk of becoming data swamp, management complexity, time consuming analysis and query speeds, security risks
 3. Data Lakehouse
    1. Metadata and governance layer on top of data lake
    2. Pros
@@ -242,3 +262,33 @@ Here are the 20 most important concepts for data modeling in the context of data
 # Trends
 1. 2025 - 2030 data migrations from legacy systems to modern data stacks
 
+# Validation
+1. Schema changes
+   1. Additive (new field)
+      1. CSV or JSON format typically have a Append to table or Overwrite table option
+      2. Spark has --merge-schema=true run argument parameter
+   2. Breaking changes (deletion, rename)
+      1. Facade view pattern
+         1. New pipeline that writes to a new versioned table
+         2. Unified view is created with UNION ALL statement
+         3. Consumers directed to the view
+2. Data types
+   1. Wrong data type
+   2. Leading zeros in number string
+   3. White space in string 
+   4. Unexpected characters
+3. Null checks
+4. Duplication 
+   1. exact
+      1. Inflates row counts, skewing basic metrics like COUNT(*) and AVG().
+      2. Dataflow solution use beam.Distinct()
+   2. key-based (sometimes want to keep latest record)
+      1. Problems of exact plus corrupts stateful analytics (e.g., a customer's final order status or current account balance).
+      2. Dataflow Use CombinePerKey and CombineFn instead of GroupByKey
+      3. Spark Window funcitons
+   3. semantic (misspelling)
+      1. Breakes entity view
+      2. BQ ML ML.GENERATE_TEXT_EMBEDDING and ML.DISTANCE
+5. Typos (can check distinct values)
+6. Outliers
+7. Missing data
