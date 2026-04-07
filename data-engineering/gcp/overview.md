@@ -1,5 +1,6 @@
 - [Errors](#errors)
 - [Products](#products)
+- [References](#references)
 - [Use Cases](#use-cases)
 
 # Errors
@@ -214,17 +215,34 @@ postScanActions:
     1.  NoSQL document database for app development and smaller-scare structures vs Bigtable
 19. IAM (Identity and Access Management)
     1.  Related to ACLS (access control list on the resource level)
+    2.  IAM users get permissions
+    3.  Service account grant principals access
 20. Logging (GCL)
 21. Looker
     1.  Has modeling tools to abstract data sources
 22. Looker Studio (prev. Data Studio)
     1.  Vizualization tool
-23. PubSub
+23. Managed Service for Kafka main
+    1.  streaming data
+    2.  vCPU and memory require config but Google handles broker sizing, cluster creation, storage management, and rebalancing
+    3.  persistent log potentially forever
+    4.  message order within partition and exactly-once delivery optional
+    5.  Offers Kafka connect for Pub/Sub
+    6.  Producer, Consumer, and consumer group instead of publisher, subscriber and subscription
+24. Pub/Sub main
    1. streaming data
-24. Spanner
+   2. serverless no ops, scales automatically, no cluster or partitions to worry about
+   3. message retention default 7 days can extend to 30 days, has seek function
+   4. At least once delivery but offers exactly once delivery
+   5. Ordered keys to maintain message order of messages with same key
+   6. More tight integration with GCP
+   7. single message transforms (SMT) like javascript UDF
+   8. Message filtering
+   9. Dead letter topics (DLT)
+25. Spanner
     1.  RDS high availability and horizontal scalability globally, best function rds
     2.  Automatic sharding and scaling
-25. Storage (GCS)
+26. Storage (GCS)
    1. Equivalent to AWS S3
    2. HTTPS requests including ranged GETS to get a portion of data
    3. Lifecycle policy for moving data between storage classes on a schedule
@@ -232,16 +250,16 @@ postScanActions:
    5. Size limits 5 TB per object
    6. Storage classes ... standards (none minimum days), nearline (30 days), coldline (90 days), archive (365 days)
    7. When you "create" a folder in the console or via CLI, you are typically creating a 0-byte object that ends in a slash.
-26. Storage Transfer
+27. Storage Transfer
     1.  gloud storage command (typically 100 MB/sec)
         1.  from file systems, object stores, HDFS
     2.  Storage Transfer Service (up to 10GB/sec)
         1.  Connects from HTTPS endpoint to Google Cloud (used to transfer TBs of data)
     3.  Transfer Appliance service (offline)
-27. VertexAI
+28. VertexAI
     1.   Vertex AI Model Registry
          1.   Can deploy models to endpoints
-28. Workflows
+29. Workflows
     1. Connects a series of shorter tasks
     2. Use case
        1. API chaining
@@ -249,6 +267,11 @@ postScanActions:
        3. lower latency than Composer
        4. Retry from step not possible
        5. Google cloud console visualizations and integrated Cloud Logging
+
+
+# References
+1. well architected framework
+   1. https://docs.cloud.google.com/architecture/framework?utm_source=youtube&utm_medium=unpaidsoc&utm_campaign=CDR_yur_gcp_hh_z8qewgfq_EngineeringForReliability_112921&utm_content=description#logging_monitoring_and_operations
 
 # Use Cases
 1. High throughput, low latency data lookup as well as analytical aggregations

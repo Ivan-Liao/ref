@@ -105,6 +105,9 @@ Here are the 20 most important concepts for data modeling in the context of data
       3. DLQ count
    3. Performance
       1. Resource utilization (vCPU, memory, bq slot usage)
+4. References
+   1. GCP log routing 
+      1. https://docs.cloud.google.com/logging/docs/routing/overview?utm_source=youtube&utm_medium=unpaidsoc&utm_campaign=CDR_yur_gcp_hh_z8qewgfq_EngineeringForReliability_112921&utm_content=description#buckets 
 
 # Optimization
 1. Partitioning
@@ -257,6 +260,9 @@ Here are the 20 most important concepts for data modeling in the context of data
    2. Uses
 
 # Streaming / Near Real Time
+1. Publisher, subscriber, topics
+2. Straight through, fan out, fan in
+3. Pull and push delivery methods
 
 # Transformation
 1. Tools
