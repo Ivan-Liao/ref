@@ -42,7 +42,7 @@
       1. From Bigquery, creating a BigLake table using a Cloud resource connection
    6. Use cases
       1. Biglake tables >> Apache Spark / Trino / Apache Flink / Bigquery
-7. Bigquery (main)
+7. Bigquery main
    1. Cloud serverless data warehouse
    2. views
       1. use case for frequently used query
@@ -70,6 +70,7 @@
    9.  Object tables (for unstructured data)
    10. Paritioning and clustering (clustering is within partitions by key)
       1. Common partition is by ingestion-time or timestamp
+      2. Support table level filter enforcement (--require-partition-filter=True)
    11. Policy tags for fine grained column access
    12. Flex slots, short burst demand
    13. AI integration
@@ -81,16 +82,31 @@
        4.  Code assist
        5.  Data Canvas
            1.  Low code, prompt based, supports dashboarding
-   14. Misc
+   14. Batch
+       1. Data Transfer Service (DTS)
+   15. Streaming
+       1. Storage write API
+          1.  default implicit streaming
+          2.  explicit streaming (committed, pending, buffered)
+   16. CDC
+   17. Continuous Queries
+       1.  Continuous execution
+       2.  SQL based
+       3.  Event-driven
+   18. Reverse ETL 
+       1.  e.g. push to Bigtable, other operational database, stream topic (Pub/Sub), Spanner, other bq tables
+   19. Misc
        1.  10 GB streaming API limit
        2.  slots (workers) and shuffle (parallel processing) enable massive at scale analytics
-       3.  Colossus is bq's query engine, Jupiter is google's petabit internal network shuffling processor
+       3.  Colossus is bq's query engine, Jupiter is google's petabit internal network shuffling processor 
 8. Bigtable 
    1. low-latency (millisecond level), high-throughput access
    2. wide column, with column family
    3. excels at single row lookup
    4. no support for SQL or complex aggregation
    5. Can handle terabytes of data if key-value pairs like time series financial data
+   6. Secondary indexes
+      1. Used to facilitate complex queries that the default row key doesn't handle
 9.  Catalog
    1. Can tag data entries to give more transparency to data origin and descriptions
 10. Cloud Build
@@ -146,20 +162,23 @@ postScanActions:
     1.  Bigquery to google sheets connection
 8.  Data Access Audit Logs
     1.  Must be enabled first, used for analyzing object access records
-9.  Dataflow
+9.  Dataflow main
    1. Data transformation pipelines, templates, notebooks
-   2. requires schema definition
-   3. side output (Tag) can rerout invalid records to a seperate PCollection (Dead Letter file in GCS)
-   4. Windows
+   2. UI core 
+      1. Job graph (execution graph)
+      2. Logs (worker logs)
+   3. requires schema definition
+   4. side output (Tag) can rerout invalid records to a seperate PCollection (Dead Letter file in GCS)
+   5. Windows
       1. sliding window (overlapping data)
       2. fixed window (tumbling e.g. 10-11 am, 11-12 pm, etc.)
       3. session window (group by activity)
-   5. Dataflow snapshots to plan for disaster recovery
-   6. Misc
+   6. Dataflow snapshots to plan for disaster recovery
+   7. Misc
       1. Max limit 10 TB per day per job
-   7. Dataflow insights automatic detection of performance issues
-   8. Job monitoring interface execution graphs to detect inefficiences and monitor overall health
-   9. Optimization parameters
+   8. Dataflow insights automatic detection of performance issues
+   9.  Job monitoring interface execution graphs to detect inefficiences and monitor overall health
+   10. Optimization parameters
       1.  worker machine types and auto scaling limits
       2.  optimize custom UDFs/transforms
       3.  Pre-process data to mitigate skew or use Beam's re-partitioning
@@ -233,7 +252,7 @@ postScanActions:
    1. streaming data
    2. serverless no ops, scales automatically, no cluster or partitions to worry about
    3. message retention default 7 days can extend to 30 days, has seek function
-   4. At least once delivery but offers exactly once delivery
+   4. At least once delivery but offers exactly once delivery (build additional idempotent logic into subscriber to handle the duplicate messages)
    5. Ordered keys to maintain message order of messages with same key
    6. More tight integration with GCP
    7. single message transforms (SMT) like javascript UDF

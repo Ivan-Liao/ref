@@ -5,12 +5,14 @@
 - [Bigquery ML](#bigquery-ml)
 - [Compute](#compute)
 - [Dataplex](#dataplex)
+- [Dataflow](#dataflow)
 - [GCS](#gcs)
 - [IAM](#iam)
 - [KMS](#kms)
 - [Kubernetes](#kubernetes)
 - [Monitoring](#monitoring)
 - [Networking](#networking)
+- [Pubsub main](#pubsub-main)
 - [Run](#run)
 
 # AI
@@ -93,7 +95,7 @@ bq query --use_legacy_sql=false 'ALTER TABLE `PROJECT_ID.DATASET_NAME.TABLE_NAME
 1. Object management
 ```
 # create dataset
-bq mk YOUR_DATASET_NAME
+bq --location=us mk YOUR_DATASET_NAME
 
 
 # create table
@@ -104,6 +106,10 @@ point_idx:integer,\
 latitude:float,\
 timestamp:timestamp\
  -t YOUR_DATASET_NAME.YOUR_TABLE_NAME
+
+bq mk --table \
+  PROJECT_ID:DATASET_NAME.TABLE_NAME \
+  /path/to/schema.json
 ```
 2. Load data
 ```
@@ -321,6 +327,25 @@ gcloud dataplex datascans create data-quality customer-orders-data-quality-job \
 ```
 
 
+# Dataflow
+1. Run project
+```
+python3 -m venv df-env
+source df-env/bin/activate
+pip install apache-beam[gcp]
+export PROJECT_ID="qwiklabs-gcp-00-9f749494ab0a"
+export BUCKET_NAME="qwiklabs-gcp-00-9f749494ab0a-bucket"
+
+python3 esports-pipeline.py \
+  --project=$PROJECT_ID \
+  --region=us-east1 \
+  --runner=DataflowRunner \
+  --streaming \
+  --temp_location=gs://$BUCKET_NAME/temp \
+  --job_name=esports-leaderboard-pipeline
+```
+
+
 # GCS
    1. Create bucket
 ```
@@ -330,7 +355,7 @@ gcloud storage buckets create gs://qwiklabs-gcp-01-83c4633b6cba-bucket --locatio
 # with uniform bucket access (no acl) and default storage specified and public access prevention 
 gcloud storage buckets create gs://qwiklabs-gcp-01-83c4633b6cba-bucket --location=$REGION --project=$(gcloud config get-value project) --default-storage-class=standard --uniform-bucket-level-access --public-access-prevention
 ```
-   2. Manipulate objects
+   1. Manipulate objects
 ```
 # create folders
 echo "" | gcloud storage cp - gs://YOUR_FOLDER_PATH/ # echo "" creates an empty file, make sure there is a trailing slash in YOUR_FOLDER_PATH
@@ -517,6 +542,15 @@ kubectl rollout undo deployment/fortune-app-blue
 1. VPNs see labs\arcade\march_holistic\12_vpn.md
 2. Private IP enable
    1. `gcloud compute networks subnets update default --region=us-west1 --enable-private-ip-google-access`
+
+
+# Pubsub main
+1. Object Creation
+```
+gcloud pubsub topics create esports_events_topic
+gcloud pubsub subscriptions create esports_events_topic-sub --topic=esports_events_topic
+
+```
 
 
 # Run
