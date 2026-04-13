@@ -120,7 +120,16 @@ bq load \
 nyctaxi.2018trips \
 gs://cloud-training/OCBL013/nyc_tlc_yellow_trips_2018_subset_2.csv
 ```
+3. Schema management
+```
+bq show --schema --format=prettyjson logs.logs | sed '1s/^/{"BigQuery Schema":/' | sed '$s/$/}/' > schema.json
 
+cat schema.json
+
+export PROJECT_ID=$(gcloud config get-value project)
+gcloud storage cp schema.json gs://${PROJECT_ID}/
+
+```
 
 # Bigquery ML
 1. Create models

@@ -183,6 +183,23 @@ postScanActions:
       2.  optimize custom UDFs/transforms
       3.  Pre-process data to mitigate skew or use Beam's re-partitioning
       4.  Configure sources and sinks with focus on file size, compression, and data partitioning
+    11. Monitoring
+        1.  Job List
+        2.  Job Info ... metadata, resources, parameters
+        3.  Job Graph
+            1.  Custom metrics
+                1.  Counter
+                2.  Distribution (Count, min, max, mean)
+                3.  Guage (latest value)
+                4.  Job Metrics
+                    1. num workers, throughput ... monitor for uneven resource usage skew
+                    2. data freshness
+                    3. system latency
+                    4. Input and output metrics
+                       1. Requests per second
+                       2. Response errors per second
+                5.  Cloud Monitoring Metrics Explorer 
+                    1.  custom dashboards
 10. Data Fusion
    1. no/low code drag and drop for complex, enterprise-grade ETL pipelines, not serverless
    2. Powered by dataproc and generally a monthly cost for instance
