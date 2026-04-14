@@ -110,6 +110,13 @@ timestamp:timestamp\
 bq mk --table \
   PROJECT_ID:DATASET_NAME.TABLE_NAME \
   /path/to/schema.json
+
+
+# create connection
+!bq mk --connection \
+  --connection_type=CLOUD_RESOURCE \
+  --location=US \
+  gemini_conn
 ```
 2. Load data
 ```

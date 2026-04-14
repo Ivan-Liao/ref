@@ -1,7 +1,7 @@
 - [Data Modeling](#data-modeling)
 - [Dataset Types](#dataset-types)
 - [Distributed Processing](#distributed-processing)
-- [Monitoring](#monitoring)
+- [Monitoring and Reliability](#monitoring-and-reliability)
 - [Optimization](#optimization)
 - [Orchestration](#orchestration)
 - [Project management](#project-management)
@@ -87,7 +87,7 @@ Here are the 20 most important concepts for data modeling in the context of data
       2. pre-partitioning/bucketing
       3. filtering early
 
-# Monitoring
+# Monitoring and Reliability
 1. Routing
    1. DLQ (dead letter queue)
       1. industry standard paradigm that allows for uninterrupted processing while errors are rerouted
@@ -105,6 +105,10 @@ Here are the 20 most important concepts for data modeling in the context of data
       3. DLQ count
    3. Performance
       1. Resource utilization (vCPU, memory, bq slot usage)
+   4. Failure modes
+      1. User code and data shape caused errors
+      2. Outages
+         1. Cloud zonal, regional (maybe regional backup streaming subscription)
 4. References
    1. GCP log routing 
       1. https://docs.cloud.google.com/logging/docs/routing/overview?utm_source=youtube&utm_medium=unpaidsoc&utm_campaign=CDR_yur_gcp_hh_z8qewgfq_EngineeringForReliability_112921&utm_content=description#buckets 

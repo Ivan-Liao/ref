@@ -200,6 +200,19 @@ postScanActions:
                        2. Response errors per second
                 5.  Cloud Monitoring Metrics Explorer 
                     1.  custom dashboards
+    12. Disaster recovery
+        1.  Recommended
+            1.  Dataflow snapshot with sources >> Stop and Drain pipeline >> create new job from snapshot
+        2.  7 days of data retention
+    13. Templates
+        1.  Classic ... stages the pipeline as a template file on Google Cloud Storage
+            1. Lacks ValueProvider system Support (allows users to submit runtime parameters) ... a system that allows uers to change between output to Bigquery or Cloud storage would require 2 classic templates
+            2. Lacks dynamic DAG support
+        2.  Flex
+            1.  Docker images uploaded to Google Container Registry and metadata spec file in Cloud Stoage (optional regex validation for parameters), job graph generated at the end
+        3.  Google-provided
+    14. Misc
+        1.  Cannot change location of job after start
 10. Data Fusion
    1. no/low code drag and drop for complex, enterprise-grade ETL pipelines, not serverless
    2. Powered by dataproc and generally a monthly cost for instance
@@ -249,23 +262,25 @@ postScanActions:
         1.  BQ insert operation >> Cloud Audit Log event >> Eventarc >> (rebuild dashboard, train ML model, etc.)
 18. Firestore 
     1.  NoSQL document database for app development and smaller-scare structures vs Bigtable
-19. IAM (Identity and Access Management)
+19. Gemini
+    1.  Local, Remote (AI cloud), Imported (e.g. from Tensorflow)
+20. IAM (Identity and Access Management)
     1.  Related to ACLS (access control list on the resource level)
     2.  IAM users get permissions
     3.  Service account grant principals access
-20. Logging (GCL)
-21. Looker
+21. Logging (GCL)
+22. Looker
     1.  Has modeling tools to abstract data sources
-22. Looker Studio (prev. Data Studio)
+23. Looker Studio (prev. Data Studio)
     1.  Vizualization tool
-23. Managed Service for Kafka main
+24. Managed Service for Kafka main
     1.  streaming data
     2.  vCPU and memory require config but Google handles broker sizing, cluster creation, storage management, and rebalancing
     3.  persistent log potentially forever
     4.  message order within partition and exactly-once delivery optional
     5.  Offers Kafka connect for Pub/Sub
     6.  Producer, Consumer, and consumer group instead of publisher, subscriber and subscription
-24. Pub/Sub main
+25. Pub/Sub main
    1. streaming data
    2. serverless no ops, scales automatically, no cluster or partitions to worry about
    3. message retention default 7 days can extend to 30 days, has seek function
@@ -275,10 +290,10 @@ postScanActions:
    7. single message transforms (SMT) like javascript UDF
    8. Message filtering
    9. Dead letter topics (DLT)
-25. Spanner
+26. Spanner
     1.  RDS high availability and horizontal scalability globally, best function rds
     2.  Automatic sharding and scaling
-26. Storage (GCS)
+27. Storage (GCS)
    1. Equivalent to AWS S3
    2. HTTPS requests including ranged GETS to get a portion of data
    3. Lifecycle policy for moving data between storage classes on a schedule
@@ -286,16 +301,16 @@ postScanActions:
    5. Size limits 5 TB per object
    6. Storage classes ... standards (none minimum days), nearline (30 days), coldline (90 days), archive (365 days)
    7. When you "create" a folder in the console or via CLI, you are typically creating a 0-byte object that ends in a slash.
-27. Storage Transfer
+28. Storage Transfer
     1.  gloud storage command (typically 100 MB/sec)
         1.  from file systems, object stores, HDFS
     2.  Storage Transfer Service (up to 10GB/sec)
         1.  Connects from HTTPS endpoint to Google Cloud (used to transfer TBs of data)
     3.  Transfer Appliance service (offline)
-28. VertexAI
+29. VertexAI
     1.   Vertex AI Model Registry
          1.   Can deploy models to endpoints
-29. Workflows
+30. Workflows
     1. Connects a series of shorter tasks
     2. Use case
        1. API chaining

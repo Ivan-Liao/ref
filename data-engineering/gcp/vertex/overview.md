@@ -1,4 +1,8 @@
 1. Function calling (ai can interact with custom made functions)
+   1. ML.EVALUATE (evaluates model performance)
+   2. ML.GENERATE_EMBEDDING (generates embeddings table)
+   3. ML.GENERATE_TEXT
+   4. ML.PREDICT (predicts using local model)
 2. Cacheing
 3. Token counts
 4. Batch prediction
