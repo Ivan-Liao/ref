@@ -359,6 +359,10 @@ python3 esports-pipeline.py \
   --streaming \
   --temp_location=gs://$BUCKET_NAME/temp \
   --job_name=esports-leaderboard-pipeline
+
+
+python3 my_pipeline.py   --project=${PROJECT_ID}   --region=us-east1 --worker_zone=us-east1-c --worker_machine_type=n2-standard-4  --output gs://$PROJECT_ID/results/prefix   --temp_location=gs://$PROJECT_I
+D/temp/   --max_num_workers=5   --runner=DataflowRunner 
 ```
 
 
