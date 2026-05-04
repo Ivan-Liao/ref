@@ -126,6 +126,13 @@ Here are the 20 most important concepts for data modeling in the context of data
    4. job completion times
    5. job profiling (bottlenecks)
    6. data skew detection
+4. Preemptible / spot resources
+   1. Can be interrupted, stopped, or reclaimed by the system at any time
+   2. Industry standard 60-80% cheaper
+5. Interleaved Tables physically store child rows on the exact same storage node (and often the same block) as the parent row.
+6. Primary key / index
+   1. Uniquely identifies row in each table
+   2. Secondary indexes help find data faster based on non-primary-key columns
 
 # Orchestration
 1. Dependency Management
