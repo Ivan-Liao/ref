@@ -75,3 +75,11 @@
       1. Hana
 2. Dashboarding
    1. Tableau
+
+# Vocabulary
+1. FAPI
+   1. Fibroblast activation protein inhibitors (FAPIs) are a class of targeted agents that bind with high affinity to FAP, a protein overexpressed in cancer-associated fibroblasts within the tumor microenvironment
+2. Fibroblast
+   1. Fibroblasts are the most common cells in connective tissue, responsible for producing the extracellular matrix (ECM), collagen, glycosaminoglycans, and elastic fibers that provide structural integrity to animal tissues
+3. PET 
+   1. Positron emission tomography (PET) is a functional imaging technique that uses radioactive substances known as radiotracers to visualize and measure changes in metabolic processes, and in other physiological activities including blood flow, regional chemical composition, and absorption. In clinical practice it is used to diagnose and manage cancer treatment, in cardiology and cardiac surgery, and in neurology and psychiatry
