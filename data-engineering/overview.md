@@ -1,3 +1,4 @@
+- [Column types](#column-types)
 - [Data Modeling](#data-modeling)
 - [Dataset Types](#dataset-types)
 - [Distributed Processing](#distributed-processing)
@@ -11,6 +12,15 @@
 - [Transformation](#transformation)
 - [Trends](#trends)
 - [Validation](#validation)
+
+# Column types
+1. description
+2. examples
+3. flag / boolean
+4. names
+5. rule
+6. timestamp
+7. type
 
 # Data Modeling
 Here are the 20 most important concepts for data modeling in the context of data engineering, with detailed descriptions.
