@@ -1,3 +1,13 @@
+- [AI and ML](#ai-and-ml)
+- [Compute and Containers](#compute-and-containers)
+- [Devops and Automation](#devops-and-automation)
+- [ETL](#etl)
+- [Foundation and Security](#foundation-and-security)
+- [Monitoring and Costs](#monitoring-and-costs)
+- [Networking and Content Delivery](#networking-and-content-delivery)
+- [Storage and Databases](#storage-and-databases)
+- [Visualization](#visualization)
+
 # AI and ML
 1. Azure OpenAI
    1. Models
@@ -7,6 +17,8 @@
    1. APIs
 4. Azure AI Foundry
    1. AI apps and agents framework
+5. Databrics Genie
+   1. Conversational AI agent
 
 # Compute and Containers
 1. Azure Virtual Machine
@@ -26,6 +38,13 @@
 3. Azure Event Hubs
 4. Azure Logic Apps
 5. Azure Container Registry
+
+# ETL
+1. Azure Data Factory
+2. Azure Databricks
+   1. Lakeflow Pipelines
+   2. Notebooks
+   3. Auto Loader / COPY INTO
 
 # Foundation and Security
 1. Hierarchy
@@ -76,13 +95,23 @@
    4. Archive
       1. Performance cost
 2. Microsoft Fabric
-   1. OneLake data lakehouse
-   2. Spark based transformations
-   3. PowerBI Integrations
+   1. Features
+      1. OneLake data lakehouse
+      2. Spark based transformations
+      3. PowerBI Integrations
+   2. Ingestion
+      1. Pipelines (chaining) & Dataflows Gen2 (powerquery)
+      2. OneLake shortcuts (data stays in original source)
+      3. Mirroring (SQL databases)
+      4. Eventstream
+      5. Notebooks (custom solutions)
 3. Azure Managed Disks
 4. Azure File
    1. On prem and cloud hybrid
-5. Azure SQL database
+5. Azure SQL 
+   1. SQL database
+   2. Managed Instance
+   3. SQL on VM
 6. Azure Database for Postgresql
 7. Azure Database for MySQL
 8. Azure Cosmos DB
