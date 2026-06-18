@@ -45,6 +45,15 @@
    1. Lakeflow Pipelines
    2. Notebooks
    3. Auto Loader / COPY INTO
+   4. Spark Structured Streaming
+3. Azure Stream Analytics
+4. Microsoft Fabric
+   1. Ingestion
+      1. Pipelines (chaining) & Dataflows Gen2 (powerquery)
+      2. OneLake shortcuts (data stays in original source)
+      3. Mirroring (SQL databases)
+      4. Eventstream
+      5. Notebooks (custom solutions)
 
 # Foundation and Security
 1. Hierarchy
@@ -94,31 +103,30 @@
       1. 90 day retention policy
    4. Archive
       1. Performance cost
-2. Microsoft Fabric
+2. Azure Managed Disks
+3. Azure File
+   1. On prem and cloud hybrid
+4. Azure SQL 
+   1. SQL database
+   2. Managed Instance
+   3. SQL on VM
+5. Azure Database for Postgresql
+6. Azure Database for MySQL
+7. Azure Cosmos DB
+   1. NoSQL
+8.  Azure managed redis
+9.  Azure AI search
+10. Azure Synapse Analytics
+11. Delta Lake
+    1.  reliability, schema reinforcement, unified batch and streaming
+12. Microsoft Fabric
    1. Features
       1. OneLake data lakehouse
       2. Spark based transformations
       3. PowerBI Integrations
-   2. Ingestion
-      1. Pipelines (chaining) & Dataflows Gen2 (powerquery)
-      2. OneLake shortcuts (data stays in original source)
-      3. Mirroring (SQL databases)
-      4. Eventstream
-      5. Notebooks (custom solutions)
-3. Azure Managed Disks
-4. Azure File
-   1. On prem and cloud hybrid
-5. Azure SQL 
-   1. SQL database
-   2. Managed Instance
-   3. SQL on VM
-6. Azure Database for Postgresql
-7. Azure Database for MySQL
-8. Azure Cosmos DB
-   1. NoSQL
-9.  Azure managed redis
-10. Azure AI search
-11. Azure Synapse Analytics
+      4. Real-TIme Dashboards
+      5. Activator (automated action triggers)
+      6. Eventhouse (database for time-series and event data with KQL)
 
 # Visualization
 1. PowerBI
