@@ -13,3 +13,6 @@
    1. Based on data and prompt
 3. Generate DAX measure
    1. Based on prompt
+
+# Gateway
+1. Acts as a secure, encrypted bridge between PowerBI and onprem data sources
