@@ -121,12 +121,14 @@
     1.  reliability, schema reinforcement, unified batch and streaming
 12. Microsoft Fabric
    1. Features
-      1. OneLake data lakehouse
-      2. Spark based transformations
-      3. PowerBI Integrations
-      4. Real-TIme Dashboards
-      5. Activator (automated action triggers)
-      6. Eventhouse (database for time-series and event data with KQL)
+      1. Admin Portal
+      2. OneLake data lakehouse
+         1. OneLake catalog to analyze, monitor, and maintain data governance
+      3. Spark based transformations
+      4. PowerBI Integrations
+      5. Real-TIme Dashboards
+      6. Activator (automated action triggers)
+      7. Eventhouse (database for time-series and event data with KQL)
 
 # Visualization
 1. PowerBI
