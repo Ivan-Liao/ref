@@ -1,125 +1,156 @@
-- [AI and ML](#ai-and-ml)
-- [Compute and Containers](#compute-and-containers)
-- [Devops and Automation](#devops-and-automation)
-- [ETL](#etl)
-- [Foundation and Security](#foundation-and-security)
-- [Monitoring and Costs](#monitoring-and-costs)
-- [Networking and Content Delivery](#networking-and-content-delivery)
+- [Tags](#tags)
+- [Services](#services)
 - [Storage and Databases](#storage-and-databases)
 - [Visualization](#visualization)
 
-# AI and ML
-1. Azure OpenAI
-   1. Models
-2. Azure Machine Learning
-   1. Train, manage, deployment of models
-3. Azure AI Services
-   1. APIs
-4. Azure AI Foundry
-   1. AI apps and agents framework
-5. Databrics Genie
-   1. Conversational AI agent
+# Tags 
+1. admin
+2. ai
+3. compute
+4. devops
+5. etl
+6. monitoring
+7. networking
+8. reporting
+9.  storage
 
-# Compute and Containers
-1. Azure Virtual Machine
-2. Azure Functions
-3. Kubernetes Service
-4. Azure Container Apps
-   1. Requires infrastructure management
-5. Azure Container Instances
-   1. single instances ideal
-6. Azure app service
+# Services
+1. Azure Health Data and AI Services
+   1. Deidentification, FHIR integration, etc.
+2. Application Insights (!monitoring)
+3. App service (!compute)
    1. Web apps, REST APIs
-7. Azure Batch
-
-# Devops and Automation
-1. Azure Bicep (like terraform)
-2. Terraform on Azure
-3. Azure Event Hubs
-4. Azure Logic Apps
-5. Azure Container Registry
-
-# ETL
-1. Azure Data Factory
-2. Azure Databricks
-   1. Lakeflow Pipelines
-   2. Notebooks
-   3. Auto Loader / COPY INTO
-   4. Spark Structured Streaming
-3. Azure Stream Analytics
-4. Microsoft Fabric
-   1. Ingestion
-      1. Pipelines (chaining) & Dataflows Gen2 (powerquery)
-      2. OneLake shortcuts (data stays in original source)
-      3. Mirroring (SQL databases)
-      4. Eventstream
-      5. Notebooks (custom solutions)
-
-# Foundation and Security
-1. Hierarchy
-   1. Management Groups
-   2. Subscriptions
-      1. Billing and payment methods
-      2. Best practices for seperating environments
-   3. Resource Groups
-      1. Group by lifecycle
-   4. Resources
-2. Microsoft Entra ID
-   1. Identities
-      1. Users
-      2. Groups
-      3. Service Principals
-   2. Roles
-      1. Owner 
-      2. Contributor
-      3. Reader
-3. Azure Key Vault
-   1. API keys
-   2. Passwords
-   3. Certificates
-   4. Encryption keys
-
-# Monitoring and Costs
-1. Azure Monitor
-2. Application Insights
-3. Azure Sentinel
-4. Microsoft Defender
-5. Azure Cost Management
-
-# Networking and Content Delivery
-1. Virtual Network
-2. Load Balancer
-3. Application Gateway
-4. Azure Front Door
-5. Traffic Manager
-6. 
+4. Azure Cosmos DB
+   1. NoSQL
+5. Azure Database for Postgresql (!storage)
+6. Azure Database for MySQL (!storage)
+7. Azure Databricks (!ai,!etl)
+   1. Lakeflow Pipelines (!etl)
+   2. Notebooks (!etl)
+   3. Auto Loader / COPY INTO (!etl)
+   4. Spark Structured Streaming (!etl)
+   5. Genie (!ai)
+      1. Conversational AI agent
+8. Azure Data Explorer Clusters (!etl,!reporting,!storage)
+    1.  Real-time, high-speed analytics for streaming and telemetry data (PaaS) build on Kusto like Fabric Eventhouse
+9.  Azure Machine Learning (!ai)
+    1.  Train, manage, deployment of models
+10. Azure Managed Redis (!storage)
+11. Azure SQL Database (!storage)
+    1.  Best for .NET / Microsoft ecosystem
+    2.  Types
+        1.  SQL database
+        2.  Managed Instance
+        3.  SQL on VM
+12. Azure Synapse Analytics (!etl,!reporting,!storage)
+    1. Data 
+       1. Delta lake foundations
+    2. Develop
+       1. Contains spark notebooks
+    3. Pipelines 
+       1. ADF pipelines
+    4. Uses serverless SQL (!compute)
+       1. Read only query engine
+13. Batch accounts (!compute)
+14. Container Apps (!compute)
+   1. Has ingress, load balancing, and internal service-to-service communication
+15. Container Instances (!compute)
+   1. Ideal for single instances, no scale-to-zero
+16. Container Registry (!devops)
+   1.  Build, store, secure, scan, replicate, and manage container images and artifacts
+17. Cost Management (!monitoring)
+18. Data Factories (!etl)
+    1.  cloud data integration service for building, scheduling, and orchestrating complex ETL
+    2.  Standalone, with Synapse, or with Fabric
+19. Event Hubs (!etl)
+    1.  Streaming broker service
+20. Function App (!compute)
+21. Key Vaults (!admin)
+    1.  API keys
+    2. Passwords
+    3. Certificates
+    4. Encryption keys
+22. Kubernetes Services (!compute)
+23. Load Balancing and Content Delivery (!networking)
+    1.  Application Gateway 
+        1.  Application-level routing and load balancing services
+    2.  Load Balancer
+    3.  Azure Front Door
+        1.  Fast, reliable, and secure access between users and applications’ web content
+24. Logic Apps (!compute)
+    1.  Process Automation with more than 1400 prebuilt connectors for email, cloud storage, databases
+25. Marketplace
+    1.  Azure AI services (!ai)
+    2.  Terraform on Azure (!devops)
+26. Microsoft Defender (!monitoring)
+27. Microsoft Entra ID (!admin)
+    1.  Identities
+        1.  Users are human identities
+        2.  Service Principals are machine / app identities
+        3.  Groups are collections of users and services
+    2.  Roles
+        1.  Owner
+        2.  Contributor
+        3.  Reader
+28. Microsoft Fabric (!etl,!reporting,!storage)
+    1.  Admin Portal
+    2.  OneLake data lakehouse in delta lake format
+    3.  Eventhouse for real time data
+        1.  Eventstream (!etl)
+    4.  Spark Notebooks for custom solutions (!etl)
+    5.  PowerBI integrations
+    6.  Activator (automated action triggers)
+    7.  Other Ingestion (!etl)
+        1.  Pipelines chaining & Dataflows Gen2 powerquery (!etl)
+        2.  OneLake shortcuts (!storage)
+            1.  data stays in original source like AWS S3
+        3.  Mirroring SQL databases (!etl,!storage)
+29. Microsoft Foundry (!ai)
+    1.  AI apps and agents framework
+    2.  OpenAI (!ai)
+        1.  Models
+    3.  AI Search 
+        1.  RAG search over user-owned content
+30. Microsoft Sentinel (!monitoring)
+31. Monitor (!monitoring)
+32. Power BI
+    1.  Power Query
+    2.  Direct Query
+    3.  DAX
+33. Resource Manager (!admin,!devops)
+    1.  Bicep is microsoft developed Infrastructure as Code (IaC) tool that allow you to define and deploy cloud resources declaratively
+    2.  Deployment Templates and Template Specs
+    3.  Management Groups
+    4.  Subscriptions
+        1.  Billing and payment methods
+        2.  Best practices for seperating environments
+    5.  Resource Groups
+        1.  Group by lifecycle
+    6.  Resources
+34. Storage (!storage)
+    1.  Blob / Object
+        1.  Storage types
+            1.  Hot
+            2.  Cool
+                1.  30 day retention policy
+            3.  Cold
+                1.  90 day retention policy
+            4.  Archive
+                1.  Performance cost
+        2.  Files must be overwritten completely
+    2.  File
+        1.  Hierarchical and files are editable
+    3.  Block
+        1.  Disks
+            1.  
+35. Stream Analytics (!etl)
+    1.  Deprecation on Oct. 31, 2027
+36. Traffic Manager (!networking)
+37. Virtual Machine (!compute)
+38. Virtual Network (!networking)
 
 # Storage and Databases
-1. Azure Blob Storage
-   1. Hot
-   2. Cool
-      1. 30 day retention policy
-   3. Cold
-      1. 90 day retention policy
-   4. Archive
-      1. Performance cost
-2. Azure Managed Disks
-3. Azure File
-   1. On prem and cloud hybrid
-4. Azure SQL 
-   1. SQL database
-   2. Managed Instance
-   3. SQL on VM
-5. Azure Database for Postgresql
-6. Azure Database for MySQL
-7. Azure Cosmos DB
-   1. NoSQL
-8.  Azure managed redis
-9.  Azure AI search
-10. Azure Synapse Analytics
-11. Delta Lake
-    1.  reliability, schema reinforcement, unified batch and streaming
-12. Microsoft Fabric
+1.  Microsoft Fabric
    1. Features
       1. Admin Portal
       2. OneLake data lakehouse

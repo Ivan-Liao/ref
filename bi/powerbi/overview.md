@@ -23,6 +23,15 @@
       1. Select chart >> Format >> Edit Interactions >> Click circle slash symbols
 3. Safe divide with DIVIDE() function
 
+# Features 
+1.  DAX
+    1.  Measure vs column, measure is part of semantic model not table
+    2.  Measure name, table column references table_name[col_name], measure references [measure_name]
+    3.  CALCULATE() for overridden context (comparison of filtered category like salesperson to total amount)
+       1.  Multiple filters / criteria possible
+    4.  Conditionals if
+    5.  Win + . to open emoji window
+
 # Gateway
 1. Acts as a secure, encrypted bridge between PowerBI and onprem data sources
 
