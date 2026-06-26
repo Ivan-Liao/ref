@@ -143,7 +143,11 @@ Successfully joined group and Successfully synced group showing the connector is
     "include.schema.changes": "true"
   }
 }
-# note optional     "column.include.list": "" for optimization
+# optional optimizations
+# note optional     "column.include.list": "YOUR_FULLY_QUALIFIED_TABLE_NAME_HERE"
+# note optional properties for lean events
+# key.converter.schemas.enable = false
+# value.converter.schemas.enable = false
 ```
 2. Create windows path for offset
 ```
