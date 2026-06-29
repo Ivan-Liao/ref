@@ -1,3 +1,15 @@
+# Connected Sheets
+1. Source data from Bigquery or Looker
+2. Features
+   1. Functions / Formulas
+   2. Charts
+   3. Pivot tables
+   4. Calculated columns
+   5. Extracts
+   6. Refreshes
+   7. Column stats
+   8. Advanced analytics (forecasting, anomalies)
+
 # Functions
 1. Aggregate functions
    1. Average
@@ -40,6 +52,7 @@
       1. TEXTJOIN(" ",TRUE,C1:C3)
    5. TRIM
    6. UPPER
+
 # References
 1. Relative references
 2. Absolute references
