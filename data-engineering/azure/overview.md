@@ -95,8 +95,6 @@
 28. Microsoft Fabric (!etl,!reporting,!storage)
     1.  Admin Portal
     2.  OneLake data lakehouse in delta lake format
-    3.  Eventhouse for real time data
-        1.  Eventstream (!etl)
     4.  Spark Notebooks for custom solutions (!etl)
     5.  PowerBI integrations
     6.  Activator (automated action triggers)
@@ -105,19 +103,39 @@
         2.  OneLake shortcuts (!storage)
             1.  data stays in original source like AWS S3
         3.  Mirroring SQL databases (!etl,!storage)
-29. Microsoft Foundry (!ai)
+29. Microsoft Fabric Eventhouse (!etl,!storage)
+    1.  for real time data
+    2.  Eventstream 
+    3.  Extract
+        1.  OneLake avilability
+    4.  KQL
+        1.  Pipe character to funnel operations
+        2. Optimization
+           1. Reduce columns 
+           2. Filter from wide to narrow
+           3. Limit results for aggregations
+           4. Join with smaller table first
+    5.  Load
+        1.  Local files, Azure storage, Amazon S3
+        2.  Azure Event hubs, Fabric Eventstream, Real-Time hub
+        3.  Database shortcuts (in place copies of data, does not actually store data)
+        4.  OneLake, Data Factory copy, Dataflows
+        5.  Connectors to Kafka, Flink, MQTT, Amazon Kinesis, Google Pub/Sub
+    6.  Materialized view
+        1.  Materialized precomputed aggregation results plus a delta
+30. Microsoft Foundry (!ai)
     1.  AI apps and agents framework
     2.  OpenAI (!ai)
         1.  Models
     3.  AI Search 
         1.  RAG search over user-owned content
-30. Microsoft Sentinel (!monitoring)
-31. Monitor (!monitoring)
-32. Power BI
+31. Microsoft Sentinel (!monitoring)
+32. Monitor (!monitoring)
+33. Power BI
     1.  Power Query
     2.  Direct Query
     3.  DAX
-33. Resource Manager (!admin,!devops)
+34. Resource Manager (!admin,!devops)
     1.  Bicep is microsoft developed Infrastructure as Code (IaC) tool that allow you to define and deploy cloud resources declaratively
     2.  Deployment Templates and Template Specs
     3.  Management Groups
@@ -127,7 +145,7 @@
     5.  Resource Groups
         1.  Group by lifecycle
     6.  Resources
-34. Storage (!storage)
+35. Storage (!storage)
     1.  Blob / Object
         1.  Storage types
             1.  Hot
@@ -143,11 +161,11 @@
     3.  Block
         1.  Disks
             1.  
-35. Stream Analytics (!etl)
+36. Stream Analytics (!etl)
     1.  Deprecation on Oct. 31, 2027
-36. Traffic Manager (!networking)
-37. Virtual Machine (!compute)
-38. Virtual Network (!networking)
+37. Traffic Manager (!networking)
+38. Virtual Machine (!compute)
+39. Virtual Network (!networking)
 
 # Storage and Databases
 1.  Microsoft Fabric
