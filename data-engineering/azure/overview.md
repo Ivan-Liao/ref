@@ -166,6 +166,10 @@
 37. Traffic Manager (!networking)
 38. Virtual Machine (!compute)
 39. Virtual Network (!networking)
+    1.  logical isolation, subnetting, hybrid connectivity, VNet Peering
+    2.  NSG, network security groups at subnet or VM level
+    3.  Route Tables
+    4.  Azure NAT Gateway
 
 # Storage and Databases
 1.  Microsoft Fabric

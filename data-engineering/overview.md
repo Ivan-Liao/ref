@@ -23,7 +23,6 @@
 7. type
 
 # Data Modeling
-Here are the 20 most important concepts for data modeling in the context of data engineering, with detailed descriptions.
 
 1. Data Vault Modeling is a hybrid data modeling methodology designed for enterprise data warehousing that combines aspects of both the normalized model (3NF) and the dimensional model (star schema). It was developed by Dan Linstedt to address the challenges of agility, flexibility, and scalability in traditional data warehousing. A Data Vault model is designed to be resilient to changes in source systems and business requirements, making it particularly well-suited for environments where the data landscape is complex and constantly evolving. The model is built on three core types of tables:
    1. Hubs: Hubs contain a distinct list of business keys for a single business entity (e.g., customer_id, product_sku). They represent the core business concepts and are designed to be extremely stable. A hub typically contains only the business key, a surrogate key (the Hub key), and metadata columns like a load timestamp and record source.
@@ -50,9 +49,19 @@ Here are the 20 most important concepts for data modeling in the context of data
          1.  For example, in a retail sales data model, the fact table might contain metrics like sales_amount, quantity_sold, and cost_of_goods. Each row in the fact table corresponds to a specific event or transaction and contains foreign keys that link to the surrounding dimension tables.
       5. Periodic Snapshot Fact Tables: These tables capture the state of things at predefined, regular intervals (e.g., daily, weekly, monthly). A common example is a daily inventory level or a monthly account balance.
       6. Accumulating Snapshot Fact Tables: These tables represent the lifecycle of a process with a well-defined beginning and end, such as order fulfillment or a claims process. The row for a given process is updated as it passes through various milestones.
-   3. Star Schema
+   3. Relationships
+      1. one-to-one 
+         1. use case for security, performance optimization, or organizing sparse data
+         2. Example ... core users table with user_profiles table with optional, rarely used data like bios and avatars
+      2. one-to-many
+         1. Most common data model
+         2. Example ... Customer table with customers that can place many orders in the Orders table, but every order is only associated with one customer
+      3. many-to-many
+         1. use case for junction tables
+         2. Example ... Students can take many courses.  Courses contain many students.
+   4. Star Schema
       1. The Star Schema is the most fundamental and widely used structure in dimensional modeling. It is named for its star-like appearance when visualized, with a central fact table connected to a number of dimension tables. 
-   4. Snowflake Schema
+   5. Snowflake Schema
       1. The defining characteristic of a snowflake schema is that its dimension tables are normalized. While a star schema features denormalized dimension tables, a snowflake schema breaks down these dimension tables into further, smaller tables. For example, in a star schema, a Dim_Product dimension table might contain columns for product_name, brand, category, and subcategory. In a snowflake schema, the product dimension would be normalized. There would be a main Dim_Product table with a foreign key to a separate Dim_Category table. The Dim_Category table might then have a foreign key to a Dim_Department table. This creates a chain of related dimension tables, radiating out from the main dimension table, which itself is connected to the central fact table. The primary motivation for using a snowflake schema is to reduce data redundancy and save storage space.
 3. Denormalization
    1. Denormalization is the strategic process of introducing redundancy into a database by combining tables or adding duplicate data, with the primary goal of improving query performance. It is the inverse of normalization. While normalization is essential for write-intensive Online Transaction Processing (OLTP) systems to ensure data integrity and eliminate redundancy, it often results in a large number of tables. Querying such a database for analytical purposes can require complex and resource-intensive joins across many tables, leading to slow performance. This is where denormalization becomes critical, especially in the context of Online Analytical Processing (OLAP) and data warehousing. By deliberately violating some rules of normalization, data engineers can create a data model that is optimized for read operations. A common denormalization technique is pre-joining tables. For instance, instead of joining a Products table with a Categories table at query time to get the category name, a denormalized Products table might include a category_name column directly. This eliminates the need for a join, drastically speeding up queries that need this information. Other techniques include adding calculated values (e.g., storing total_price in an order items table instead of calculating it from quantity and unit_price every time) or creating summary tables that store pre-aggregated data. The trade-off is clear: read performance is gained at the expense of storage space and data consistency challenges. When the source data is updated, all redundant copies must also be updated, which introduces complexity into the data loading (ETL/ELT) process and increases the risk of data anomalies if not managed carefully. For data engineers, mastering denormalization is about striking a balance—understanding the query patterns of end-users and selectively denormalizing parts of the data model to meet performance requirements without excessively compromising data integrity

@@ -3,11 +3,20 @@
 - [Kafka installation](#kafka-installation)
 - [Kafka startup](#kafka-startup)
 - [Debezium configuration](#debezium-configuration)
-- [Azure Events Hub to Delta Lake](#azure-events-hub-to-delta-lake)
-- [Connect Delta Lake to Fabric](#connect-delta-lake-to-fabric)
-- [Buildout Fabric streaming pipeline](#buildout-fabric-streaming-pipeline)
-- [Connect Fabric to PowerBI](#connect-fabric-to-powerbi)
-- [MariaDB SQL references](#mariadb-sql-references)
+- [powershell](#powershell)
+- [cmd prompt alternative](#cmd-prompt-alternative)
+- [list topics](#list-topics)
+- [consume events](#consume-events)
+- [keep consume event window open](#keep-consume-event-window-open)
+- [manual sql statments in MariaDB](#manual-sql-statments-in-mariadb)
+- [Bootstrap server retrieved from Fabric](#bootstrap-server-retrieved-from-fabric)
+- [Security settings required by Fabric's Kafka layer](#security-settings-required-by-fabrics-kafka-layer)
+- [The username is literally '$ConnectionString'. Do not replace this with a variable name.](#the-username-is-literally-connectionstring-do-not-replace-this-with-a-variable-name)
+- [test connectivity](#test-connectivity)
+- [linux](#linux)
+- [windows](#windows)
+- [list tables](#list-tables)
+  - [example Debezium json event](#example-debezium-json-event)
 
 
 # MariaDB binlog setup
@@ -39,14 +48,14 @@ cd "C:\Program Files\MariaDB 12.0\bin"
 Start-Process -FilePath "C:\Program Files\MariaDB 12.0\bin\mariadbd.exe" -ArgumentList "--defaults-file=`"C:\SFDevDB\MariaDB 12.0\data\my.ini`"" -WindowStyle Hidden
 
 
-# to permanently install MariaDB as a service
+# (Optional) to permanently install MariaDB as a service
 cd "C:\Program Files\MariaDB\bin"
 .\mariadb-install-db.exe --service=MariaDB --password=YourRootPassword
 ```
 
 # MariaDB debezium user creation
 ```
-# Optional hostname if debezium will run from a known host address
+# Create service user for Debezium
 CREATE USER 'debezium'@'%' IDENTIFIED BY 'StrongPasswordHere';
 # In MariaDB 10.5+, REPLICATION CLIENT was renamed BINLOG MONITOR
 
@@ -66,24 +75,27 @@ SHOW BINARY LOGS;
 
 # Kafka installation
 1. May need to install the latest Java SDK
-2. Add kafka/bin directory to Windows Env variables
-   1. Settings > System > Optional Settings > View all > WMIC (Check box)
+2. Settings > System > Optional Settings > View all > WMIC (Check box)
 3. Kafka
-   1. Kafka binary from kafka.apache.org (note Kafka 4.x and above no longer utilize zookeeper)
-   2. Configure config\server.properties
+   1. Download Kafka binary from kafka.apache.org (note Kafka 4.x and above no longer utilize zookeeper)
+   2. Add kafka/bin directory to Windows Env variables
+   3. Configure config\server.properties
       1. `log.dirs=C:/kafka/kafka-logs`
-   3. Cluster ID and Format Storage
+      2. `auto.create.topics.enable=true`
+   4. Cluster ID and Format Storage
+   5. Set Kafka logging explicitly
+      1. `set KAFKA_LOG4J_OPTS=-Dlog4j2.configurationFile=file:C:/kafka/config/log4j2.yaml`
 ```
 cd C:\kafka
-.\bin\windows\kafka-storage.bat random-uuid
+\bin\windows\kafka-storage.bat random-uuid
 # Format log directory using output UUID
-.\bin\windows\kafka-storage.bat format -t cldahqo1SRyavcJGsgYCcQ -c .\config\server.properties
+.\bin\windows\kafka-storage.bat format -t i_Yk4I8RQCOyhZIe_0pucA -c .\config\server.properties --standalone
 ```
 
 # Kafka startup
 1. Launch the broker
 ```
-.\bin\windows\kafka-server-start.bat .\config\server.properties --standalone
+.\bin\windows\kafka-server-start.bat .\config\server.properties
 # Note this cmd window will need to be kept open
 ```
 2. Debezium MariaDB Connector plugin
@@ -91,11 +103,14 @@ cd C:\kafka
    2. Place extracted folder in C:\kafka\plugins
 3. Kafka Connect
 ```
+
 # Open C:\kafka\config\connect-standalone.properties
 # Point configuration to running broker
 bootstrap.servers=localhost:9092
 # Define plugin path
 plugin.path=C:/kafka/plugins
+# Create windows path for offset
+offset.storage.file.filename=C:/kafka/connect-data/connect.offsets
 # New command prompt and launch standalone worker
 .\bin\windows\connect-standalone.bat .\config\connect-standalone.properties .\config\connect-file-sink.properties
 # Verify plugin installation
@@ -119,27 +134,17 @@ Successfully joined group and Successfully synced group showing the connector is
   "name": "mariadb-cdc",
   "config": {
     "connector.class": "io.debezium.connector.mariadb.MariaDbConnector",
-
     "database.hostname": "localhost",
     "database.port": "3306",
-
     "database.user": "debezium",
     "database.password": "YOUR_DEBEZIUM_USER_PASSWORD_HERE",
-
     "database.server.id": "5401",
-
     "topic.prefix": "biorx",
-
     "database.include.list": "master",
-    
     "table.include.list": "master.ordered,master.reasoncode",
-
     "schema.history.internal.kafka.bootstrap.servers": "localhost:9092",
-
     "schema.history.internal.kafka.topic": "schema-history.master",
-
     "snapshot.mode": "initial",
-
     "include.schema.changes": "true"
   }
 }
@@ -149,13 +154,8 @@ Successfully joined group and Successfully synced group showing the connector is
 # key.converter.schemas.enable = false
 # value.converter.schemas.enable = false
 ```
-2. Create windows path for offset
 ```
-# Depends on which worker file but for standalone
-# kafka/config/connect-standalone.properties
-# look for line offset.storage.file.filename=C:/kafka/connect-data/connect.offsets
-```
-3. Register Connector
+1. Register Connector
 ```
 # powershell
 Invoke-RestMethod `
@@ -199,21 +199,116 @@ where col = "YOUR_VALUE"
 6. Connect Debezium to Azure Event Hubs
    1. https://learn.microsoft.com/en-us/azure/event-hubs/event-hubs-kafka-connect-debezium
 
-# Azure Events Hub to Delta Lake
+# Azure Fabric Eventstream
+1. Create custom stream endpoint
+   1.  My workspace > New Item > Eventstream > Use custom endpoint
+2. Reconfigure Kafka connect properties file along with security
+```
+# Bootstrap server retrieved from Fabric
+bootstrap.servers=esehbn9kd0zwt2ixox3m9p.servicebus.windows.net:9093
 
-# Connect Delta Lake to Fabric
+# Security settings required by Fabric's Kafka layer
+security.protocol=SASL_SSL
+sasl.mechanism=PLAIN
 
-# Buildout Fabric streaming pipeline
+# The username is literally '$ConnectionString'. Do not replace this with a variable name.
+sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required \
+  username="$ConnectionString" \
+  password="YOUR_CONNECTION_STRING_PRIMARY_KEY_FROM_FABRIC";
+
+```
+3. Configure VNET settings
+   1. Add outbound security rule for IP associated with the VM sfdevdesktop
+```
+Source: Specific private IP of sfdevdesktop (172.17.0.4).
+Source Port Ranges: *
+Destination: AzureCloud
+Destination Port Ranges: 9093
+Protocol: TCP
+Action: Allow
+
+# test connectivity
+# linux
+nc -zv esehbn9kd0zwt2ixox3m9p.servicebus.windows.net:9093 9093
+# windows
+Test-NetConnection -ComputerName esehbn9kd0zwt2ixox3m9p.servicebus.windows.net:9093 -Port 9093
+telnet esehbn9kd0zwt2ixox3m9p.servicebus.windows.net:9093 9093
+```
+
+# Eventstream to Eventhouse
+
+# Eventhouse KQL Update Policy
+1. CDC JSON stream into a raw Eventhouse table
+2. Flattening function
+```
+.create function with (docstring = 'Extracts after object and flattens CDC payload', folder = 'Transformations') Flatten_ReasonCodes() {
+    Raw_ReasonCodes
+    | project 
+        ReasonCodeID = toint(payload.after.ReasonCodeID),
+        ReasonCodeGUID = tostring(payload.after.ReasonCodeGUID),
+        Action = toint(payload.after.Action),
+        Code = tostring(payload.after.Code),
+        Description = tostring(payload.after.Description),
+        CreatedDT = todatetime(payload.after.CreatedDT),
+        CreatedByID = toint(payload.after.CreatedByID),
+        Synced = toint(payload.after.Synced),
+        Deleted = toint(payload.after.Deleted),
+        CancelledOrder = toint(payload.after.CancelledOrder),
+        ChangeTimestamp = todatetime(payload.payload.ts_ms)
+}
+```
+3. Define Update Policy
+```
+// 1. Create the target table
+.create table Current_ReasonCodes (
+    ReasonCodeID: int,
+    ReasonCodeGUID: string,
+    Action: int,
+    Code: string,
+    Description: string,
+    CreatedDT: datetime,
+    CreatedByID: int,
+    Synced: int,
+    Deleted: int,
+    CancelledOrder: int,
+    ChangeTimestamp: datetime
+)
+
+// 2. Apply the update policy
+.alter table Current_ReasonCodes policy update @'[{"IsEnabled": true, "Source": "Raw_ReasonCodes", "Query": "Flatten_ReasonCodes()", "IsTransactional": false}]'
+```
+5. Materialized view to instantly query current true state
+```
+.create materialized-view MV_Current_ReasonCodes on table Current_ReasonCodes {
+    Current_ReasonCodes
+    | summarize arg_max(ChangeTimestamp, *) by ReasonCodeID
+    | where Deleted == 0
+}
+```
 
 # Connect Fabric to PowerBI 
 
-# MariaDB SQL references
+
+
+
+# references
+## MariaDB SQL references
 ```
 # list tables
+```
 SHOW TABLES;
 SELECT * FROM reason LIMIT 5;
 SELECT * FROM reasoncode where DeletedDT is null LIMIT 5;
 INSERT into reasoncode (ReasonCodeID, ReasonCodeGUID, Action, Code, Description, CreatedDT, CreatedByID, DeletedDT, DeletedByID, Synced, Deleted, CancelledOrder) VALUES (99955,'TESTTEST-D2A6-45EF-A592-ABE3E4CE6112', 0, 999, 'Test Reason', '2026-06-24 12:45:00', 999, NULL, NULL, 1, 0, 1);
 SELECT * FROM reasoncode where ReasonCodeID = 99955;
 DELETE FROM reasoncode where ReasonCodeID = 99955;
+```
+## example Debezium json event
+1. deletion
+```
+{"schema":{"type":"struct","fields":[{"type":"struct","fields":[{"type":"int32","optional":false,"field":"ReasonCodeID"},{"type":"string","optional":true,"field":"ReasonCodeGUID"},{"type":"int32","optional":true,"field":"Action"},{"type":"string","optional":true,"field":"Code"},{"type":"string","optional":true,"field":"Description"},{"type":"int64","optional":true,"name":"io.debezium.time.Timestamp","version":1,"field":"CreatedDT"},{"type":"int32","optional":true,"field":"CreatedByID"},{"type":"int64","optional":true,"name":"io.debezium.time.Timestamp","version":1,"field":"DeletedDT"},{"type":"int32","optional":true,"field":"DeletedByID"},{"type":"int16","optional":true,"default":0,"field":"Synced"},{"type":"int16","optional":true,"default":0,"field":"Deleted"},{"type":"int16","optional":true,"default":0,"field":"CancelledOrder"}],"optional":true,"name":"biorx.master.reasoncode.Value","field":"before"},{"type":"struct","fields":[{"type":"int32","optional":false,"field":"ReasonCodeID"},{"type":"string","optional":true,"field":"ReasonCodeGUID"},{"type":"int32","optional":true,"field":"Action"},{"type":"string","optional":true,"field":"Code"},{"type":"string","optional":true,"field":"Description"},{"type":"int64","optional":true,"name":"io.debezium.time.Timestamp","version":1,"field":"CreatedDT"},{"type":"int32","optional":true,"field":"CreatedByID"},{"type":"int64","optional":true,"name":"io.debezium.time.Timestamp","version":1,"field":"DeletedDT"},{"type":"int32","optional":true,"field":"DeletedByID"},{"type":"int16","optional":true,"default":0,"field":"Synced"},{"type":"int16","optional":true,"default":0,"field":"Deleted"},{"type":"int16","optional":true,"default":0,"field":"CancelledOrder"}],"optional":true,"name":"biorx.master.reasoncode.Value","field":"after"},{"type":"struct","fields":[{"type":"string","optional":false,"field":"version"},{"type":"string","optional":false,"field":"connector"},{"type":"string","optional":false,"field":"name"},{"type":"int64","optional":false,"field":"ts_ms"},{"type":"string","optional":true,"name":"io.debezium.data.Enum","version":1,"parameters":{"allowed":"true,first,first_in_data_collection,last_in_data_collection,last,false,incremental"},"default":"false","field":"snapshot"},{"type":"string","optional":false,"field":"db"},{"type":"string","optional":true,"field":"sequence"},{"type":"int64","optional":true,"field":"ts_us"},{"type":"int64","optional":true,"field":"ts_ns"},{"type":"string","optional":true,"field":"table"},{"type":"int64","optional":false,"field":"server_id"},{"type":"string","optional":true,"field":"gtid"},{"type":"string","optional":false,"field":"file"},{"type":"int64","optional":false,"field":"pos"},{"type":"int32","optional":false,"field":"row"},{"type":"int64","optional":true,"field":"thread"},{"type":"string","optional":true,"field":"query"}],"optional":false,"name":"io.debezium.connector.mariadb.Source","version":1,"field":"source"},{"type":"struct","fields":[{"type":"string","optional":false,"field":"id"},{"type":"int64","optional":false,"field":"total_order"},{"type":"int64","optional":false,"field":"data_collection_order"}],"optional":true,"name":"event.block","version":1,"field":"transaction"},{"type":"string","optional":false,"field":"op"},{"type":"int64","optional":true,"field":"ts_ms"},{"type":"int64","optional":true,"field":"ts_us"},{"type":"int64","optional":true,"field":"ts_ns"}],"optional":false,"name":"biorx.master.reasoncode.Envelope","version":2},"payload":{"before":{"ReasonCodeID":99955,"ReasonCodeGUID":"TESTTEST-D2A6-45EF-A592-ABE3323f6212","Action":0,"Code":"999","Description":"Test Reason","CreatedDT":1782305100000,"CreatedByID":999,"DeletedDT":null,"DeletedByID":null,"Synced":1,"Deleted":0,"CancelledOrder":1},"after":null,"source":{"version":"3.5.2.Final","connector":"mariadb","name":"biorx","ts_ms":1782327979000,"snapshot":"false","db":"master","sequence":null,"ts_us":1782327979000000,"ts_ns":1782327979000000000,"table":"reasoncode","server_id":1,"gtid":"0-1-37","file":"mariadb-bin.000002","pos":16043,"row":0,"thread":null,"query":null},"transaction":null,"op":"d","ts_ms":1782327979817,"ts_us":1782327979817895,"ts_ns":1782327979817895400}}
+```
+2. creation
+```
+{"schema":{"type":"struct","fields":[{"type":"struct","fields":[{"type":"int32","optional":false,"field":"ReasonCodeID"},{"type":"string","optional":true,"field":"ReasonCodeGUID"},{"type":"int32","optional":true,"field":"Action"},{"type":"string","optional":true,"field":"Code"},{"type":"string","optional":true,"field":"Description"},{"type":"int64","optional":true,"name":"io.debezium.time.Timestamp","version":1,"field":"CreatedDT"},{"type":"int32","optional":true,"field":"CreatedByID"},{"type":"int64","optional":true,"name":"io.debezium.time.Timestamp","version":1,"field":"DeletedDT"},{"type":"int32","optional":true,"field":"DeletedByID"},{"type":"int16","optional":true,"default":0,"field":"Synced"},{"type":"int16","optional":true,"default":0,"field":"Deleted"},{"type":"int16","optional":true,"default":0,"field":"CancelledOrder"}],"optional":true,"name":"biorx.master.reasoncode.Value","field":"before"},{"type":"struct","fields":[{"type":"int32","optional":false,"field":"ReasonCodeID"},{"type":"string","optional":true,"field":"ReasonCodeGUID"},{"type":"int32","optional":true,"field":"Action"},{"type":"string","optional":true,"field":"Code"},{"type":"string","optional":true,"field":"Description"},{"type":"int64","optional":true,"name":"io.debezium.time.Timestamp","version":1,"field":"CreatedDT"},{"type":"int32","optional":true,"field":"CreatedByID"},{"type":"int64","optional":true,"name":"io.debezium.time.Timestamp","version":1,"field":"DeletedDT"},{"type":"int32","optional":true,"field":"DeletedByID"},{"type":"int16","optional":true,"default":0,"field":"Synced"},{"type":"int16","optional":true,"default":0,"field":"Deleted"},{"type":"int16","optional":true,"default":0,"field":"CancelledOrder"}],"optional":true,"name":"biorx.master.reasoncode.Value","field":"after"},{"type":"struct","fields":[{"type":"string","optional":false,"field":"version"},{"type":"string","optional":false,"field":"connector"},{"type":"string","optional":false,"field":"name"},{"type":"int64","optional":false,"field":"ts_ms"},{"type":"string","optional":true,"name":"io.debezium.data.Enum","version":1,"parameters":{"allowed":"true,first,first_in_data_collection,last_in_data_collection,last,false,incremental"},"default":"false","field":"snapshot"},{"type":"string","optional":false,"field":"db"},{"type":"string","optional":true,"field":"sequence"},{"type":"int64","optional":true,"field":"ts_us"},{"type":"int64","optional":true,"field":"ts_ns"},{"type":"string","optional":true,"field":"table"},{"type":"int64","optional":false,"field":"server_id"},{"type":"string","optional":true,"field":"gtid"},{"type":"string","optional":false,"field":"file"},{"type":"int64","optional":false,"field":"pos"},{"type":"int32","optional":false,"field":"row"},{"type":"int64","optional":true,"field":"thread"},{"type":"string","optional":true,"field":"query"}],"optional":false,"name":"io.debezium.connector.mariadb.Source","version":1,"field":"source"},{"type":"struct","fields":[{"type":"string","optional":false,"field":"id"},{"type":"int64","optional":false,"field":"total_order"},{"type":"int64","optional":false,"field":"data_collection_order"}],"optional":true,"name":"event.block","version":1,"field":"transaction"},{"type":"string","optional":false,"field":"op"},{"type":"int64","optional":true,"field":"ts_ms"},{"type":"int64","optional":true,"field":"ts_us"},{"type":"int64","optional":true,"field":"ts_ns"}],"optional":false,"name":"biorx.master.reasoncode.Envelope","version":2},"payload":{"before":null,"after":{"ReasonCodeID":99955,"ReasonCodeGUID":"TESTTEST-D2A6-45EF-A592-ABE3323E6212","Action":0,"Code":"999","Description":"Test Reason","CreatedDT":1782305100000,"CreatedByID":999,"DeletedDT":null,"DeletedByID":null,"Synced":1,"Deleted":0,"CancelledOrder":1},"source":{"version":"3.5.2.Final","connector":"mariadb","name":"biorx","ts_ms":1783016286000,"snapshot":"false","db":"master","sequence":null,"ts_us":1783016286000000,"ts_ns":1783016286000000000,"table":"reasoncode","server_id":1,"gtid":"0-1-61","file":"mariadb-bin.000002","pos":26776,"row":0,"thread":null,"query":null},"transaction":null,"op":"c","ts_ms":1783016286705,"ts_us":1783016286705016,"ts_ns":1783016286705016500}}
 ```
