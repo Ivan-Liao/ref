@@ -188,6 +188,8 @@
      4.  Multiple filters / criteria possible
     4.  Conditionals if
     5.  Win + . to open emoji window
+4.  Power Automate
+    1.  
 ## Resource Manager (!admin,!devops)
 1.  Bicep is microsoft developed Infrastructure as Code (IaC) tool that allow you to define and deploy cloud resources declaratively
 2.  Deployment Templates and Template Specs
