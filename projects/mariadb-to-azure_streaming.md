@@ -173,3 +173,74 @@ DELETE FROM reasoncode where ReasonCodeID = 99955;
 ```
 {"schema":{"type":"struct","fields":[{"type":"struct","fields":[{"type":"int32","optional":false,"field":"ReasonCodeID"},{"type":"string","optional":true,"field":"ReasonCodeGUID"},{"type":"int32","optional":true,"field":"Action"},{"type":"string","optional":true,"field":"Code"},{"type":"string","optional":true,"field":"Description"},{"type":"int64","optional":true,"name":"io.debezium.time.Timestamp","version":1,"field":"CreatedDT"},{"type":"int32","optional":true,"field":"CreatedByID"},{"type":"int64","optional":true,"name":"io.debezium.time.Timestamp","version":1,"field":"DeletedDT"},{"type":"int32","optional":true,"field":"DeletedByID"},{"type":"int16","optional":true,"default":0,"field":"Synced"},{"type":"int16","optional":true,"default":0,"field":"Deleted"},{"type":"int16","optional":true,"default":0,"field":"CancelledOrder"}],"optional":true,"name":"biorx.master.reasoncode.Value","field":"before"},{"type":"struct","fields":[{"type":"int32","optional":false,"field":"ReasonCodeID"},{"type":"string","optional":true,"field":"ReasonCodeGUID"},{"type":"int32","optional":true,"field":"Action"},{"type":"string","optional":true,"field":"Code"},{"type":"string","optional":true,"field":"Description"},{"type":"int64","optional":true,"name":"io.debezium.time.Timestamp","version":1,"field":"CreatedDT"},{"type":"int32","optional":true,"field":"CreatedByID"},{"type":"int64","optional":true,"name":"io.debezium.time.Timestamp","version":1,"field":"DeletedDT"},{"type":"int32","optional":true,"field":"DeletedByID"},{"type":"int16","optional":true,"default":0,"field":"Synced"},{"type":"int16","optional":true,"default":0,"field":"Deleted"},{"type":"int16","optional":true,"default":0,"field":"CancelledOrder"}],"optional":true,"name":"biorx.master.reasoncode.Value","field":"after"},{"type":"struct","fields":[{"type":"string","optional":false,"field":"version"},{"type":"string","optional":false,"field":"connector"},{"type":"string","optional":false,"field":"name"},{"type":"int64","optional":false,"field":"ts_ms"},{"type":"string","optional":true,"name":"io.debezium.data.Enum","version":1,"parameters":{"allowed":"true,first,first_in_data_collection,last_in_data_collection,last,false,incremental"},"default":"false","field":"snapshot"},{"type":"string","optional":false,"field":"db"},{"type":"string","optional":true,"field":"sequence"},{"type":"int64","optional":true,"field":"ts_us"},{"type":"int64","optional":true,"field":"ts_ns"},{"type":"string","optional":true,"field":"table"},{"type":"int64","optional":false,"field":"server_id"},{"type":"string","optional":true,"field":"gtid"},{"type":"string","optional":false,"field":"file"},{"type":"int64","optional":false,"field":"pos"},{"type":"int32","optional":false,"field":"row"},{"type":"int64","optional":true,"field":"thread"},{"type":"string","optional":true,"field":"query"}],"optional":false,"name":"io.debezium.connector.mariadb.Source","version":1,"field":"source"},{"type":"struct","fields":[{"type":"string","optional":false,"field":"id"},{"type":"int64","optional":false,"field":"total_order"},{"type":"int64","optional":false,"field":"data_collection_order"}],"optional":true,"name":"event.block","version":1,"field":"transaction"},{"type":"string","optional":false,"field":"op"},{"type":"int64","optional":true,"field":"ts_ms"},{"type":"int64","optional":true,"field":"ts_us"},{"type":"int64","optional":true,"field":"ts_ns"}],"optional":false,"name":"biorx.master.reasoncode.Envelope","version":2},"payload":{"before":null,"after":{"ReasonCodeID":99955,"ReasonCodeGUID":"TESTTEST-D2A6-45EF-A592-ABE3323E6212","Action":0,"Code":"999","Description":"Test Reason","CreatedDT":1782305100000,"CreatedByID":999,"DeletedDT":null,"DeletedByID":null,"Synced":1,"Deleted":0,"CancelledOrder":1},"source":{"version":"3.5.2.Final","connector":"mariadb","name":"biorx","ts_ms":1783016286000,"snapshot":"false","db":"master","sequence":null,"ts_us":1783016286000000,"ts_ns":1783016286000000000,"table":"reasoncode","server_id":1,"gtid":"0-1-61","file":"mariadb-bin.000002","pos":26776,"row":0,"thread":null,"query":null},"transaction":null,"op":"c","ts_ms":1783016286705,"ts_us":1783016286705016,"ts_ns":1783016286705016500}}
 ```
+
+## mariadb-connector.json versions
+1. v1 (working but with consumer limitation in Fabric Eventstreams custom endpoint)
+```
+{
+  "name": "mariadb-cdc-v6",
+  "config": {
+    "connector.class": "io.debezium.connector.mariadb.MariaDbConnector",
+    "database.hostname": "localhost",
+    "database.port": "3306",
+    "database.user": "debezium",
+    "database.password": "toodles-zoO-SquirreL-19284",
+    "database.server.id": "5401",
+    "topic.prefix": "biorx3",
+    "database.include.list": "master",
+    "table.include.list": "master.reasoncode",
+    "schema.history.internal.kafka.topic": "esehbn18tmfo040bvonhn8_eh",
+    "schema.history.internal.kafka.bootstrap.servers": "esehbn18tmfo040bvonhn8.servicebus.windows.net:9093",
+    "schema.history.internal.producer.security.protocol": "SASL_SSL",
+    "schema.history.internal.producer.sasl.mechanism": "PLAIN",
+    "schema.history.internal.producer.sasl.jaas.config": "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"$ConnectionString\" password=\"";",
+    "schema.history.internal.consumer.security.protocol": "SASL_SSL",
+    "schema.history.internal.consumer.sasl.mechanism": "PLAIN",
+    "schema.history.internal.consumer.sasl.jaas.config":  "";",
+    "producer.override.security.protocol": "SASL_SSL",
+    "producer.override.sasl.mechanism": "PLAIN",
+    "producer.override.sasl.jaas.config":  "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"$ConnectionString\" password=\"";",
+    "signal.enabled.channels": "",    
+    "snapshot.mode": "no_data",
+    "transforms": "route",
+    "transforms.route.type": "org.apache.kafka.connect.transforms.RegexRouter",
+    "transforms.route.regex": "biorx3\\.master\\.(.*)",
+    "transforms.route.replacement": "esehbn18tmfo040bvonhn8_eh",
+    "include.schema.changes": "true"
+  }
+}
+```
+2. v2 changed to file storage for schema history
+```
+{
+  "name": "mariadb-cdc-v6",
+  "config": {
+    "connector.class": "io.debezium.connector.mariadb.MariaDbConnector",
+    "database.hostname": "localhost",
+    "database.port": "3306",
+    "database.user": "debezium",
+    "database.password": "toodles-zoO-SquirreL-19284",
+    "database.server.id": "5401",
+    "topic.prefix": "biorx3",
+    "database.include.list": "master",
+    "table.include.list": "master.reasoncode",
+
+    "schema.history.internal": "io.debezium.storage.file.history.FileSchemaHistory",
+    "schema.history.internal.file.filename": "C:/kafka/connect-data/schema-history.dat",
+
+    "producer.override.security.protocol": "SASL_SSL",
+    "producer.override.sasl.mechanism": "PLAIN",
+    "producer.override.sasl.jaas.config": "";",
+
+    "signal.enabled.channels": "",
+    "snapshot.mode": "no_data",
+
+    "transforms": "route",
+    "transforms.route.type": "org.apache.kafka.connect.transforms.RegexRouter",
+    "transforms.route.regex": "biorx3\\.master\\.(.*)",
+    "transforms.route.replacement": "esehbn18tmfo040bvonhn8_eh",
+
+    "include.schema.changes": "true"
+  }
+}
+```
