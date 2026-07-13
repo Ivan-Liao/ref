@@ -1,0 +1,38 @@
+# --- Comments start with a hashtag ---
+
+# Ignore temp files
+temp.md
+
+# Ignore sensitive files (API keys, secrets)
+.env
+*.pem
+credentials.json
+
+# Ignore large dependency folders
+node_modules/
+venv/
+.venv/
+env/
+
+# Ignore build outputs and compiled code
+dist/
+build/
+out/
+*.pyc
+*.class
+*.exe
+
+# Ignore log files and diagnostics
+*.log
+npm-debug.log*
+yarn-error.log*
+
+# Ignore IDE and Text Editor configurations
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+
+# Ignore System-specific files (OS junk)
+.DS_Store
+Thumbs.db
