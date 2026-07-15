@@ -1,7 +1,7 @@
 # --- Comments start with a hashtag ---
 
 # Ignore temp files
-temp.md
+temp.*
 
 # Ignore sensitive files (API keys, secrets)
 .env
