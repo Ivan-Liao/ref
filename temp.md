@@ -1,8 +1,1 @@
-# Write your MySQL query statement below
-with sums as (
-    select sum(p.price) as total_amount,
-        sum(u.units) as total_units
-    from Prices p
-    left join UnitsSold u
-    group by p.product_id = u.product_id 
-)
+Ordered_MV\n| project CalibrationDate,\n    Deleted,\n    OrderedID,\n    Filled\n| where todatetime(CalibrationDate) between (ago(48h) .. ago(-24h))\n| where Deleted == 0\n| summarize total_orders = count(),\n    total_filled = count(tobool(Filled))\n;

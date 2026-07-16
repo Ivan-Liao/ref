@@ -1,0 +1,27 @@
+Ordered_MV
+| project CalibrationDate, 
+    Deleted,   
+    OrderedID,
+    Filled,
+    Packed,
+    Delivered
+| where todatetime(CalibrationDate) between (format_datetime(ago(48h),'yyyy-mm-dd'); .. format_datetime(ago(24h),'yyyy-mm-dd'))
+| where Deleted == 0
+| summarize total_orders = count(),
+    total_filled = count(tobool(Filled))
+    total_packed = count(tobool(Packed)),
+    total_delivered = count(tobool(Delivered));
+
+Ordered_MV
+| project CalibrationDate, 
+    Deleted,   
+    OrderedID,
+    Filled,
+    Packed,
+    Delivered
+| where todatetime(CalibrationDate) between (format_datetime(ago(48h),'yyyy-mm-dd'); .. format_datetime(ago(0h),'yyyy-mm-dd'))
+| where Deleted == 0
+| summarize total_orders = count(),
+    total_filled = count(tobool(Filled))
+    total_packed = count(tobool(Packed)),
+    total_delivered = count(tobool(Delivered));

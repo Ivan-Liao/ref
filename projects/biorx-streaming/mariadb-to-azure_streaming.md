@@ -16,6 +16,9 @@
    1. `mariadb -u root -p`
 2. Check binlog status
    1. `SHOW VARIABLES LIKE 'log_bin';`
+   2. `SHOW VARIABLES LIKE 'binlog_format';`
+   3. `SHOW VARIABLES LIKE 'binlog_row_image';`
+   4. `SHOW VARIABLES LIKE 'binlog_expire_logs_seconds';`
 3. Locate MariaDB config file and alter it
 ```
 # typically in C:\Program Files\MariaDB 11.0\data\my.ini
@@ -27,7 +30,7 @@ server-id=1
 log_bin=mariadb-bin
 binlog_format=ROW
 binlog_row_image=FULL
-binlog_expire_logs_seconds=604800
+binlog_expire_logs_seconds=300000
 ```
 4. Stop and restart MariaDB service
 ```

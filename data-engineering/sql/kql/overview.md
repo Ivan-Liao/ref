@@ -1,3 +1,6 @@
+# Functions (built in)
+1. format_datetime(ago(24h),'yyyy-mm-dd')
+
 # Functions
 ```
 .create-or-alter function trips_by_min_passenger_count(num_passengers:long)
@@ -17,6 +20,14 @@ trips_by_min_passenger_count(3)
     by vendor_id, pickup_date = format_datetime(pickup_datetime, "yyyy-MM-dd")
 }
 ```
+# Policy Updates
+1. `.alter table stg_shipcontainer_flat policy update @'[{"IsEnabled": true, "Source": "raw_shipcontainer", "Query": "shipcontainer_flat_function", "IsTransactional": false, "PropagateIngestionProperties": true}]';`
+2. `.show table MyTargetTable policy update`
+
+# Profiling
+1. Table schema
+   1. .show table Ordered_Flattened schema as json;
+2. function code
 
 # Query Examples
 TripsByVendor
@@ -33,3 +44,4 @@ TaxiTrips
 | where vendor_id == "VTS"           // Specific vendor - eliminates some data  
 | where fare_amount > 0              // Value filter - eliminates least data
 | summarize trip_count = count()
+

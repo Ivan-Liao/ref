@@ -110,5 +110,10 @@
         "key": "ctrl+e",
         "command": "-workbench.action.quickOpenNavigateNextInFilePicker",
         "when": "inFilesPicker && inQuickOpen"
+    },
+    {
+        "key": "shift+alt+down",
+        "command": "-extension.vim_cmd+alt+down",
+        "when": "editorTextFocus && vim.active && !inDebugRepl"
     }
 ]
