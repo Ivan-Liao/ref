@@ -1,0 +1,12 @@
+.create table stg_shipcontainer_flat (
+    ship_container_id             : long,
+    ordered_id                    : long,
+    cdc_event_time                : datetime,
+    source_event_time             : datetime,
+    event_sequence_ns             : long,
+    packed_by_id                  : long,
+    packed_date                   : datetime,
+    packed_time                   : timespan,
+    delivered_time                : datetime,
+    delivered_date                : timespan
+);

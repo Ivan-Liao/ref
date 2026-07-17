@@ -1,3 +1,10 @@
+- [Functions (built in)](#functions-built-in)
+- [Functions](#functions)
+- [Materialized view](#materialized-view)
+- [Policy Updates](#policy-updates)
+- [Profiling](#profiling)
+- [Query Examples](#query-examples)
+
 # Functions (built in)
 1. format_datetime(ago(24h),'yyyy-mm-dd')
 
@@ -21,8 +28,13 @@ trips_by_min_passenger_count(3)
 }
 ```
 # Policy Updates
-1. `.alter table stg_shipcontainer_flat policy update @'[{"IsEnabled": true, "Source": "raw_shipcontainer", "Query": "shipcontainer_flat_function", "IsTransactional": false, "PropagateIngestionProperties": true}]';`
-2. `.show table MyTargetTable policy update`
+```
+.show table MyTargetTable policy update
+
+.alter table stg_shipcontainer_flat policy update @'[{"IsEnabled": true, "Source": "raw_shipcontainer", "Query": "shipcontainer_flat_function()", "IsTransactional": false, "PropagateIngestionProperties": true}]';
+
+.append stg_shipcontainer_flat <| shipcontainer_flat_function();
+```
 
 # Profiling
 1. Table schema

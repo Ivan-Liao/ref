@@ -1,0 +1,15 @@
+Ordered_MV 
+| join kind=leftouter shipcontainer_mv on $left.OrderedID == $right.ordered_id
+| project CalibrationDate, 
+    IsDeleted,   
+    OrderedID,
+    Filled,
+    packed_date,
+    delivered_date
+| where IsDeleted == 0
+| where todatetime(CalibrationDate) == (format_datetime(ago(24h),'yyyy-MM-dd'))
+| summarize total_orders = count(),
+    total_filled = count(tobool(Filled)),
+    total_packed = count(tobool(packed_date)),
+    total_delivered = count(tobool(delivered_date))
+;

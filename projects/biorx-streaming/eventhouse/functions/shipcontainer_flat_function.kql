@@ -1,0 +1,18 @@
+.create-or-alter function shipcontainer_flat_function() {
+    raw_shipcontainer
+    | extend p = todynamic(payload)
+    | where tostring(p.source.table) == "shipcontainer_demo"
+    | where tostring(p.op) in ("r", "c", "u", "d")
+    | extend row_data = coalesce(todynamic(p.after), todynamic(p.before))
+    | project 
+        ship_container_id = tolong(row_data.ShipContainerID),
+        ordered_id = tolong(row_data.OrderedID),
+        cdc_event_time = unixtime_milliseconds_todatetime(tolong(p.ts_ms)),
+        source_event_time = unixtime_milliseconds_todatetime(tolong(p.source.ts_ms)),
+        event_sequence_ns = coalesce(tolong(p.ts_ns), tolong(p.ts_ms) * 1000000),
+        packed_by_id = tolong(row_data.PackedByID),
+        packed_date = datetime(1970-01-01) + tolong(row_data.PackedDate) * 1d,
+        packed_time = tolong(row_data.PackedTime) / 1000 * 1ms,
+        delivered_date = datetime(1970-01-01) + tolong(row_data.DeliveredDate) * 1d,
+        delivered_time = tolong(row_data.DeliveredTime) / 1000 * 1ms
+};

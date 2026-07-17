@@ -1,0 +1,4 @@
+.create materialized-view with (backfill=true) shipcontainer_mv on table stg_shipcontainer_flat {
+    stg_shipcontainer_flat
+    | summarize arg_max(event_sequence_ns, *) by ship_container_id
+}
