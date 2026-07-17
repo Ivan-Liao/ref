@@ -1,6 +1,7 @@
 - [Column types](#column-types)
 - [Data Modeling](#data-modeling)
 - [Dataset Types](#dataset-types)
+  - [The 4 Vs](#the-4-vs)
 - [Distributed Processing](#distributed-processing)
 - [Monitoring and Reliability](#monitoring-and-reliability)
 - [Optimization](#optimization)
@@ -95,9 +96,35 @@
    2. Entity Integrity (no null primary key)
 
 # Dataset Types
-1. Geospatial
+1. String
+2. Number
+3. Float
+4. Boolean
+5. Object / Dynamic
+6. Geospatial
    1. use cases
       1. Patient routing
+
+## The 4 Vs
+
+- [ ] Velocity
+  - [ ] Orchestration (batch with what cadence or stream) 
+- [ ] Variety
+  - [ ] Data Format
+- [ ] Volume
+  - [ ] Limit scope of ingestion
+- [ ] Validity/Veracity
+  - [ ] Schema changes
+  - [ ] Data types
+    - [ ] Wrong data type
+    - [ ] Leading zeros in number string
+    - [ ] White space in string 
+  - [ ] Null checks
+  - [ ] Duplication 
+  - [ ] Typos (can check distinct values)
+  - [ ] Outliers
+  - [ ] Missing data
+
 
 # Distributed Processing
 1. Data shuffle (a notorious bottleneck)
