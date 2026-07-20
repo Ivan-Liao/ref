@@ -2,10 +2,21 @@
 
 raw_shipcontainer.kql
 stg_shipcontainer_flat.kql
+stg_ordered_flat.kql
 shipcontainer_flat_function.kql
+ordered_flat_function.kql
 
 ```
 .alter table stg_shipcontainer_flat policy update @'[{"IsEnabled": true, "Source": "raw_shipcontainer", "Query": "shipcontainer_flat_function()", "IsTransactional": false, "PropagateIngestionProperties": true}]';
+
+.alter table Ordered_Flattened policy update
+@'[{
+    "IsEnabled": true,
+    "Source": "Ordered",
+    "Query": "Ordered_Flatten_Function()",
+    "IsTransactional": false,
+    "PropagateIngestionProperties": true
+}]'
 
 .append stg_shipcontainer_flat <| shipcontainer_flat_function();
 ```

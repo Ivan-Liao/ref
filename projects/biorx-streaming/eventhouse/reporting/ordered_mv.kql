@@ -1,0 +1,12 @@
+.create async materialized-view with
+(
+    backfill = true,
+    folder = "CDC",
+    docString = "Latest ordered_demo state per OrderedID"
+)
+Ordered_Latest_MV
+on table Ordered_Flattened
+{
+    Ordered_Flattened
+    | summarize arg_max(EventSequenceNs, *) by OrderedID
+}
