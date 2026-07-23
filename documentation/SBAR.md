@@ -1,0 +1,1 @@
+The SBAR method—which stands for Situation, Background, ****Assessment, and Recommendation—is a standardized communication framework. Originally developed for the military and widely adopted in healthcare, it provides a structured, concise, and predictable way to exchange essential information, especially during urgent situations or shift changes

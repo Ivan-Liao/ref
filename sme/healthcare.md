@@ -26,3 +26,11 @@
    1. EE \- entry error  
    2. CE \- calculation error  
    3. TE \- transcription error  
+8. OTIF
+   1. On time in full
+   2. Denominator is all dose that come in
+   3. Numerator depends on 
+9. Sofie
+   1.  Total Orders
+   2.  Orders Fulfilled
+   3.  Orders Not Fulfilled

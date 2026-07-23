@@ -11,9 +11,34 @@
 
 # Power BI Paginated Report Creation
 1. Select fields
+```
+   1. Rx ID
+   2. Pharmacy
+   3. Product
+   4. Client
+   5. Reason Code
+   6. Reason
+   7. Lot Number
+   8. Multidose order flag
+   9. Redirected order flag 
+   10. Dose
+   11. Cal Date
+   12. Cal Time
+   13. Order Date
+   14. Order Time
+   15. Filled Date
+   16. Filled Time
+   17. Packed Date
+   18. Packed Time
+   19. Shipped Date
+   20. Shipped Time
+   21. Delivery Date
+   22. Delivery Time
+```
 2. Aggregate or deselect summarization
-3. Create parameter on dynamic value to filter data by like date
-4. Save in a power bi premium workspace that houses the semantic model
+3. Create parameter on dynamic value to filter data like date
+4. Filter by reason codes
+5. Save in a power bi premium workspace that houses the semantic model
 
 # Power Automate
 ## Recurrance
@@ -43,20 +68,20 @@
 ```
 # format is "<new column name>": @{split(itm(), ',')[0]} where 0 is the order of column
 {
-  "Pharmacy": @{split(item(), ',')[0]},
-  "Product": @{split(item(), ',')[1]},
-  "Rx ID": @{split(item(), ',')[2]},
-  "Lot Number": @{split(item(), ',')[3]},
-  "Not Fulfilled": @{split(item(), ',')[4]},
-  "Redirected Orders": @{split(item(), ',')[5]},
-  "MultiDose Bulk": @{split(item(), ',')[6]},
-  "Reason Code": @{split(item(), ',')[7]},
-  "Reason": @{split(item(), ',')[8]},
-  "Client Name": @{split(item(), ',')[9]},
-  "Order Date": @{split(item(), ',')[10]},
-  "Order Time": @{split(item(), ',')[11]},
-  "Calibration Date": @{split(item(), ',')[12]},
-  "Calibration Time": @{split(item(), ',')[13]},
+  "Rx ID": @{split(item(), ',')[0]},
+  "Pharmacy": @{split(item(), ',')[1]},
+  "Product": @{split(item(), ',')[2]},
+  "Client Name": @{split(item(), ',')[3]},
+  "Reason Code": @{split(item(), ',')[4]},
+  "Reason": @{split(item(), ',')[5]},
+  "Lot Number": @{split(item(), ',')[6]},
+  "MultiDose Bulk": @{split(item(), ',')[7]},
+  "Redirected Orders": @{split(item(), ',')[8]},
+  "Dose": @{split(item(), ',')[9]},
+  "Calibration Date": @{split(item(), ',')[10]},
+  "Calibration Time": @{split(item(), ',')[11]},
+  "Order Date": @{split(item(), ',')[12]},
+  "Order Time": @{split(item(), ',')[13]},
   "Filled Date": @{split(item(), ',')[14]},
   "Filled Time": @{split(item(), ',')[15]},
   "Packed Date": @{split(item(), ',')[16]},

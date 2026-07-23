@@ -1,0 +1,1 @@
+The SMART methodology is a highly structured goal-setting framework designed to maximize the likelihood of achieving objectives. It establishes clear criteria—Specific, Measurable, Achievable (or Attainable), Relevant, and Time-bound—to transform vague intentions into concrete, actionable steps.

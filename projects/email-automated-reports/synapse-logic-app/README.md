@@ -2,6 +2,11 @@
 1. Create new pipeline
 2. Copy Data activity
    1. Source: Synapse lake database or view
+      1. Source Dataset
+         1. AzureSynapseAnalyticsDeltaTable
+      2. Linked Service
+      3. Table path
+         1. f"abfss://biwarp@stacsfedwprd.dfs.core.windows.net/mart/fact/{Table_Name}"
    2. Sink: ADLS Gen2 dataset with format DelimitedText (CSV)
    3. Filename: 
       1. First row as header checked

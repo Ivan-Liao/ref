@@ -1,0 +1,1 @@
+The STAR methodology is an interview framework for answering behavioral questions (e.g., "Tell me about a time when..."). It stands for Situation (context), Task (the goal), Action (your specific steps), and Result (the outcome) to ensure your stories are concise, structured, and focused on your personal contributions

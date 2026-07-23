@@ -9,6 +9,7 @@
   - [Azure Database for MySQL (!storage)](#azure-database-for-mysql-storage)
   - [Azure Databricks (!ai,!etl)](#azure-databricks-aietl)
   - [Azure Data Explorer Clusters (!etl,!reporting,!storage)](#azure-data-explorer-clusters-etlreportingstorage)
+  - [Azure Functions](#azure-functions)
   - [Azure Machine Learning (!ai)](#azure-machine-learning-ai)
   - [Azure Managed Redis (!storage)](#azure-managed-redis-storage)
   - [Azure SQL Database (!storage)](#azure-sql-database-storage)
@@ -72,6 +73,17 @@
    1. Conversational AI agent
 ## Azure Data Explorer Clusters (!etl,!reporting,!storage)
  1.  Real-time, high-speed analytics for streaming and telemetry data (PaaS) build on Kusto like Fabric Eventhouse
+## Azure Functions
+1. Serverless solution with less code, less infrastructure, and cost savings
+2. Triggers
+   1. Ways that the code execution begins
+3. Bindings
+   1. Simplify coding for input and output data
+4. Plans
+   1. Subject to change, but consider scalability, virtual networking, pre-provisioning
+5. Structure
+   1. host.json project file
+      1. functionTimeout property 
 ##  Azure Machine Learning (!ai)
 1.  Train, manage, deployment of models
 ##  Azure Managed Redis (!storage)
