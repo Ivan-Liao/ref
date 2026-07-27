@@ -9,6 +9,7 @@
   - [Azure Database for MySQL (!storage)](#azure-database-for-mysql-storage)
   - [Azure Databricks (!ai,!etl)](#azure-databricks-aietl)
   - [Azure Data Explorer Clusters (!etl,!reporting,!storage)](#azure-data-explorer-clusters-etlreportingstorage)
+  - [Azure Data Lake Storage (ADLS) Gen2](#azure-data-lake-storage-adls-gen2)
   - [Azure Functions](#azure-functions)
   - [Azure Machine Learning (!ai)](#azure-machine-learning-ai)
   - [Azure Managed Redis (!storage)](#azure-managed-redis-storage)
@@ -56,14 +57,21 @@
 
 # Services
 ## Azure Health Data and AI Services
+
 ## Deidentification, FHIR integration, etc.
+
 ## App service (!compute)
+
 ## Application Insights (!monitoring)
 1. Web apps, REST APIs
+
 ## Azure Cosmos DB
 1. NoSQL
+
 ## Azure Database for Postgresql (!storage)
+
 ## Azure Database for MySQL (!storage)
+
 ## Azure Databricks (!ai,!etl)
 1. Lakeflow Pipelines (!etl)
 2. Notebooks (!etl)
@@ -71,8 +79,13 @@
 4. Spark Structured Streaming (!etl)
 5. Genie (!ai)
    1. Conversational AI agent
+
 ## Azure Data Explorer Clusters (!etl,!reporting,!storage)
  1.  Real-time, high-speed analytics for streaming and telemetry data (PaaS) build on Kusto like Fabric Eventhouse
+
+## Azure Data Lake Storage (ADLS) Gen2
+1. OverviewConfigurable capability of an Azure Storage account
+
 ## Azure Functions
 1. Serverless solution with less code, less infrastructure, and cost savings
 2. Triggers
@@ -84,15 +97,19 @@
 5. Structure
    1. host.json project file
       1. functionTimeout property 
+
 ##  Azure Machine Learning (!ai)
 1.  Train, manage, deployment of models
+
 ##  Azure Managed Redis (!storage)
+
 ## Azure SQL Database (!storage)
 1.  Best for .NET / Microsoft ecosystem
 2.  Types
     1.  SQL database
     2.  Managed Instance
     3.  SQL on VM
+
 ## Azure Synapse Analytics (!etl,!reporting,!storage)
 1. Data 
    1. Delta lake foundations
@@ -102,38 +119,53 @@
    1. ADF pipelines
 4. Uses serverless SQL (!compute)
    1. Read only query engine
+
 ## Batch accounts (!compute)
+
 ## Container Apps (!compute)
 1. Has ingress, load balancing, and internal service-to-service communication
+
 ## Container Instances (!compute)
 1. Ideal for single instances, no scale-to-zero
+
 ## Container Registry (!devops)
 1.  Build, store, secure, scan, replicate, and manage container images and artifacts
+
 ## Cost Management (!monitoring)
+
 ## Data Factories (!etl)
 1.  cloud data integration service for building, scheduling, and orchestrating complex ETL
 2.  Standalone, with Synapse, or with Fabric
+
 ## Event Hubs (!etl)
 1.  Streaming broker service
+
 ## Function App (!compute)
+
 ## Key Vaults (!admin)
 1.  API keys
 2. Passwords
 3. Certificates
 4. Encryption keys
+
 ## Kubernetes Services (!compute)
+
 ## Load Balancing and Content Delivery (!networking)
  1.  Application Gateway 
      1.  Application-level routing and load balancing services
  2.  Load Balancer
  3.  Azure Front Door
      1.  Fast, reliable, and secure access between users and applications’ web content
+
 ## Logic Apps (!compute)
 1.  Process Automation with more than 1400 prebuilt connectors for email, cloud storage, databases
+
 ## Marketplace
 1.  Azure AI services (!ai)
 2.  Terraform on Azure (!devops)
+
 ## Microsoft Defender (!monitoring)
+
 ## Microsoft Entra ID (!admin)
 1.  Identities
     1.  Users are human identities
@@ -142,13 +174,22 @@
         1.  Azure resource groups
         2.  Microsoft 365 groups for teams, sharepoint, outlook
 2.  Roles
-    1.  Owner
-    2.  Contributor
-    3.  Reader
-    4.  etc.
+    1.  Common roles
+        1.  Owner
+        2.  Contributor
+        3.  Reader
+    2.  Built-in roles
+    3.  Custom roles
+    4.  Actions (inclusionary) and Notactions (exclusionary)
 3.  Security Groups
     1.  Collective identity containers, allowing access management for multiple users at once.
     2.  RBAC role can be assigned to security groups
+4.  Subscriptions
+    1.  One subscription can trust only one Microsoft Entra ID directory
+    2.  One Microsoft Entra ID directory can be associated with multiple subscriptions
+5.  Misc
+    1.  Microsoft Entra Connect to integrate Windows Server Active Directory
+
 ## Microsoft Fabric (!etl,!reporting,!storage)
 1.  Admin Portal
 2.  OneLake data lakehouse in delta lake format
@@ -160,6 +201,7 @@
     2.  OneLake shortcuts (!storage)
         1.  data stays in original source like AWS S3
     3.  Mirroring SQL databases (!etl,!storage)
+
 ## Microsoft Fabric Eventhouse (!etl,!storage)
 1.  For real time data
 2.  Database shortcuts to existing KQL databases in other eventhouses or ADX databases
@@ -182,12 +224,14 @@
 7.  Materialized view
     1.  Materialized precomputed aggregation results plus a delta
 8.  Real-Time Dashboards
+
 ## Microsoft Foundry (!ai)
 1.  AI apps and agents framework
 2.  OpenAI (!ai)
     1.  Models
 3.  AI Search 
     1.  RAG search over user-owned content
+
 ## Microsoft Sentinel (!monitoring)
 ## Monitor (!monitoring)
 ## Power BI
@@ -202,6 +246,7 @@
     5.  Win + . to open emoji window
 4.  Power Automate
     1.  
+
 ## Resource Manager (!admin,!devops)
 1.  Bicep is microsoft developed Infrastructure as Code (IaC) tool that allow you to define and deploy cloud resources declaratively
 2.  Deployment Templates and Template Specs
@@ -212,6 +257,7 @@
 5.  Resource Groups
     1.  Group by lifecycle
 6.  Resources
+
 ## Storage (!storage)
 1.  Blob / Object
     1.  Storage types
@@ -221,20 +267,43 @@
         3.  Cold
             1.  90 day retention policy
         4.  Archive
-            1.  Performance cost
+            1.  180 day retention policy
+            2.  Performance cost 
+                1.  standard priority, within 15 hour retrieval
+                2.  high priority, within 1 hour retrieval
+            3.  Activation methods
+                1.  Copy blob into new online tier
+                2.  Set blob tier in place update
     2.  Files must be overwritten completely
+    3.  Lifecycle management
+        1.  Transitioning to cooler storage tier
+        2.  Automatically transitioning from cooler storage tier to hot when accessed
+        3.  Delete current and previous versions as well as snapshots for blobs
+        4.  Rules apply on storage account, container, or blob subset (prefix or index tags)
+    4.  Blob object replication (e.g. across servers)
+    5.  Blob types
+        1.  Block
+        2.  Append ... for logs
+        3.  Page ... for frequent write/read
 2.  File
     1.  Hierarchical and files are editable
 3.  Block
     1.  Disks
         1.  
+
 ## Stream Analytics (!etl)
 1.  Deprecation on Oct. 31, 2027
+
 ## Subscriptions (!security)
 1. IAM
 2. Resource Groups
+3. Resource providers
+   1. May need to be registered like cloudshell.  Some registered by default like Microsoft.Storage
+
 ## Traffic Manager (!networking)
+
 ## Virtual Machine (!compute)
+
 ## Virtual Network (!networking)
  1.  logical isolation, subnetting, hybrid connectivity, VNet Peering
  2.  NSG, network security groups at subnet or VM level
