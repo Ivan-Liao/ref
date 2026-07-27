@@ -23,15 +23,15 @@ We want to address this issue in a timely manner based on the reason codes.
 3. Sofie Sales team
 4. Sofie BI team: Ivan Liao, Elangovan Srinivasan
 5. Email list maintainer: Brad Stamp
-6. Email recepients
+6. Email recipients
    1. First pass testing: Brad.Stamp@sofie.com, william.crisp@sofie.com
-   2. brian.schumer@sofie.com, Eric.Kroencke@sofie.com, joseph.cascone@sofie.com, malia.proskey@sofie.com, Mike.Parisi@sofie.com, Phyllis.Hoelsworth@sofie.com, Tim.Riemen@sofie.com
-   3. Operations team: Distro-Pharmacy-Managers@sofie.com
-   4.  Sales team: **TODO** NESalesTeam@sofie.com?
+   2. Second pass testing: jerrod.brown@sofie.com, casey.melby@sofie.com, Micah.Bounds@sofie.com, Andrea.Tremblay@sofie.com, Nasrin.Pourkiani@sofie.com
+   3. brian.schumer@sofie.com, Eric.Kroencke@sofie.com, joseph.cascone@sofie.com, malia.proskey@sofie.com, Mike.Parisi@sofie.com, Phyllis.Hoelsworth@sofie.com, Tim.Riemen@sofie.com
+   4. Operations team: Distro-Pharmacy-Managers@sofie.com
+   5.  Sales team: Distro-Sales@sofie.com?
 
 # 4.0 Requirements
 1. Daily email to designated email list at 6 am EST
-   1. **TODO** which days? Tues - Sun?
 2. Filters only for the following reason codes: 300, 310, 320, 340, 370, 220, 230, 240, 250, 270, 500, 510, 520
 3. Filters by `Cal Date = Previous Day's Date`.  
 4. Attached csv with the following fields
@@ -44,7 +44,7 @@ We want to address this issue in a timely manner based on the reason codes.
    7. Lot Number
    8. Multidose order flag
    9. Redirected order flag 
-   10. Dose
+   10. Dose Activity
    11. Cal Date
    12. Cal Time
    13. Order Date
