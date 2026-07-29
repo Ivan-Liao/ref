@@ -113,3 +113,8 @@
 1. It is possible to pass in a variable to the parameters field of the Export to File action
    1. Used with button power automate button with filters already established in Power BI
    2. https://youtu.be/FrY4O2Qs5bI?si=fCtWEODBD8EtdhJI 
+2. Order Cancelled and Deleted are used interchangeably
+3. Final disposition is always shipped (with reason code) or cancelled
+   1. Credit codes when after "shipped" in order lifecycle
+   2. Delete codes when before "shipped" in order lifescycle, "produced or earlier"
+   3. If not in cancelled or shipped, we need a final disposition report

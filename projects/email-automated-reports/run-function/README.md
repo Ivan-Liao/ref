@@ -157,6 +157,9 @@ Confirm the ODBC driver (`msodbcsql18`) is available in your Function's runtime 
 
 ```python
 import os
+import io
+import csv
+import base64
 import logging
 import pyodbc
 from azure.identity import DefaultAzureCredential
@@ -167,62 +170,104 @@ from jinja2 import Template
 ACS_ENDPOINT = os.environ["ACS_ENDPOINT"]
 SENDER_ADDRESS = os.environ["SENDER_ADDRESS"]  # e.g. DoNotReply@reports.yourcompany.com
 
+# Recipient list is maintained independently of the query results — these are the
+# people who receive the report, not data returned by the orders query.
+# Sourced from an app setting so the list can change without a redeploy;
+# falls back to a hardcoded list if the setting isn't present.
+RECIPIENT_LIST = [
+    addr.strip()
+    for addr in os.environ.get("RECIPIENT_LIST", "").split(",")
+    if addr.strip()
+] or [
+    "person1@yourcompany.com",
+    "person2@yourcompany.com",
+]
+
+
 def main(mytimer) -> None:
     credential = DefaultAzureCredential()
     kv_client = SecretClient(vault_url=os.environ["KEYVAULT_URL"], credential=credential)
 
     conn_str = kv_client.get_secret("SynapseSqlConnStr").value
-    rows = query_lake_database(conn_str)
+    orders = query_orders(conn_str)
 
-    if not rows:
-        logging.info("No rows returned — skipping send.")
+    if not orders:
+        logging.info("No orders returned — skipping send.")
         return
 
+    html_body = render_email(orders)
+    csv_attachment = build_csv_attachment(orders)
     email_client = EmailClient(ACS_ENDPOINT, credential)
 
     sent, failed = 0, 0
-    for recipient in rows:
+    for recipient_address in RECIPIENT_LIST:
         try:
-            send_email(email_client, recipient)
+            send_email(email_client, recipient_address, html_body, csv_attachment)
             sent += 1
         except Exception as ex:
-            logging.error(f"Failed to send to {recipient.get('email')}: {ex}")
+            logging.error(f"Failed to send to {recipient_address}: {ex}")
             failed += 1
 
-    logging.info(f"Sent {sent} emails, {failed} failed.")
+    logging.info(f"Queried {len(orders)} orders. Sent {sent} emails, {failed} failed.")
 
 
-def query_lake_database(conn_str):
+def query_orders(conn_str):
+    """Returns the orders dataset that populates the report — not recipients."""
     with pyodbc.connect(conn_str) as conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM dbo.daily_report_view")
+        cursor.execute("SELECT * FROM dbo.daily_orders_view")
         columns = [col[0] for col in cursor.description]
         return [dict(zip(columns, row)) for row in cursor.fetchall()]
 
 
-def render_email(data):
+def render_email(orders):
+    """Builds the report body once from the full orders dataset. The same
+    rendered report is sent to every recipient in RECIPIENT_LIST."""
     template = Template(open("email_template.html").read())
-    return template.render(**data)
+    return template.render(orders=orders, order_count=len(orders))
 
 
-def send_email(email_client, recipient):
+def build_csv_attachment(orders):
+    """Builds the orders dataset as an in-memory CSV, base64-encoded for the
+    ACS attachment payload. Built once and reused across every recipient."""
+    buffer = io.StringIO()
+    writer = csv.DictWriter(buffer, fieldnames=list(orders[0].keys()))
+    writer.writeheader()
+    writer.writerows(orders)
+
+    csv_bytes = buffer.getvalue().encode("utf-8")
+    return {
+        "name": "orders.csv",
+        "contentType": "text/csv",
+        "contentInBase64": base64.b64encode(csv_bytes).decode("utf-8"),
+    }
+
+
+def send_email(email_client, recipient_address, html_body, csv_attachment):
     message = {
         "senderAddress": SENDER_ADDRESS,
-        "recipients": {"to": [{"address": recipient["email"]}]},
+        "recipients": {"to": [{"address": recipient_address}]},
         "content": {
-            "subject": "Your daily report",
-            "html": render_email(recipient),
+            "subject": "Your daily orders report",
+            "html": html_body,
         },
+        "attachments": [csv_attachment],
     }
     poller = email_client.begin_send(message)
     poller.result()
 ```
 
+Two things worth flagging about the attachment:
+
+- **Built once, reused across recipients.** Like the HTML body, the CSV is generated a single time in `main()` — encoding 20 identical attachments separately would just be wasted work.
+- **Size limit.** ACS Email caps total message size (attachments included) at **10 MB**. Fine for a typical daily orders file, but if `orders` can grow large (e.g., thousands of rows with wide columns), it's worth adding a row-count guard that logs a warning — or switches to a link to the file in blob storage instead of an attachment — rather than letting a send fail silently on a big day.
+- **`RECIPIENT_LIST` is still config, not data.** It's read from an app setting (`RECIPIENT_LIST=alice@yourcompany.com,bob@yourcompany.com`) so recipients can be added or removed via `az functionapp config appsettings set` without touching code or redeploying.
+
 ---
 
 ## 10. Build the email template
 
-Create `email_template.html` with Jinja2 placeholders. Use inline styles and a simple table — email clients render modern CSS poorly.
+Create `email_template.html` with Jinja2 placeholders that iterate over `orders` (a list of order dicts) and reference `order_count`, e.g. a `{% for order in orders %}` loop building a table row per order. Use inline styles and a simple table — email clients render modern CSS poorly.
 
 ---
 
@@ -249,7 +294,8 @@ az functionapp config appsettings set --name $FUNC_APP --resource-group $RG \
   --settings \
   "KEYVAULT_URL=https://$KEYVAULT.vault.azure.net/" \
   "ACS_ENDPOINT=https://$ACS_NAME.communication.azure.com" \
-  "SENDER_ADDRESS=DoNotReply@reports.yourcompany.com"
+  "SENDER_ADDRESS=DoNotReply@reports.yourcompany.com" \
+  "RECIPIENT_LIST=alice@yourcompany.com,bob@yourcompany.com"
 ```
 
 Wire into CI/CD (GitHub Actions or Azure DevOps) once past initial testing.

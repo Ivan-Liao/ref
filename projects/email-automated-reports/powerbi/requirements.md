@@ -61,12 +61,14 @@ We want to address this issue in a timely manner based on the reason codes.
 # 4.1 Out of scope
 1. Filters by `Cal Date = Previous Day's Date` or `LastModified = Previous Day's Date`.  This is needed because sometimes Credit Order Reason codes will be updated after days after the Cal Date.
    1. Currently Browser based paginated report builder lacks complex filtering capability.  Will retry as soon as desktop version is installed.
+   2. Maybe get a diff of the previous 3 days to see which reason codes changed
 2. Templated email message potentially with Product, Pharmacy, Client, Order Date, Cal Date, Reason, or additional fields. 
 3. Out of scope fields
    1. Procedure Name ... due to semantic model issue
    2. Procedure Description ... due to semantic model issue
    3. Route Name ... not useful in current state
    4. Route Description .... not useful in current state
+4. Not from personal email but from system email
 
 # 5.0 Architecture
 1. [Link to architecture diagram](https://viewer.diagrams.net/?tags=%7B%7D&lightbox=1&highlight=0000ff&edit=_blank&layers=1&nav=1&title=CSV%20Automated%20Emails%20for%20Unfulfilled%20Orders&dark=auto#Uhttps%3A%2F%2Fdrive.google.com%2Fuc%3Fid%3D186-DBOhJdZMVcRPczB89Of2NXASOqNBR%26export%3Ddownload#%7B%22pageId%22%3A%22L0mPaQPRMhuCCB-t4P-Q%22%7D)

@@ -34,12 +34,15 @@ binlog_expire_logs_seconds=300000
 ```
 4. Stop and restart MariaDB service
 ```
+# example instructions, paths will need to be changed to match the file structure of the target VM
 # change directory to MariaDB bin directory
 cd "C:\Program Files\MariaDB 12.0\bin" 
 
+# shutdown mariadb service
 .\mariadb-admin.exe -u root -p shutdown 
 
-# need backtick to escape double quotes to handle space in defaults file path
+# Use powershell to start mariadb process
+# needs backtick to escape double quotes to handle space in defaults file path
 Start-Process -FilePath "C:\Program Files\MariaDB 12.0\bin\mariadbd.exe" -ArgumentList "--defaults-file=`"C:\SFDevDB\MariaDB 12.0\data\my.ini`"" -WindowStyle Hidden
 
 
