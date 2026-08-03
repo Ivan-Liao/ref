@@ -143,7 +143,7 @@
 ## Function App (!compute)
 
 ## Key Vaults (!admin)
-1.  API keys
+1. API keys
 2. Passwords
 3. Certificates
 4. Encryption keys

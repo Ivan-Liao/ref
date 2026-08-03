@@ -41,16 +41,16 @@
             ON f.Location_SID = s.Locations_SID
          LEFT JOIN biwarp_biorx_mart.dbo.dim_reasoncode rc
             ON f.ReasonCode_SID = rc.ReasonCode_SID
-         WHERE f.CalibrationDate >= CAST(DATEADD(day, -5, GETDATE()) AS DATE)
-            AND f.CalibrationDate <= CAST(DATEADD(day, -1, GETDATE()) AS DATE)
+         WHERE f.CalibrationDate = CAST(DATEADD(day, -1, GETDATE()) AS DATE)
             AND rc.Code IN ('300','310','320','340','370','220','230','240','250','270','500','510','520')
 
 
          SELECT TOP (100) * FROM biwarp_biorx_mart.dbo.dim_reasoncode
          ```
-   2. Sink: ADLS Gen2 sink
-      1. First row as header: checked
-      2. Filename convention: `orders_not_fulfilled_<YYYY-MM-DD>.csv`
+   2. Sink: Azure Blob Storage dataset, format DelimitedText (CSV)
+      1. Simpler than an ADLS Gen2 sink when you don't need hierarchical namespace, directory-level ACLs, or POSIX permissions
+      2. First row as header: checked
+      3. Filename convention: `orders_not_fulfilled_<YYYY-MM-DD>.csv`
 3. Test flow to see the final joined csv file land in the storage container
 4. Web activity action linked to Success path
    1. URL: HTTP POST URL from Logic App trigger

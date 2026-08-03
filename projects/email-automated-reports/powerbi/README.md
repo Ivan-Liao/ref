@@ -19,9 +19,9 @@
    5. Reason Code
    6. Reason
    7. Lot Number
-   8. Multidose order flag
-   9. Redirected order flag 
-   10. Dose
+   8. Multidose Order flag
+   9. Redirected Order flag 
+   10. Dose Activity
    11. Cal Date
    12. Cal Time
    13. Order Date
