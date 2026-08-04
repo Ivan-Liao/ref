@@ -104,7 +104,7 @@
 3. Body
 4. Attachments.Name 
    1. data.csv
-   2. concat('unfulfilled_orders_', formatDateTime(addDays(utcNow(), -1), 'yyyy-MM-dd'), '.csv')
+   2. concat('orders_not_fulfilled_', formatDateTime(addDays(utcNow(), -1), 'yyyy-MM-dd'), '.csv')
 5. Attachments.Content 
    1. Search for dynamic content (output of previous block)
 

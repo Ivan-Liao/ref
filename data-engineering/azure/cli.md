@@ -1,5 +1,7 @@
 - [General Info](#general-info)
 - [Security](#security)
+- [Storage account](#storage-account)
+- [Subscriptions](#subscriptions)
 
 # General Info
 1. Subscription list ... `az account list`
@@ -16,3 +18,24 @@ az ad user create --display-name "Ivy Liao" \
                   --force-change-password-next-sign-in true \
                   --mail-nickname "IvyL"
 ```
+
+# Storage account
+1. Create new container
+```
+az storage account list --output table
+
+az storage container create \
+    --name <your-container-name> \
+    --account-name <your-storage-account-name> \
+    --auth-mode login
+
+
+```
+
+# Subscriptions
+1. List and change subscriptions
+   ```
+   az account list --output table
+   az account set --subscription <subscription-name-or-id>
+   ```
+2. test
