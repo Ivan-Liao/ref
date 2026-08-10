@@ -8,6 +8,7 @@
   - [Create CSV table](#create-csv-table)
   - [Send an email (V2)](#send-an-email-v2)
 - [References](#references)
+  - [Manual process](#manual-process)
 
 # Power BI Paginated Report Creation
 1. Select fields
@@ -118,3 +119,30 @@
    1. Credit codes when after "shipped" in order lifecycle
    2. Delete codes when before "shipped" in order lifescycle, "produced or earlier"
    3. If not in cancelled or shipped, we need a final disposition report
+
+## Manual process
+1. Expression
+   1. `=FILTER(Export!A2:Z309, ISNUMBER(MATCH(Export!J2:J309, {"300","310","320","340","370","220","230","240","250","270","500","510","520"}, 0)))`
+   2. Source sheet name
+   3. Source range
+2. Copy headers over too
+3. Format date and time columns (6 columns total)
+4. Export as csv
+5. Reopen
+   1. Delete Y,Z
+   2. Delete 1900-01-01 dates
+   3. Delete empty times
+6. Subject: Orders not Fulfilled for Previous Day
+7.  Body
+   ```
+   Hello all,
+
+
+   CSV report attached. Today's report was late due to an error.  This report will be delivered at 8 am EST in the future.
+
+
+   Unfulfilled orders are defined as orders with reason codes that map to 300, 310, 320, 340, 370, 220, 230, 240, 250, 270, 500, 510, or 520.
+   ```
+7. Recipients
+
+"Brad Stamp" <Brad.Stamp@sofie.com>; "William Crisp" <william.crisp@sofie.com>; "Elangovan Srinivasan" <elangovan.srinivasan@sofie.com>; "Jerrod Brown" <jerrod.brown@sofie.com>; "Casey Melby" <casey.melby@sofie.com>; "Micah Bounds" <Micah.Bounds@sofie.com>; "Andrea Tremblay" <Andrea.Tremblay@sofie.com>; "Nasrin Pourkiani" <Nasrin.Pourkiani@sofie.com>; "Distro-Pharmacy-Managers" <Distro-Pharmacy-Managers@sofie.com>; "Brian Schumer" <brian.schumer@sofie.com>; "Mike Parisi" <Mike.Parisi@sofie.com>
