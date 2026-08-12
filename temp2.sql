@@ -1,228 +1,134 @@
-SELECT Filter_Flag,
-    orderedid,
-    Redirected_Order,
-    Reason_Code,
-    Client_Name,
-    LocationGuid,
-    PharmacyName,
-    Calibration_Date,
-    Order_Filled_Date,
-    Order_Filled_Time,
-    Order_Packed_Date,
-    Order_Packed_Time,
-    Order_Shipped_Date,
-    Order_Shipped_Time,
-    Order_Delivered_Date,
-    Order_Delivered_Time,
-    Order_ShipContainer_ID,
-    Ordered_Amount,
-    Filled_Flag,
-    Packed_Flag,
-    Shipped_Flag,
-    Delivered_Flag
-FROM (
-        SELECT CASE
-                WHEN (
-                    r.code IN (
-                        125,
-                        001,
-                        002,
-                        003,
-                        004,
-                        012,
-                        018,
-                        022,
-                        032,
-                        100,
-                        120,
-                        130,
-                        200,
-                        210,
-                        220,
-                        260
-                    )
-                    OR (
-                        shpmnt.Order_Packed_Date IS NULL
-                        AND r.code IS NULL
-                        AND (
-                            rd.Redirected_Order IS NULL
-                            OR r.code = "240"
-                        )
-                    )
-                ) THEN 'NO - Reject'
-                ELSE 'YES '
-            END AS Filter_Flag,
-            od.deleted,
-            od.orderedid,
-            CASE
-                WHEN Bulkod.Flag_Bulk_Order IS NOT NULL THEN 'Yes'
-                ELSE 'No'
-            END AS Flag_Bulk_Order,
-            rd.Redirected_Order,
-            od.clientID AS Client_ID,
-            r.code AS Reason_Code,
-            r.Description AS Reason_Desc,
-            r.reasonid,
-            cl.Name AS Client_Name,
-            od.LocationGUID AS LocationGuid,
-            site.LocationName AS PharmacyName,
-            od.ProductID AS Product_ID,
-            p.Name AS Product_Name,
-            pr.Name AS Procedure_Name,
-            od.RouteID AS RouteID,
-            route.RouteTime AS Route_Time,
-            CASE
-                WHEN route.Description IS NOT NULL THEN route.Name
-                ELSE CONCAT(route.Name, '-', route.Description)
-            END AS Route_Name,
-            CASE
-                WHEN od.PONumber IS NOT NULL THEN 'NA'
-                ELSE od.PONumber
-            END AS PO_Number,
-            od.orderDate AS Order_Date,
-            od.OrderTime AS Order_Time,
-            od.CalibrationDate AS Calibration_Date,
-            CASE
-                WHEN Bulkod.Flag_Bulk_Order IS NOT NULL THEN (Bulkod.CalibrationTime)
-                ELSE od.CalibrationTime
-            END AS Calibration_Time,
-            od.FilledDate AS Order_Filled_Date,
-            od.FilledTime AS Order_Filled_Time,
-            shpmnt.Order_Packed_Date AS Order_Packed_Date,
-            shpmnt.Order_Packed_Time AS Order_Packed_Time,
-            shpmnt.Order_Shipped_Date AS Order_Shipped_Date,
-            shpmnt.Order_Shipped_Time AS Order_Shipped_Time,
-            shpmnt.Order_Delivered_Date AS Order_Delivered_Date,
-            shpmnt.Order_Delivered_Time AS Order_Delivered_Time,
-            od.ShipContainerID AS Order_ShipContainer_ID,
-            od.Quantity AS Ordered_Quantity,
-            od.Amount AS Ordered_Amount,
-            CASE
-                WHEN od.FilledDate IS NOT NULL THEN "Yes"
-                ELSE "No"
-            END AS Filled_Flag,
-            CASE
-                WHEN shpmnt.Order_Packed_Date IS NOT NULL THEN "Yes"
-                ELSE "No"
-            END AS Packed_Flag,
-            CASE
-                WHEN shpmnt.Order_Shipped_Date IS NOT NULL THEN "Yes"
-                ELSE "No"
-            END AS Shipped_Flag,
-            CASE
-                WHEN shpmnt.Order_Delivered_Date IS NOT NULL THEN "Yes"
-                ELSE "No"
-            END AS Delivered_Flag
-        FROM (
-                SELECT *
-                FROM ordered od
-                WHERE CalibrationDate >= DATE_SUB(CAST(sysdate() AS DATE), INTERVAL 14 DAY)
-                    /* AND LocationGUID = 'B8E5FFE1-D87E-46DE-90C2-5C1262A301B0' 
-                                                  -- orderedid = '70858'
-                                                  -- AND productid = 17 */
-            ) od
-            LEFT OUTER JOIN (
-                SELECT ob.orderedid,
-                    ob.locationGuid,
-                    AVG(ob.CalAmount) AS Amount,
-                    MIN(ob.caltime) AS CalibrationTime,
-                    'Yes' AS Flag_Bulk_Order
-                FROM master.orderedbulk ob
-                WHERE Deleted = 0
-                GROUP BY ob.orderedid,
-                    ob.locationGuid
-            ) Bulkod ON (
-                od.OrderedID = Bulkod.orderedid
-                AND od.LocationGUID = Bulkod.locationGuid
-            )
-            LEFT OUTER JOIN (
-                SELECT rd.orderedID AS Origin_Orderid,
-                    rd.ExchangedID AS Delegated_Orderid,
-                    l.LocationGUID AS Origin_Pharmacy,
-                    rd.FacilityName AS Delegated_Pharmacy,
-                    DATE(TransmissionDT) AS Transmission_Date,
-                    'Yes' AS Redirected_Order
-                FROM master.orderedredirect rd
-                    INNER JOIN master.locations l ON (rd.LocationGUID = l.LocationGUID)
-                    INNER JOIN (
-                        SELECT rdf.LocationGUID,
-                            rdf.OrderedID,
-                            MAX(rdf.CreatedDT) AS MaxCreatedDT
-                        FROM (
-                                SELECT *
-                                FROM orderedredirect
-                                WHERE OrderedID IS NOT NULL
-                                    AND ExchangedID IS NOT NULL
-                                    AND Deleted = 0
-                            ) rdf
-                        WHERE rdf.orderedID IS NOT NULL
-                            AND rdf.ExchangedID IS NOT NULL
-                            AND rdf.Deleted = 0
-                        GROUP BY rdf.LocationGUID,
-                            rdf.OrderedID
-                    ) rd_max ON (
-                        rd.orderedID = rd_max.orderedID
-                        AND rd.LocationGUID = rd_max.LocationGUID
-                        AND rd.CreatedDT = rd_max.MaxCreatedDT
-                    )
-            ) rd ON (
-                od.orderedid = rd.Origin_Orderid
-                AND od.LocationGUID = rd.Origin_Pharmacy
-            )
-            LEFT OUTER JOIN master.locations site ON (od.LocationGUID = site.LocationGUID)
-            LEFT OUTER JOIN master.client cl ON (od.clientid = cl.clientid)
-            LEFT OUTER JOIN master.product p ON(od.ProductID = p.Product)
-            LEFT OUTER JOIN master.procedures pr ON(od.ProcedureID = pr.ProcedureID)
-            LEFT OUTER JOIN master.routes route ON(
-                od.RouteID = route.RouteID
-                AND od.LocationGUID = route.LocationGUID
-            )
-            LEFT OUTER JOIN (
-                SELECT sc.shipcontainerid,
-                    sc.PackedDate AS Order_Packed_Date,
-                    sc.PackedTime AS Order_Packed_Time,
-                    sh.ShipDate AS Order_Shipped_Date,
-                    sh.ShipTime AS Order_Shipped_Time,
-                    sc.DeliveredDate AS Order_Delivered_Date,
-                    sc.DeliveredTime AS Order_Delivered_Time,
-                    sc.LocationGUID
-                FROM master.shipcontainer sc
-                    LEFT OUTER JOIN master.shipment sh ON (
-                        sh.ShipmentID = sc.DeliveredShipmentID
-                        AND sc.LocationGUID = sh.LocationGUID
-                    )
-            ) shpmnt ON(
-                od.shipcontainerid = shpmnt.shipcontainerid
-                AND od.LocationGUID = shpmnt.LocationGUID
-            )
-            LEFT OUTER JOIN (
-                SELECT r.reasonid,
-                    r.LocationGUID,
-                    r.recordid AS reason_Orderid,
-                    r.REASONCODEID,
-                    rc.code,
-                    rc.Description
-                FROM master.reason r
-                    INNER JOIN (
-                        SELECT r.LocationGUID,
-                            recordid,
-                            MAX(r.ReasonID) AS ReasonID,
-                            MAX(r.DT) AS DT
-                        FROM master.reason r
-                        WHERE r.DELETED = 0
-                            AND r.TableName = 'ordered'
-                        GROUP BY r.LocationGUID,
-                            r.recordid
-                    ) r_max ON (
-                        r.LocationGUID = r_max.LocationGUID
-                        AND r.RecordID = r_max.recordid
-                        AND r.DT = r_max.DT
-                        AND r.ReasonID = r_max.ReasonID
-                    )
-                    INNER JOIN master.reasoncode rc ON(r.reasoncodeid = rc.reasoncodeid)
-                WHERE r.Deleted = 0
-                    AND r.TableName = 'ordered'
-            ) r ON (
-                r.reason_Orderid = od.OrderedID
-                AND r.LocationGUID = od.LocationGUID
-            )
+WITH
+-- Reusable list of "actionable" reason codes, defined once instead of
+-- repeated in two separate IN(...) clauses.
+reason_codes AS (
+    SELECT Code
+    FROM (VALUES
+        ('300'),('310'),('320'),('340'),('370'),
+        ('220'),('230'),('240'),('250'),('270'),
+        ('500'),('510'),('520')
+    ) AS rc(Code)
+),
+
+-- Rank each order's reason rows newest-first (by DT) so we can later
+-- isolate just the most recent reason per order.
+reason_ranking AS (
+    SELECT
+        r.RecordID      AS ReasonOrderedID,
+        r.ReasonCodeID,
+        r.DT            AS ReasonDT,
+        r.LocationGUID,
+        ROW_NUMBER() OVER (PARTITION BY r.RecordID, r.LocationGUID ORDER BY r.DT DESC) AS ReasonRank
+    FROM biwarp_biorx_ods.dbo.reason r
+    WHERE r.TableName = 'ordered'
+        -- DT is a datetime column and needs to be cast to date for the comparison
+        AND CAST(r.DT AS DATE) = CAST(DATEADD(day, -1, GETDATE()) AS DATE)
+),
+current_reason AS (
+    SELECT
+        ReasonOrderedID,
+        ReasonCodeID,
+        ReasonDT,
+        LocationGUID
+    FROM reason_ranking
+    WHERE ReasonRank = 1
+),
+
+-- Filter + dedupe FIRST, joining only the tables needed to evaluate the
+-- WHERE clause (dim_site for LocationGUID, dim_reasoncode for Code,
+-- current_reason for ReasonDT). This keeps row counts small before we
+-- bring in the purely cosmetic dimension joins below.
+filtered_orders AS (
+    SELECT
+        f.Ordered_Id,
+        f.Location_SID,
+        f.Client_SID,
+        f.Product_SID,
+        f.Procedure_SID,
+        f.ReasonCode_SID,
+        f.Lot_Number,
+        f.Flag_Bulk_Order,
+        f.Flag_Redirected_Order,
+        f.Amount,
+        f.CalibrationDate,
+        f.CalibrationTime,
+        f.Order_Date,
+        f.Order_Time,
+        f.FilledDate,
+        f.FilledTime,
+        f.Order_Packed_Date,
+        f.Order_Packed_Time,
+        f.Order_Shipped_Date,
+        f.Order_Shipped_Time,
+        f.Order_Delivered_Date,
+        f.Order_Delivered_Time,
+        cr.ReasonDT,
+        ROW_NUMBER() OVER (
+            PARTITION BY f.Ordered_Id
+            ORDER BY f.LastModified DESC
+        ) AS OrderRank
+    FROM biwarp_biorx_mart.dbo.f_ordered f
+    LEFT JOIN biwarp_biorx_mart.dbo.dim_site s
+        ON f.Location_SID = s.Locations_SID
+    LEFT JOIN biwarp_biorx_mart.dbo.dim_reasoncode rc
+        ON f.ReasonCode_SID = rc.ReasonCode_SID
+    LEFT JOIN current_reason cr
+        ON f.Ordered_Id = cr.ReasonOrderedID
+        AND s.LocationGUID = cr.LocationGUID
+    WHERE
+        -- Case 1: calibrated yesterday with an actionable reason code
+        (
+            f.CalibrationDate = CAST(DATEADD(day, -1, GETDATE()) AS DATE)
+            AND rc.Code IN (SELECT Code FROM reason_codes)
+        )
+        -- Case 2: calibrated in the last 14 days, with a recent (non-null)
+        -- reason recorded, also carrying an actionable reason code
+        OR (
+            f.CalibrationDate BETWEEN
+                CAST(DATEADD(day, -14, GETDATE()) AS DATE)
+                AND CAST(DATEADD(day, -1, GETDATE()) AS DATE)
+            AND cr.ReasonDT IS NOT NULL
+            AND rc.Code IN (SELECT Code FROM reason_codes)
+        )
+)
+
+-- Attach the display-only dimensions and keep just the most recent
+-- version of each order.
+SELECT
+    fo.Ordered_Id                      AS "RxID",
+    s.LocationName                     AS "Pharmacy",
+    p.Name                             AS "Product",
+    procedures.Name                    AS "Procedure",
+    c.Name                             AS "Client",
+    rc.Code                            AS "Reason Code",
+    rc.Description                     AS "Reason",
+    fo.ReasonDT                        AS "ReasonDT",
+    fo.Lot_Number                      AS "LotNumber",
+    fo.Flag_Bulk_Order                 AS "MultidoseOrderFlag",
+    fo.Flag_Redirected_Order           AS "RedirectedOrderFlag",
+    fo.Amount                          AS "DoseActivity",
+    fo.CalibrationDate                 AS "CalDate",
+    fo.CalibrationTime                 AS "CalTime",
+    fo.Order_Date                      AS "OrderDate",
+    fo.Order_Time                      AS "OrderTime",
+    fo.FilledDate                      AS "FilledDate",
+    fo.FilledTime                      AS "FilledTime",
+    fo.Order_Packed_Date               AS "PackedDate",
+    fo.Order_Packed_Time               AS "PackedTime",
+    fo.Order_Shipped_Date              AS "ShippedDate",
+    fo.Order_Shipped_Time              AS "ShippedTime",
+    fo.Order_Delivered_Date            AS "DeliveryDate",
+    fo.Order_Delivered_Time            AS "DeliveryTime"
+FROM filtered_orders fo
+LEFT JOIN biwarp_biorx_mart.dbo.dim_client c
+    ON fo.Client_SID = c.Client_SID
+LEFT JOIN biwarp_biorx_mart.dbo.dim_product p
+    ON fo.Product_SID = p.Product_SID
+LEFT JOIN biwarp_biorx_mart.dbo.dim_site s
+    ON fo.Location_SID = s.Locations_SID
+LEFT JOIN biwarp_biorx_mart.dbo.dim_reasoncode rc
+    ON fo.ReasonCode_SID = rc.ReasonCode_SID
+LEFT JOIN biwarp_biorx_mart.dbo.dim_procedures procedures
+    ON fo.Procedure_SID = procedures.Procedures_SID
+WHERE fo.OrderRank = 1
+ORDER BY fo.Ordered_Id;
