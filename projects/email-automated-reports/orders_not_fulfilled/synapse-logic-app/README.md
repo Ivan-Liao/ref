@@ -64,13 +64,13 @@ Azure Synapse lake database > Synapse pipeline (ADLS read > ADLS sink)> Logic Ap
                   f.Order_Date,
                   f.Order_Time,
                   f.FilledDate,
-                  f.FilledTime,
+                  CAST(f.FilledTime AS TIME) AS  FilledTime,
                   f.Order_Packed_Date,
-                  f.Order_Packed_Time,
+                  CAST(f.Order_Packed_Time AS TIME) AS Order_Packed_Time,
                   f.Order_Shipped_Date,
-                  f.Order_Shipped_Time,
+                  CAST(f.Order_Shipped_Time AS TIME) AS Order_Shipped_Time,
                   f.Order_Delivered_Date,
-                  f.Order_Delivered_Time,
+                  CAST(f.Order_Delivered_Time AS TIME) AS Order_Delivered_Time,
                   cr.ReasonDT,
                   ROW_NUMBER() OVER (
                         PARTITION BY f.Ordered_Id
@@ -139,7 +139,7 @@ Azure Synapse lake database > Synapse pipeline (ADLS read > ADLS sink)> Logic Ap
             LEFT JOIN biwarp_biorx_mart.dbo.dim_procedures procedures
                ON fo.Procedure_SID = procedures.Procedures_SID
             WHERE fo.OrderRank = 1
-            ORDER BY fo.Ordered_Id;
+            ORDER BY s.LocationName,fo.CalibrationDate DESC;
          ;
          ```
    2. Sink: ADLS Gen2 sink

@@ -83,4 +83,5 @@ We want to address the issue of unfulfilled orders in a timely manner based on t
 1. Orders with reason code 220 (SOFIE Cancelled - Order Entry Error / Duplicate Order) will now be added.  Previously the PowerBI report had filtered these out.
 2. Additional orders with calibration dates in the past two weeks have been added. These orders have had their reason code updated on the previous day to one of the reason codes that we track.
 3. Archived architecture diagram v1.0
+4. Procedure will be added to the dataset as a new column.
    1. [Link to architecture diagram](https://viewer.diagrams.net/?tags=%7B%7D&lightbox=1&highlight=0000ff&edit=_blank&layers=1&nav=1&title=CSV%20Automated%20Emails%20for%20Unfulfilled%20Orders&dark=auto#Uhttps%3A%2F%2Fdrive.google.com%2Fuc%3Fid%3D186-DBOhJdZMVcRPczB89Of2NXASOqNBR%26export%3Ddownload#%7B%22pageId%22%3A%22L0mPaQPRMhuCCB-t4P-Q%22%7D)
