@@ -38,25 +38,27 @@ We want to address this issue in a timely manner based on the reason codes.
    1. Rx ID
    2. Pharmacy
    3. Product
-   4. Client
-   5. Reason Code
-   6. Reason
-   7. Lot Number
-   8. Multidose order flag
-   9. Redirected order flag 
-   10. Dose Activity
-   11. Cal Date
-   12. Cal Time
-   13. Order Date
-   14. Order Time
-   15. Filled Date
-   16. Filled Time
-   17. Packed Date
-   18. Packed Time
-   19. Shipped Date
-   20. Shipped Time
-   21. Delivery Date
-   22. Delivery Time
+   4. Procedure
+   5. Procedure Description
+   6. Client
+   7. Reason Code
+   8. Reason
+   9. Lot Number
+   10. Multidose order flag
+   11. Redirected order flag 
+   12. Dose Activity
+   13. Cal Date
+   14. Cal Time
+   15. Order Date
+   16. Order Time
+   17. Filled Date
+   18. Filled Time
+   19. Packed Date
+   20. Packed Time
+   21. Shipped Date
+   22. Shipped Time
+   23. Delivery Date
+   24. Delivery Time
 
 # 4.1 Out of scope
 1. Filters by `Cal Date = Previous Day's Date` or `LastModified = Previous Day's Date`.  This is needed because sometimes Credit Order Reason codes will be updated after days after the Cal Date.
@@ -64,10 +66,8 @@ We want to address this issue in a timely manner based on the reason codes.
    2. Maybe get a diff of the previous 3 days to see which reason codes changed
 2. Templated email message potentially with Product, Pharmacy, Client, Order Date, Cal Date, Reason, or additional fields. 
 3. Out of scope fields
-   1. Procedure Name ... due to semantic model issue
-   2. Procedure Description ... due to semantic model issue
-   3. Route Name ... not useful in current state
-   4. Route Description .... not useful in current state
+   1. Route Name ... not useful in current state
+   2. Route Description .... not useful in current state
 4. Not from personal email but from system email
 
 # 5.0 Architecture

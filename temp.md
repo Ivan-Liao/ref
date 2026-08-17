@@ -1,12 +1,3 @@
-FilteredOrders = 
-FILTER(
-    'f_ordered',
-    'f_ordered'[C_Flag_Filled] = 0 
-    && ( 
-        'f_ordered'[CalibrationDate] = DATE(2026, 6, 19) 
-        || ('f_ordered'[CalibrationDate] BETWEEN DATE(2026, 6, 16) AND DATE(2026, 6, 18)
-        && 'f_ordered'[LastModified] = DATE(2026, 6, 19) 
-        )
-    )
-)
+=FILTER(Export!A2:Y2650, ISNUMBER(MATCH(Export!J2:J2650, {300,310,320,340,370,220,230,240,250,270,500,510,520}, 0)))
 
+=FILTER(Export!A2:Z2669, ISNUMBER(MATCH(Export!J2:J2669, {"300","310","320","340","370","220","230","240","250","270","500","510","520"}, 0)))

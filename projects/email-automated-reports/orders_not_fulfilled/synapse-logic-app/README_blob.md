@@ -42,12 +42,17 @@
          LEFT JOIN biwarp_biorx_mart.dbo.dim_reasoncode rc
             ON f.ReasonCode_SID = rc.ReasonCode_SID
          WHERE f.CalibrationDate = CAST(DATEADD(day, -1, GETDATE()) AS DATE)
+            AND rc.Code IN ('300','310','320','340','370','220','230','240','250','270','500','510','520')
+
+
+         SELECT TOP (100) * FROM biwarp_biorx_mart.dbo.dim_reasoncode
          ```
-      4. Adjust the join type (INNER/LEFT/etc.) and WHERE clause as needed depending on whether unmatched rows should be dropped or kept
    2. Sink: Azure Blob Storage dataset, format DelimitedText (CSV)
       1. Simpler than an ADLS Gen2 sink when you don't need hierarchical namespace, directory-level ACLs, or POSIX permissions
       2. First row as header: checked
-      3. Filename convention: `orders_not_fulfilled_<YYYY-MM-DD>.csv`
+      3. Sink dataset name: SnapshotOrdersNotFulfilled
+      4. Filename convention: `orders_not_fulfilled_<YYYY-MM-DD>.csv`
+         1. @concat('filename_', formatDateTime(addDays(utcNow(), -1), 'yyyy-MM-dd'), '.csv')
 3. Test flow to see the final joined csv file land in the storage container
 4. Web activity action linked to Success path
    1. URL: HTTP POST URL from Logic App trigger
@@ -77,6 +82,13 @@ For a straightforward join across a handful of known tables, the SQL query + sin
    3. Body:
    4. Add new parameter and check attachments
       1. File content dynamic token
+
+# Changlog
+1. New Lake database: extracts
+   1. new table orders_not_fulfilled
+2. New Integration database
+   1. orders_not_fulfilled (for source)
+   2. SnapshotOrdersNotFulfilled (for sink)
 
 # References
 1. Watch file size as Office 365 Outlook caps attachments at roughly 20 - 35 MB
