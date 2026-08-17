@@ -84,7 +84,9 @@
  1.  Real-time, high-speed analytics for streaming and telemetry data (PaaS) build on Kusto like Fabric Eventhouse
 
 ## Azure Data Lake Storage (ADLS) Gen2
-1. OverviewConfigurable capability of an Azure Storage account
+1. Overview
+   1. Configurable capability of an Azure Storage account
+   2. Physical directories unlike virtual directories in normal blob storage ... more efficient for directory level changes
 
 ## Azure Functions
 1. Serverless solution with less code, less infrastructure, and cost savings

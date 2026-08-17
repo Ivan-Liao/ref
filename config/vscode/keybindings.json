@@ -112,34 +112,13 @@
         "when": "inFilesPicker && inQuickOpen"
     },
     {
-        "key": "shift+alt+down",
-        "command": "-extension.vim_cmd+alt+down",
-        "when": "editorTextFocus && vim.active && !inDebugRepl"
+        "key": "ctrl+shift+o",
+        "command": "extension.vim_ctrl+o",
+        "when": "editorTextFocus && vim.active && vim.use<C-o> && !inDebugRepl"
     },
     {
-        "key": "j",
-        "command": "-list.focusDown",
-        "when": "listFocus && !inputFocus"
-    },
-    {
-        "key": "alt+j",
-        "command": "workbench.action.quickOpenNavigateNext"
-    },
-    {
-        "key": "alt+k",
-        "command": "workbench.action.quickOpenNavigatePrevious"
-    },
-    {
-        "key": "ctrl+j ctrl+s",
-        "command": "workbench.action.focusSideBar"
-    },
-    {
-        "key": "ctrl+0",
-        "command": "-workbench.action.focusSideBar"
-    },
-    {
-        "key": "j",
-        "command": "list.focusDown",
-        "when": "listFocus && !inputFocus && !treestickyScrollFocused"
+        "key": "ctrl+o",
+        "command": "-extension.vim_ctrl+o",
+        "when": "editorTextFocus && vim.active && vim.use<C-o> && !inDebugRepl"
     }
 ]
