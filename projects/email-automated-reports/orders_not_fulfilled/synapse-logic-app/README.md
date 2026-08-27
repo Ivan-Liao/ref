@@ -6,9 +6,13 @@ Azure Synapse lake database > Synapse pipeline (ADLS read > ADLS sink)> Logic Ap
 2. Copy Data activity
    1. Source
       1. Connector: Azure Synapse Analytics
-      2. Linked service: points at the workspace's **built-in serverless SQL endpoint** (this is what makes the lake database tables queryable via T-SQL even though they're written by the Spark pool)
-         1. sofiesyndev1-ondemand.sql.azuresynapse.net
-         2. biwarp_biorx_mart
+      2. Linked service
+         1. Name: AzureSynapseAnalyticsBioRxMart
+         2. Fully qualified domain name: sofiesyndev1-ondemand.sql.azuresynapse.net
+            1. @{concat(linkedService().Workspace_Name,'-ondemand.sql.azuresynapse.net')}
+         3. Database name: biwarp_biorx_mart
+         4. Authentication type: System-assigned managed identity
+         5. Parameters: Workspace_Name
       3. Use query (not table) — write the join and column selection directly in SQL, e.g.:
          ```sql
             WITH
@@ -32,7 +36,9 @@ Azure Synapse lake database > Synapse pipeline (ADLS read > ADLS sink)> Logic Ap
                FROM biwarp_biorx_ods.dbo.reason r
                WHERE r.TableName = 'ordered'
                   -- DT is a datetime column and needs to be cast to date for the comparison
-                  AND CAST(r.DT AS DATE) = CAST(DATEADD(day, -1, GETDATE()) AS DATE)
+                  -- Today and yesterday to pull in all DT values
+                  AND CAST(r.DT AS DATE) > CAST(DATEADD(day, -14, GETDATE()) AS DATE)
+                  AND CAST(r.DT AS DATE) < CAST(GETDATE() AS DATE)
             ),
             current_reason AS (
                SELECT
@@ -64,7 +70,7 @@ Azure Synapse lake database > Synapse pipeline (ADLS read > ADLS sink)> Logic Ap
                   f.Order_Date,
                   f.Order_Time,
                   f.FilledDate,
-                  CAST(f.FilledTime AS TIME) AS  FilledTime,
+                  NULLIF(CAST(f.FilledTime AS TIME), '00:00:00') AS  FilledTime,
                   f.Order_Packed_Date,
                   CAST(f.Order_Packed_Time AS TIME) AS Order_Packed_Time,
                   f.Order_Shipped_Date,
@@ -72,10 +78,7 @@ Azure Synapse lake database > Synapse pipeline (ADLS read > ADLS sink)> Logic Ap
                   f.Order_Delivered_Date,
                   CAST(f.Order_Delivered_Time AS TIME) AS Order_Delivered_Time,
                   cr.ReasonDT,
-                  ROW_NUMBER() OVER (
-                        PARTITION BY f.Ordered_Id
-                        ORDER BY f.LastModified DESC
-                  ) AS OrderRank
+                  ROW_NUMBER() OVER (PARTITION BY f.Ordered_Id ORDER BY f.LastModified DESC) AS OrderRank
                FROM biwarp_biorx_mart.dbo.f_ordered f
                LEFT JOIN biwarp_biorx_mart.dbo.dim_site s
                   ON f.Location_SID = s.Locations_SID
@@ -85,18 +88,17 @@ Azure Synapse lake database > Synapse pipeline (ADLS read > ADLS sink)> Logic Ap
                   ON f.Ordered_Id = cr.ReasonOrderedID
                   AND s.LocationGUID = cr.LocationGUID
                WHERE
-                  -- Case 1: calibrated yesterday with a reason code
+                  -- Case 1: calibrated yesterday with a relavent reason code
                   (
                         f.CalibrationDate = CAST(DATEADD(day, -1, GETDATE()) AS DATE)
                         AND rc.Code IN (SELECT Code FROM reason_codes)
                   )
-                  -- Case 2: calibrated in the last 14 days, with a recent (non-null)
-                  -- reason recorded, also carrying an actionable reason code
+                  -- Case 2: calibrated in the last 14 days, with a relavent reason recorded yesterday
                   OR (
                         f.CalibrationDate BETWEEN
                            CAST(DATEADD(day, -14, GETDATE()) AS DATE)
                            AND CAST(DATEADD(day, -1, GETDATE()) AS DATE)
-                        AND cr.ReasonDT IS NOT NULL
+                        AND CAST(cr.ReasonDT AS DATE) = CAST(DATEADD(day, -1, GETDATE()) AS DATE)
                         AND rc.Code IN (SELECT Code FROM reason_codes)
                   )
             )
@@ -139,7 +141,7 @@ Azure Synapse lake database > Synapse pipeline (ADLS read > ADLS sink)> Logic Ap
             LEFT JOIN biwarp_biorx_mart.dbo.dim_procedures procedures
                ON fo.Procedure_SID = procedures.Procedures_SID
             WHERE fo.OrderRank = 1
-            ORDER BY s.LocationName,fo.CalibrationDate DESC;
+            ORDER BY s.LocationName,fo.CalibrationDate DESC
          ;
          ```
    2. Sink: ADLS Gen2 sink

@@ -30,10 +30,13 @@ server-id=1
 log_bin=mariadb-bin
 binlog_format=ROW
 binlog_row_image=FULL
-binlog_expire_logs_seconds=300000
+binlog_expire_logs_seconds=604800
 ```
-4. Stop and restart MariaDB service
+4. Stop and restart MariaDB service 
 ```
+# best to use windows services.exe
+
+# alternative below
 # example instructions, paths will need to be changed to match the file structure of the target VM
 # change directory to MariaDB bin directory
 cd "C:\Program Files\MariaDB 12.0\bin" 

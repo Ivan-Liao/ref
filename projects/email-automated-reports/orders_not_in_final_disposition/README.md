@@ -13,6 +13,7 @@ WITH order_ranking AS (
         Deleted,
         Processed,
         Filled,
+        FilledDate,
         ROW_NUMBER() OVER (PARTITION BY OrderedID, LocationGUID ORDER BY LastModified DESC) AS OrderRank
     FROM biwarp_biorx_ods.dbo.ordered
     WHERE CalibrationDate >= DATEADD(day, -14, CAST(GETDATE() AS DATE)) -- calibration date range testing
@@ -29,7 +30,8 @@ WITH order_ranking AS (
         ProductID,
         Deleted,
         Processed,
-        Filled
+        Filled,
+        FilledDate
     FROM order_ranking
     WHERE OrderRank = 1
 ),reason_ranking AS (
@@ -59,14 +61,15 @@ SELECT
     p.Name          AS Product,
     c.Name          AS Client,
     o.CalibrationDate,
-    o.CalibrationTime
+    o.CalibrationTime,
+    o.FilledDate
 FROM current_order o
     -- Shipment chain: used only to check whether the order has shipped.
     LEFT JOIN biwarp_biorx_ods.dbo.shipcontainer sc
         ON sc.ShipContainerID = o.ShipContainerID
         AND sc.LocationGUID = o.LocationGUID
     LEFT JOIN biwarp_biorx_ods.dbo.shipment s
-        ON s.ShipmentID = sc.ShipmentID
+        ON s.ShipmentID = sc.DeliveredShipmentID
         AND s.LocationGUID = o.LocationGUID
     LEFT JOIN biwarp_biorx_ods.dbo.locations l
         ON l.LocationGUID = o.LocationGUID
@@ -87,9 +90,9 @@ WHERE 1=1                                          -- anchor; comment out filter
     AND s.ShipDate IS NULL                          -- not yet shipped (or no shipment record at all)
     AND r.Code IS NULL                              -- no current reason code found
     AND o.Deleted = 0
-    AND o.Processed not in (1, -2)
-    AND o.Filled <> 1
-    AND ore.ExchangedID IS NULL
+    AND o.Filled <> 2
+    -- AND o.Processed <> 1
+    -- AND ore.ExchangedID IS NULL
 ```
 
 ## Solution on replication server
@@ -110,10 +113,11 @@ WITH order_ranking AS (
         Deleted,
         Processed,
         Filled,
+        FilledDate,
         ROW_NUMBER() OVER (PARTITION BY OrderedID,LocationGUID ORDER BY LastModified DESC) AS OrderRank
     FROM master.ordered
-    WHERE CalibrationDate >= DATE_ADD(CAST(NOW() AS DATE), INTERVAL -14 DAY) -- calibration date range testing
-        AND CalibrationDate <= CAST(NOW() AS DATE) -- only orders calibrated today
+    WHERE CalibrationDate >= DATE_ADD(CAST(NOW() AS DATE), INTERVAL -14 DAY) 
+        AND CalibrationDate <= DATE_ADD(CAST(NOW() AS DATE) , INTERVAL 0 DAY) 
 ),current_order AS (
     -- Keep only the most recent order (rank 1) per order.
     SELECT
@@ -126,14 +130,14 @@ WITH order_ranking AS (
         ProductID,
         Deleted,
         Processed,
-        Filled
+        Filled,
+        FilledDate
     FROM order_ranking
     WHERE OrderRank = 1
 )
 ,
 reason_ranking AS (
-    -- Rank each order's reason rows newest-first (by DT) so we can later
-    -- isolate just the most recent reason per order.
+    -- Rank each order's reason rows newest-first (by DT)
     SELECT
         r.RecordID  AS ReasonOrderedID,
         r.LocationGUID AS LocationGUID,
@@ -159,14 +163,17 @@ SELECT
     p.Name          AS Product,
     c.Name          AS Client,
     o.CalibrationDate,
-    o.CalibrationTime
+    o.CalibrationTime,
+    o.FilledDate,
+    s.ShipDate
+    -- ore.ExchangedID -- too confusing for now only for Redirected Sent, not Redirected Received
 FROM current_order o
-    -- Shipment chain: used only to check whether the order has shipped.
+    -- Shipment chain many shipcontainers in a shipment, only shipment has shipping date
     LEFT JOIN master.shipcontainer sc
         ON sc.ShipContainerID = o.ShipContainerID
         AND sc.LocationGUID = o.LocationGUID
     LEFT JOIN master.shipment s
-        ON s.ShipmentID = sc.ShipmentID
+        ON s.ShipmentID = sc.DeliveredShipmentID
         AND s.LocationGUID = o.LocationGUID
     LEFT JOIN master.locations l
         ON l.LocationGUID = o.LocationGUID
@@ -182,9 +189,8 @@ FROM current_order o
     	ON ore.OrderedID = o.OrderedID
     	AND ore.LocationGUID = o.LocationGUID
 WHERE 1=1                                          -- anchor; comment out filters below individually as needed
-    AND s.ShipDate IS NULL                          -- not yet shipped (or no shipment record at all)
+    AND sc.PackedDate IS NULL                          -- not yet shipped (or no shipment record at all)
     AND r.Code IS NULL                              -- no current reason code found
     AND o.Deleted = 0
-    AND ore.ExchangedID IS null
-    AND o.Processed not in (1, -2)
+    AND o.Filled <> 2
 ```
