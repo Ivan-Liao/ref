@@ -10,16 +10,17 @@
    3. enable private subnet
    4. subnet delegation 
       1. Microsoft.MessagingConnectors/connector
-7. Workspace identity
-   1. Name: FabricDev
-   2. ID: f07fa8e3-feb0-4802-8705-6c92403861af
-   3. App ID: 9611bdd3-35f3-4e88-8220-16052f5dd5f0
-8. Grant contributor role on the connector VNET (ELANGO)
-9. Create Streaming VNet Data Gateway 
-10. Create Fabric connection
+7. Fabric portal > admin portal > fabric capacity > capacity admins
+8. Workspace identity
+   1. Name: FabricProd
+   2. ID: b9ed41bd-0895-4793-9083-9bd0e57d2bff
+   3. App ID: d24c7a8d-1672-4a6b-9f29-654e5a9b671f
+9. Grant network contributor role on the connector VNET (ELANGO) to workspace identity
+10. Create Streaming VNet Data Gateway 
+11. Create Fabric connection
     1.  10.20.37.4
     2.  3306
     3.  master
     4.  Username (ELANGO)
     5.  Password (ELANGO)
-11. Configure Eventstream Source
+12. Configure Eventstream Source
