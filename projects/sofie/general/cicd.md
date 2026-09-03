@@ -58,3 +58,16 @@
 8. Run CI/CD pipeline Synapse_cicd with deployProd
    1. parameter deployDev
    2. Verify in live mode
+
+# Changelog
+
+## 2026-09-02
+1. TODO sync with Elango
+   1. Delete unused parameters
+2. Collaboration branch will be changed to master
+3. Checked parameters
+   1. In review by Ram
+   2. Some may need to be created anew to have the same shared name between dev and prod
+   3. Existing pipelines can stay
+4. Check Dataset 
+5. First time sync for master from live mode

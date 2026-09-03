@@ -159,17 +159,18 @@ Azure Synapse lake database > Synapse pipeline (ADLS read > ADLS sink)> Logic Ap
 2. New trigger: "when an HTTP request is received"
    1. HTTP URL generated upon save
 3. Save the app immediately to generate a unique HTTP POST URL
-4. Azure Data Lake: Read File
+4. Get blob content (V2) ... Azure Data Lake: Read File
    1. Storage account name
    2. File path with filename expression
-      1. concat('orders_not_fulfilled_', formatDateTime(addDays(utcNow(), -1), 'yyyy-MM-dd'), '.csv')
+      1. concat('orders_not_fulfilled_', formatDateTime(utcNow(), 'yyyy-MM-dd'), '.csv')
    3. Get blob content (V2) and point to the container/blob path used by the Copy Data sink
 5. Office 365 Outlook: Send an email (V2) 
    1. To:
    2. Subject:
    3. Body:
    4. Add new parameter and check attachments
-      1. File content dynamic token
+      1. Name: concat('orders_not_fulfilled_', formatDateTime(utcNow(), 'yyyy-MM-dd'), '.csv')
+      2. File content: outputs('Get_blob_content_(V2)')?['body']
 
 # Back to Synapse pipeline
 1. Add Web activity action linked to Success path
@@ -204,7 +205,7 @@ Look under the Create SAS URI by path section and select Web URL. This inserts a
 ```
 
 
-# Weekend run
+## Weekend run
 ```
             WITH
             -- Reusable list of "actionable" reason codes, defined once instead of
@@ -334,3 +335,30 @@ Look under the Create SAS URI by path section and select Web URL. This inserts a
             WHERE fo.OrderRank = 1
             ORDER BY s.LocationName,fo.CalibrationDate DESC
 ```
+
+## Manual process
+1. Expression
+   1. `=FILTER(Export!A2:Z2603, ISNUMBER(MATCH(Export!J2:J2603, {"300","310","320","340","370","220","230","240","250","270","500","510","520"}, 0)))`
+   2. Source sheet name
+   3. Source range
+2. Copy headers over too
+3. Format date and time columns (6 columns total)
+4. Export as csv
+5. Reopen
+   1. Delete Y,Z
+   2. Delete 1900-01-01 dates
+   3. Delete empty times
+6. Subject: Orders not Fulfilled for Previous Day
+7.  Body
+   ```
+Hello everyone,
+
+
+CSV report is attached.
+
+
+Unfulfilled orders are defined as orders with relevant reason codes that map to 300, 310, 320, 340, 370, 220, 230, 240, 250, 270, 500, 510, or 520.  These orders have a calibration date on the previous day OR have a calibration date in the past two weeks with a relevant reason code that was added the previous day.
+   ```
+7. Recipients
+
+"Brad Stamp" <Brad.Stamp@sofie.com>; "William Crisp" <william.crisp@sofie.com>; "Elangovan Srinivasan" <elangovan.srinivasan@sofie.com>; "Jerrod Brown" <jerrod.brown@sofie.com>; "Casey Melby" <casey.melby@sofie.com>; "Micah Bounds" <Micah.Bounds@sofie.com>; "Andrea Tremblay" <Andrea.Tremblay@sofie.com>; "Nasrin Pourkiani" <Nasrin.Pourkiani@sofie.com>; "Distro-Pharmacy-Managers" <Distro-Pharmacy-Managers@sofie.com>; "Brian Schumer" <brian.schumer@sofie.com>; Eric.Kroencke@sofie.com; "Mike Parisi" <Mike.Parisi@sofie.com>; Phyllis.Hoelsworth@sofie.com; Tim.Riemen@sofie.com; Distro-Sales-Team@sofie.com
