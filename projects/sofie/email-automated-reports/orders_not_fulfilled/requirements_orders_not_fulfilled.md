@@ -29,7 +29,7 @@ We want to address the issue of unfulfilled orders in a timely manner based on t
 4. Sofie BI team: Ivan Liao, Elangovan Srinivasan
 5. Email list maintainer: Ivan Liao
 6. Email list
-   1.  "Brad Stamp" <Brad.Stamp@sofie.com>; "William Crisp" <william.crisp@sofie.com>; "Elangovan Srinivasan" <elangovan.srinivasan@sofie.com>; "Jerrod Brown" <jerrod.brown@sofie.com>; "Casey Melby" <casey.melby@sofie.com>; "Micah Bounds" <Micah.Bounds@sofie.com>; "Andrea Tremblay" <Andrea.Tremblay@sofie.com>; "Nasrin Pourkiani" <Nasrin.Pourkiani@sofie.com>; "Distro-Pharmacy-Managers" <Distro-Pharmacy-Managers@sofie.com>; "Brian Schumer" <brian.schumer@sofie.com>; Eric.Kroencke@sofie.com; "Mike Parisi" <Mike.Parisi@sofie.com>; Phyllis.Hoelsworth@sofie.com; Tim.Riemen@sofie.com; Distro-Sales-Team@sofie.com
+   1.  "Brad.Stamp@sofie.com,william.crisp@sofie.com,elangovan.srinivasan@sofie.com,jerrod.brown@sofie.com,casey.melby@sofie.com,Micah.Bounds@sofie.com,Andrea.Tremblay@sofie.com,Nasrin.Pourkiani@sofie.com,Distro-Pharmacy-Managers@sofie.com,brian.schumer@sofie.com,Eric.Kroencke@sofie.com,Mike.Parisi@sofie.com,Phyllis.Hoelsworth@sofie.com,Tim.Riemen@sofie.com,ivan.liao@sofie.com"
    2.  Sales team: Distro-Sales@sofie.com?
 
 # 4.0 Requirements
