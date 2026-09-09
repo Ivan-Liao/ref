@@ -1,13 +1,13 @@
 .create-or-alter function with
 (
     folder = "CDC",
-    docstring = "Flattens ordered_demo MySQL CDC payloads"
+    docstring = "Flattens raw_ordered MariaDB CDC payloads"
 )
-Ordered_Flatten_Function()
+func_ordered_flat()
 {
-    Ordered
+    raw_ordered
     | extend p = todynamic(payload)
-    | where tostring(p.source.table) == "ordered_demo"
+    | where tostring(p.source.table) == "ordered"
     | where tostring(p.op) in ("r", "c", "u", "d")
     | extend row_data = coalesce(
         todynamic(p.after),

@@ -38,7 +38,7 @@ Azure Synapse lake database > Synapse pipeline (ADLS read > ADLS sink)> Logic Ap
                   -- DT is a datetime column and needs to be cast to date for the comparison
                   -- Today and yesterday to pull in all DT values
                   AND CAST(r.DT AS DATE) > CAST(DATEADD(day, -14, GETDATE()) AS DATE)
-                  AND CAST(r.DT AS DATE) < CAST(GETDATE() AS DATE)
+                  AND CAST(r.DT AS DATE) < CAST(DATEADD(day, -1, GETDATE()) AS DATE)
             ),
             current_reason AS (
                SELECT

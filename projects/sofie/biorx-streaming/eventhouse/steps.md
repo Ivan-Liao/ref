@@ -4,20 +4,22 @@ raw_shipcontainer.kql
 stg_shipcontainer_flat.kql
 stg_ordered_flat.kql
 shipcontainer_flat_function.kql
-ordered_flat_function.kql
+func_ordered_flat.kql
 
 ```
-.alter table stg_shipcontainer_flat policy update @'[{"IsEnabled": true, "Source": "raw_shipcontainer", "Query": "shipcontainer_flat_function()", "IsTransactional": false, "PropagateIngestionProperties": true}]';
-
-.alter table Ordered_Flattened policy update
+.alter table stg_shipcontainer_flat policy update 
 @'[{
-    "IsEnabled": true,
-    "Source": "Ordered",
-    "Query": "Ordered_Flatten_Function()",
-    "IsTransactional": false,
-    "PropagateIngestionProperties": true
-}]'
+    "IsEnabled": true, 
+    "Source": "raw_shipcontainer", 
+    "Query": "shipcontainer_flat_function()", 
+    "IsTransactional": false, 
+    "PropagateIngestionProperties": true}]';
 
+.alter table stg_ordered_flat policy update
+@'[{"IsEnabled": true,"Source": "raw_ordered","Query": "func_ordered_flat()","IsTransactional": false,"PropagateIngestionProperties": true}]'
+
+
+.append stg_ordered_flat <| func_ordered_flat();
 .append stg_shipcontainer_flat <| shipcontainer_flat_function();
 ```
 
@@ -43,3 +45,5 @@ Ordered_MV
     total_packed = count(tobool(packed_date)),
     total_delivered = count(tobool(delivered_date))
 ;
+
+Grant SELECT, RELOAD, SHOW DATABASES, LOCK TABLES, REPLICATION SLAVE, BINLOG MONITOR ON *.* TO `sfbiorxcdc`@`%` IDENTIFIED BY PASSWORD ...
