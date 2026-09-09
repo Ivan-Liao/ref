@@ -13,7 +13,7 @@ Azure Synapse lake database > Synapse pipeline (ADLS read > ADLS sink)> Logic Ap
          3. Database name: biwarp_biorx_mart
          4. Authentication type: System-assigned managed identity
          5. Parameters: Workspace_Name
-      3. Use query (not table) — write the join and column selection directly in SQL, e.g.:
+      3. Use query (no semicolon on synapse pipeline):
          ```sql
             WITH
             -- Reusable list of "actionable" reason codes, defined once instead of
@@ -65,19 +65,19 @@ Azure Synapse lake database > Synapse pipeline (ADLS read > ADLS sink)> Logic Ap
                   f.Flag_Bulk_Order,
                   f.Flag_Redirected_Order,
                   f.Amount,
-                  f.CalibrationDate,
-                  f.CalibrationTime,
-                  f.Order_Date,
-                  f.Order_Time,
-                  f.FilledDate,
-                  NULLIF(CAST(f.FilledTime AS TIME), '00:00:00') AS  FilledTime,
-                  f.Order_Packed_Date,
-                  CAST(f.Order_Packed_Time AS TIME) AS Order_Packed_Time,
-                  f.Order_Shipped_Date,
-                  CAST(f.Order_Shipped_Time AS TIME) AS Order_Shipped_Time,
-                  f.Order_Delivered_Date,
-                  CAST(f.Order_Delivered_Time AS TIME) AS Order_Delivered_Time,
-                  cr.ReasonDT,
+                  CONVERT(VARCHAR(10),f.CalibrationDate, 23) AS CalibrationDate,
+                  CONVERT(VARCHAR(8), f.CalibrationTime, 108) AS CalibrationTime,
+                  CONVERT(VARCHAR(10),f.Order_Date, 23) AS Order_Date,
+                  CONVERT(VARCHAR(8), f.Order_Time, 108) AS Order_Time,
+                  CONVERT(VARCHAR(10),f.FilledDate, 23) AS FilledDate,
+                  NULLIF(CONVERT(VARCHAR(8), f.FilledTime, 108), '00:00:00') AS  FilledTime,
+                  CONVERT(VARCHAR(10),f.Order_Packed_Date, 23) AS Order_Packed_Date,
+                  CONVERT(VARCHAR(8), f.Order_Packed_Time, 108) AS Order_Packed_Time,
+                  CONVERT(VARCHAR(10),f.Order_Shipped_Date, 23) AS Order_Shipped_Date,
+                  CONVERT(VARCHAR(8), f.Order_Shipped_Time, 108) AS Order_Shipped_Time,
+                  CONVERT(VARCHAR(10),f.Order_Delivered_Date, 23) AS Order_Delivered_Date,
+                  CONVERT(VARCHAR(8), f.Order_Delivered_Time, 108) AS Order_Delivered_Time,
+                  CONVERT(VARCHAR(19),cr.ReasonDT, 120) AS ReasonDT,
                   ROW_NUMBER() OVER (PARTITION BY f.Ordered_Id ORDER BY f.LastModified DESC) AS OrderRank
                FROM biwarp_biorx_mart.dbo.f_ordered f
                LEFT JOIN biwarp_biorx_mart.dbo.dim_site s
