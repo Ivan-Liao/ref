@@ -17,7 +17,11 @@ func_ordered_flat.kql
 
 .alter table stg_ordered_flat policy update @'[{"IsEnabled": true,"Source": "raw_ordered","Query": "func_stg_ordered_flat()","IsTransactional": false,"PropagateIngestionProperties": true}]'
 
+.alter table stg_client_flat policy update @'[{"IsEnabled": true,"Source": "raw_client","Query": "func_stg_client_flat()","IsTransactional": false,"PropagateIngestionProperties": true}]'
 
+
+.append stg_ordered_flat <| func_stg_ordered_flat();
+.append stg_client_flat <| func_stg_client_flat();
 .append stg_ordered_flat <| func_stg_ordered_flat();
 .append stg_shipcontainer_flat <| shipcontainer_flat_function();
 ```

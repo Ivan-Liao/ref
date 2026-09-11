@@ -1,0 +1,13 @@
+.create table stg_product_flat
+(
+    cdc_operation: string,
+    cdc_event_datetime: datetime,
+    source_event_datetime: datetime,
+    ts_ns: long,
+    is_deleted: bool,
+
+    product_id: long,
+    name: string,
+    description: string,
+    product_guid: string
+)

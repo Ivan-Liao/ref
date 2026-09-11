@@ -1,0 +1,55 @@
+.create-or-alter function with
+(
+    folder = "CDC",
+    docstring = "Flattens raw_reasoncode MariaDB CDC payloads"
+)
+func_stg_reasoncode_flat()
+{
+    raw_reasoncode
+    | extend p = todynamic(payload)
+    | where tostring(p.source.table) == "reasoncode"
+    | where tostring(p.op) in ("r", "c", "u", "d")
+    | extend row_data = coalesce(
+        todynamic(p.after),
+        todynamic(p.before)
+    )
+    | project
+        cdc_operation = tostring(p.op),
+
+        cdc_event_datetime =
+            unixtime_milliseconds_todatetime(
+                tolong(p.ts_ms)
+            ),
+
+        source_event_datetime =
+            unixtime_milliseconds_todatetime(
+                tolong(p.source.ts_ms)
+            ),
+
+        ts_ns = coalesce(
+            tolong(p.ts_ns),
+            tolong(p.ts_ms) * 1000000
+        ),
+
+        is_deleted =
+            tostring(p.op) == "d"
+            or toint(row_data.Deleted) == 1,
+
+        reason_code_id = tolong(row_data.ReasonCodeID),
+        reason_code_guid = tostring(row_data.ReasonCodeGUID),
+        code = tostring(row_data.Code),
+        description = tostring(row_data.Description),
+
+        created_dt =
+            unixtime_milliseconds_todatetime(
+                tolong(row_data.CreatedDT)
+            ),
+
+        deleted_dt =
+            unixtime_milliseconds_todatetime(
+                tolong(row_data.DeletedDT)
+            ),
+
+        deleted = toint(row_data.Deleted),
+        cancelled_order = toint(row_data.CancelledOrder)
+}

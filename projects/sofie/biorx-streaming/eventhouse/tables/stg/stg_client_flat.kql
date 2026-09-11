@@ -1,0 +1,13 @@
+.create table stg_client_flat
+(
+    cdc_operation:string,
+    cdc_event_datetime:datetime,
+    source_event_datetime:datetime,
+    ts_ns:long,
+    is_deleted:bool,
+
+    client_id:long,
+    client_guid:string,
+    client_number:long,
+    name:string
+)

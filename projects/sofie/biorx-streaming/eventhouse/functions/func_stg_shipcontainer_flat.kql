@@ -1,0 +1,87 @@
+.create-or-alter function with
+(
+    folder = "CDC",
+    docstring = "Flattens raw_shipcontainer MariaDB CDC payloads"
+)
+func_stg_shipcontainer_flat()
+{
+    raw_shipcontainer
+    | extend p = todynamic(payload)
+    | where tostring(p.source.table) == "shipcontainer"
+    | where tostring(p.op) in ("r", "c", "u", "d")
+    | extend row_data = coalesce(
+        todynamic(p.after),
+        todynamic(p.before)
+    )
+    | project
+        cdc_operation = tostring(p.op),
+
+        cdc_event_datetime =
+            unixtime_milliseconds_todatetime(
+                tolong(p.ts_ms)
+            ),
+
+        source_event_datetime =
+            unixtime_milliseconds_todatetime(
+                tolong(p.source.ts_ms)
+            ),
+
+        ts_ns = coalesce(
+            tolong(p.ts_ns),
+            tolong(p.ts_ms) * 1000000
+        ),
+
+        is_deleted =
+            tostring(p.op) == "d"
+            or toint(row_data.Deleted) == 1,
+
+        ship_container_id = tolong(row_data.ShipContainerID),
+        shipper_id = tolong(row_data.ShipperID),
+        container_number = toint(row_data.ContainerNumber),
+        description = tostring(row_data.Description),
+        client_id = tolong(row_data.ClientID),
+        client_verified = toint(row_data.ClientVerified),
+
+        delivery_date =
+            datetime(1970-01-01)
+            + tolong(row_data.DeliveryDate) * 1d,
+
+        delivery_time =
+            tolong(row_data.DeliveryTime) / 1000 * 1ms,
+
+        route_id = tolong(row_data.RouteID),
+        packed_by_id = tolong(row_data.PackedByID),
+
+        packed_date =
+            datetime(1970-01-01)
+            + tolong(row_data.PackedDate) * 1d,
+
+        packed_time =
+            tolong(row_data.PackedTime) / 1000 * 1ms,
+
+        delivery_number = tostring(row_data.DeliveryNumber),
+        status = tostring(row_data.Status),
+        shipment_id = tolong(row_data.ShipmentID),
+        container_id = tolong(row_data.ContainerID),
+        returned = toint(row_data.Returned),
+
+        returned_date =
+            datetime(1970-01-01)
+            + tolong(row_data.ReturnedDate) * 1d,
+
+        returned_time =
+            tolong(row_data.ReturnedTime) / 1000 * 1ms,
+
+        returned_by_id = tolong(row_data.ReturnedByID),
+        delivered_shipment_id = tolong(row_data.DeliveredShipmentID),
+
+        delivered_date =
+            datetime(1970-01-01)
+            + tolong(row_data.DeliveredDate) * 1d,
+
+        delivered_time =
+            tolong(row_data.DeliveredTime) / 1000 * 1ms,
+
+        deleted = toint(row_data.Deleted),
+        location_guid = tostring(row_data.LocationGUID)
+}

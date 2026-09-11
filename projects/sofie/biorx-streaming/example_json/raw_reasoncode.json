@@ -1,0 +1,41 @@
+{
+	"ts_ms": 1788888001830,
+	"ts_us": 1788888001830281,
+	"ts_ns": "1788888001830281902",
+	"source": {
+		"ts_ms": 1788888001000,
+		"version": "3.4.0.Final",
+		"connector": "mysql",
+		"name": "cdc.mysql",
+		"snapshot": "true",
+		"db": "master",
+		"sequence": null,
+		"ts_us": 1788888001000000,
+		"ts_ns": "1788888001000000000",
+		"table": "reasoncode",
+		"server_id": 0,
+		"gtid": null,
+		"file": "az-mariadb-binlog.000030",
+		"pos": 40368529,
+		"row": 0,
+		"thread": null,
+		"query": null
+	},
+	"before": null,
+	"after": {
+		"ReasonCodeID": 2,
+		"ReasonCodeGUID": "9f13e80f-e3b7-4807-a0f1-4bb721ce429d",
+		"Action": 0,
+		"Code": "002",
+		"Description": "Duplicate Order",
+		"CreatedDT": 1682944630000,
+		"CreatedByID": 1,
+		"DeletedDT": 1712864760000,
+		"DeletedByID": 398,
+		"Synced": 1,
+		"Deleted": 1,
+		"CancelledOrder": 0
+	},
+	"transaction": null,
+	"op": "r"
+}

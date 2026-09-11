@@ -1,12 +1,34 @@
-.create table stg_shipcontainer_flat (
-    ship_container_id             : long,
-    ordered_id                    : long,
-    cdc_event_time                : datetime,
-    source_event_time             : datetime,
-    event_sequence_ns             : long,
-    packed_by_id                  : long,
-    packed_date                   : datetime,
-    packed_time                   : timespan,
-    delivered_time                : datetime,
-    delivered_date                : timespan
-);
+.create table stg_shipcontainer_flat
+(
+    cdc_operation: string,
+    cdc_event_datetime: datetime,
+    source_event_datetime: datetime,
+    ts_ns: long,
+    is_deleted: bool,
+
+    ship_container_id: long,
+    shipper_id: long,
+    container_number: int,
+    description: string,
+    client_id: long,
+    client_verified: int,
+    delivery_date: datetime,
+    delivery_time: timespan,
+    route_id: long,
+    packed_by_id: long,
+    packed_date: datetime,
+    packed_time: timespan,
+    delivery_number: string,
+    status: string,
+    shipment_id: long,
+    container_id: long,
+    returned: int,
+    returned_date: datetime,
+    returned_time: timespan,
+    returned_by_id: long,
+    delivered_shipment_id: long,
+    delivered_date: datetime,
+    delivered_time: timespan,
+    deleted: int,
+    location_guid: string
+)

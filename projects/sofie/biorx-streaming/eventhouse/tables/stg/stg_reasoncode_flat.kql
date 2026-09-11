@@ -1,0 +1,17 @@
+.create table stg_reasoncode_flat
+(
+    cdc_operation: string,
+    cdc_event_datetime: datetime,
+    source_event_datetime: datetime,
+    ts_ns: long,
+    is_deleted: bool,
+
+    reason_code_id: long,
+    reason_code_guid: string,
+    code: string,
+    description: string,
+    created_dt: datetime,
+    deleted_dt: datetime,
+    deleted: int,
+    cancelled_order: int
+)
