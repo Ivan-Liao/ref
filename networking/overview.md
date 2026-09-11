@@ -1,9 +1,13 @@
+- [CIDR](#cidr)
 - [metaphor](#metaphor)
     - [1. IP Addresses: The "Mailing Address"](#1-ip-addresses-the-mailing-address)
     - [2. Port Forwarding: The "Internal Extension"](#2-port-forwarding-the-internal-extension)
     - [3. Proxies: The "Front Desk / Security Guard"](#3-proxies-the-front-desk--security-guard)
     - [4. URL Map: The "Building Directory"](#4-url-map-the-building-directory)
     - [How they connect in a real-world request:](#how-they-connect-in-a-real-world-request)
+
+# CIDR
+The Easy Memory Trick: Halving the NumbersThink of a /24 as your starting anchor point of 256 total addresses (the classic full standard class-C size block in an octet). Every time you increase the slash number by 2 bits (going from /24 to /26, or /26 to /28), you divide the total number of addresses by 4 (or halve it twice). For a single step like /27, you just halve it once from /26.
 
 # metaphor
 In networking, these components work together like a postal system to ensure a request from a user's browser reaches the correct application on a server. Think of it as a journey from the **General Location (IP)** to the **Specific Building (Proxy/URL Map)** and finally the **Exact Room (Port).**

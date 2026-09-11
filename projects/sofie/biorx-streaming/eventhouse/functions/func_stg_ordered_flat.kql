@@ -1,0 +1,214 @@
+.create-or-alter function with
+(
+    folder = "CDC",
+    docstring = "Flattens raw_ordered MariaDB CDC payloads"
+)
+func_stg_ordered_flat()
+{
+    raw_ordered
+    | extend p = todynamic(payload)
+    | where tostring(p.source.table) == "ordered"
+    | where tostring(p.op) in ("r", "c", "u", "d")
+    | extend row_data = coalesce(
+        todynamic(p.after),
+        todynamic(p.before)
+    )
+    | project
+        cdc_operation = tostring(p.op),
+ 
+        cdc_event_datetime =
+            unixtime_milliseconds_todatetime(
+                tolong(p.ts_ms)
+            ),
+ 
+        source_event_datetime =
+            unixtime_milliseconds_todatetime(
+                tolong(p.source.ts_ms)
+            ),
+ 
+        ts_ns = coalesce(
+            tolong(p.ts_ns),
+            tolong(p.ts_ms) * 1000000
+        ),
+
+        is_deleted =
+            tostring(p.op) == "d"
+            or toint(row_data.Deleted) == 1,
+ 
+        ordered_id = tolong(row_data.OrderedID),
+        client_id = tolong(row_data.ClientID),
+        client_bill_id = tolong(row_data.ClientBillID),
+        order_client_id = tolong(row_data.OrderClientID),
+        product_id = tolong(row_data.ProductID),
+        allowed_id = tolong(row_data.AllowedID),
+        procedure_id = tolong(row_data.ProcedureID),
+        amount = todouble(row_data.Amount),
+        units = tostring(row_data.Units),
+ 
+        calibration_time =
+            tolong(row_data.CalibrationTime) / 1000 * 1ms,
+ 
+        patient_name = tostring(row_data.PatientName),
+        po_number = tostring(row_data.PONumber),
+        physician_id = tolong(row_data.PhysicianID),
+ 
+        referring_physician_id =
+            tolong(row_data.ReferringPhysicianID),
+ 
+        ordered_by_id = tolong(row_data.OrderedByID),
+ 
+        order_date =
+            datetime(1970-01-01)
+            + tolong(row_data.OrderDate) * 1d,
+ 
+        order_time =
+            tolong(row_data.OrderTime) / 1000 * 1ms,
+ 
+        order_taken_by_id =
+            tolong(row_data.OrderTakenByID),
+ 
+        filled = toint(row_data.Filled),
+        filled_by_id = tolong(row_data.FilledByID),
+ 
+        filled_date =
+            datetime(1970-01-01)
+            + tolong(row_data.FilledDate) * 1d,
+ 
+        filled_time =
+            tolong(row_data.FilledTime) / 1000 * 1ms,
+ 
+        quantity = toint(row_data.Quantity),
+ 
+        actual_activity =
+            todouble(row_data.ActualActivity),
+ 
+        actual_activity_units =
+            tostring(row_data.ActualActivityUnits),
+ 
+        actual_volume =
+            todouble(row_data.ActualVolume),
+ 
+        actual_volume_units =
+            tostring(row_data.ActualVolumeUnits),
+ 
+        actual_saline_added =
+            todouble(row_data.ActualSalineAdded),
+ 
+        actual_total_volume =
+            todouble(row_data.ActualTotalVolume),
+ 
+        actual_quantity =
+            toint(row_data.ActualQuantity),
+ 
+        ship_container_id =
+            tolong(row_data.ShipContainerID),
+ 
+        returned = toint(row_data.Returned),
+ 
+        bio_dose_schedule_id =
+            tolong(row_data.BioDoseScheduleID),
+ 
+        returned_by_id =
+            tolong(row_data.ReturnedByID),
+ 
+        returned_quantity =
+            toint(row_data.ReturnedQuantity),
+ 
+        returned_date =
+            datetime(1970-01-01)
+            + tolong(row_data.ReturnedDate) * 1d,
+ 
+        returned_time =
+            tolong(row_data.ReturnedTime) / 1000 * 1ms,
+ 
+        processed = toint(row_data.Processed),
+ 
+        processed_by_id =
+            tolong(row_data.ProcessedByID),
+ 
+        processed_date =
+            datetime(1970-01-01)
+            + tolong(row_data.ProcessedDate) * 1d,
+ 
+        processed_time =
+            tolong(row_data.ProcessedTime) / 1000 * 1ms,
+ 
+        billed = toint(row_data.Billed),
+        billed_by_id = tolong(row_data.BilledByID),
+ 
+        billed_date =
+            datetime(1970-01-01)
+            + tolong(row_data.BilledDate) * 1d,
+ 
+        billed_time =
+            tolong(row_data.BilledTime) / 1000 * 1ms,
+ 
+        price_id = tolong(row_data.PriceID),
+        price_overriden = toint(row_data.PriceOverriden),
+        price = todouble(row_data.Price),
+        statement_id = tolong(row_data.StatementID),
+        amount_billed = todouble(row_data.AmountBilled),
+        amount_credit = todouble(row_data.AmountCredit),
+        paid = toint(row_data.Paid),
+ 
+        date_paid =
+            datetime(1970-01-01)
+            + tolong(row_data.DatePaid) * 1d,
+ 
+        amount_paid = todouble(row_data.AmountPaid),
+        adjustment = todouble(row_data.Adjustment),
+        deleted = toint(row_data.Deleted),
+ 
+        delivery_date =
+            datetime(1970-01-01)
+            + tolong(row_data.DeliveryDate) * 1d,
+ 
+        delivery_time =
+            tolong(row_data.DeliveryTime) / 1000 * 1ms,
+ 
+        deliver_by_time =
+            tolong(row_data.DeliverByTime) / 1000 * 1ms,
+ 
+        delivery_type_id =
+            tolong(row_data.DeliveryTypeID),
+ 
+        route_id = tolong(row_data.RouteID),
+ 
+        calibration_date =
+            datetime(1970-01-01)
+            + tolong(row_data.CalibrationDate) * 1d,
+ 
+        container_id = tolong(row_data.ContainerID),
+ 
+        tax = todouble(row_data.Tax),
+        tax2 = todouble(row_data.Tax2),
+        tax3 = todouble(row_data.Tax3),
+        notes = tostring(row_data.Notes),
+        prep_fee = todouble(row_data.PrepFee),
+        pharmacist_id = tolong(row_data.PharmacistID),
+        synced = toint(row_data.Synced),
+ 
+        location_guid =
+            tostring(row_data.LocationGUID),
+ 
+        saline_inventory_id =
+            tolong(row_data.SalineInventoryID),
+ 
+        weight = todouble(row_data.Weight),
+        weight_units = tostring(row_data.WeightUnits),
+ 
+        expiration_date =
+            datetime(1970-01-01)
+            + tolong(row_data.ExpirationDate) * 1d,
+ 
+        expiration_time =
+            tolong(row_data.ExpirationTime) / 1000 * 1ms,
+ 
+        proposed_inventory_id =
+            tolong(row_data.ProposedInventoryID),
+ 
+        last_modified =
+            unixtime_milliseconds_todatetime(
+                tolong(row_data.LastModified)
+            )
+}

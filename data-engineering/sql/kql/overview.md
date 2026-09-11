@@ -7,8 +7,21 @@
 
 # Functions (built in)
 1. format_datetime(ago(24h),'yyyy-mm-dd')
+2. type conversions
+   1. tostring()
+   2. toint()
+   3. todouble()
+   4. tolong()
+   5. unix epoch
+      1. datetime(1970-01-01) + tolong(row_data.OrderDate) * 1d ... for days
+      2. unixtime_milliseconds_todatetime() ... for milliseconds
+      3. tolong(row_data.OrderTime) / 1000 * 1ms ... for microseconds
 
 # Functions
+1. parse raw string representation of JSON payload into a structured dynamic object
+   1. extend adds a new computed column p
+   2. todynamic() converts JSON formatted strings into dynamic data type, which allows dot notation
+   3. `extend p = todynamic(payload)`
 ```
 .create-or-alter function trips_by_min_passenger_count(num_passengers:long)
 {

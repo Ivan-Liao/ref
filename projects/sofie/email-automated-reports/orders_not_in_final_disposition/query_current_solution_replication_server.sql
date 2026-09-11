@@ -14,7 +14,7 @@ WITH order_ranking AS (
         ROW_NUMBER() OVER (PARTITION BY OrderedID,LocationGUID ORDER BY LastModified DESC) AS OrderRank
     FROM master.ordered
     WHERE CalibrationDate >= DATE_ADD(CAST(NOW() AS DATE), INTERVAL -14 DAY) 
-        AND CalibrationDate <= CAST(NOW() AS DATE) 
+        AND CalibrationDate <= DATE_ADD(CAST(NOW() AS DATE) , INTERVAL 0 DAY) 
 ),current_order AS (
     -- Keep only the most recent order (rank 1) per order.
     SELECT
@@ -62,8 +62,8 @@ SELECT
     o.CalibrationDate,
     o.CalibrationTime,
     o.FilledDate,
-    s.ShipDate,
-    ore.ExchangedID
+    s.ShipDate
+    -- ore.ExchangedID -- too confusing for now only for Redirected Sent, not Redirected Received
 FROM current_order o
     -- Shipment chain many shipcontainers in a shipment, only shipment has shipping date
     LEFT JOIN master.shipcontainer sc
@@ -82,9 +82,6 @@ FROM current_order o
     LEFT JOIN current_reason r
         ON r.ReasonOrderedID = o.OrderedID
         AND r.LocationGUID = l.LocationGUID
-    LEFT JOIN master.orderedredirect ore
-    	ON ore.OrderedID = o.OrderedID
-    	AND ore.LocationGUID = o.LocationGUID
 WHERE 1=1                                          -- anchor; comment out filters below individually as needed
     AND sc.PackedDate IS NULL                          -- not yet shipped (or no shipment record at all)
     AND r.Code IS NULL                              -- no current reason code found
