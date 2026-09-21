@@ -1,5 +1,6 @@
 - [Functions (built in)](#functions-built-in)
 - [Functions](#functions)
+- [Limitations](#limitations)
 - [Materialized view](#materialized-view)
 - [Policy Updates](#policy-updates)
 - [Profiling](#profiling)
@@ -31,6 +32,10 @@
 }
 trips_by_min_passenger_count(3)
 ```
+
+# Limitations 
+
+
 # Materialized view
 ```
 .create materialized-view TripsByVendor on table TaxiTrips

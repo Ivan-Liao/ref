@@ -1,0 +1,147 @@
+// =====================================================================
+// Actionable Orders — Fabric Eventhouse (KQL)
+//
+// Layer 1: materialized views that keep only the latest row per entity.
+//          (equivalent of ROW_NUMBER() OVER (... ORDER BY LastModified DESC) = 1)
+// Layer 2: a stored function that joins them and applies the
+//          -1 month / +1 month calibration window.
+//
+// Materialized views cannot contain joins or now(), so all cross-table
+// logic and the relative date filter live in the function.
+// =====================================================================
+
+
+// ---------------------------------------------------------------------
+// LAYER 1 — deduplicating materialized views
+// ---------------------------------------------------------------------
+
+// Latest version of each order.
+.create materialized-view with (backfill=true, docstring="Latest row per ordered_id")
+    MV_ordered_latest on table stg_ordered_flat
+{
+    stg_ordered_flat
+    | summarize arg_max(last_modified, *) by ordered_id
+}
+
+// Most recent reason row per order/location  (reason_ranking + current_reason)
+.create materialized-view with (backfill=true, docstring="Most recent reason per order")
+    MV_reason_current on table stg_reason_flat
+{
+    stg_reason_flat
+    | where table_name == "ordered"
+    | summarize arg_max(dt, *) by record_id, location_guid
+}
+
+// Dimensions — latest row per natural key.
+.create materialized-view with (backfill=true) MV_site_latest on table stg_site_flat
+{
+    stg_site_flat  | summarize arg_max(last_modified, *) by location_guid
+}
+
+.create materialized-view with (backfill=true) MV_product_latest on table stg_product_flat
+{
+    stg_product_flat | summarize arg_max(last_modified, *) by product_id
+}
+
+.create materialized-view with (backfill=true) MV_client_latest on table stg_client_flat
+{
+    stg_client_flat | summarize arg_max(last_modified, *) by client_id
+}
+
+.create materialized-view with (backfill=true) MV_reasoncode_latest on table stg_reasoncode_flat
+{
+    stg_reasoncode_flat | summarize arg_max(last_modified, *) by reason_code_id
+}
+
+.create materialized-view with (backfill=true) MV_shipcontainer_latest on table stg_shipcontainer_flat
+{
+    stg_shipcontainer_flat | summarize arg_max(last_modified, *) by shipcontainer_id
+}
+
+.create materialized-view with (backfill=true) MV_shipment_latest on table stg_shipment_flat
+{
+    stg_shipment_flat | summarize arg_max(last_modified, *) by shipment_id
+}
+
+
+// ---------------------------------------------------------------------
+// LAYER 2 — reporting function (the joins + the time window)
+// ---------------------------------------------------------------------
+
+.create-or-alter function with (
+    docstring = "Actionable orders calibrated between 1 month ago and 1 month ahead",
+    folder    = "Reporting")
+ActionableOrders()
+{
+    let reason_codes = dynamic([
+        "300","310","320","340","370",
+        "220","230","240","250","270",
+        "500","510","520"
+    ]);
+    let window_start = startofday(now(-30d));
+    let window_end   = startofday(now(+30d));
+    //
+    let reasons =
+        materialized_view('MV_reason_current')
+        | project reason_order_id = record_id,
+                  location_guid,
+                  reason_reason_code_id = reason_code_id,
+                  reason_dt = dt;
+    let sites =
+        materialized_view('MV_site_latest')
+        | project location_guid, location_name;
+    let products =
+        materialized_view('MV_product_latest')
+        | project product_id, product_name = name;
+    let clients =
+        materialized_view('MV_client_latest')
+        | project client_id, client_name = name;
+    let reasoncodes =
+        materialized_view('MV_reasoncode_latest')
+        | project reason_code_id, code, description;
+    let containers =
+        materialized_view('MV_shipcontainer_latest')
+        | project shipcontainer_id, shipment_id, packed_date, packed_time,
+                  delivered_date, delivered_time;
+    let shipments =
+        materialized_view('MV_shipment_latest')
+        | project shipment_id, shipped_date, shipped_time;
+    //
+    materialized_view('MV_ordered_latest')
+    | where calibration_date between (window_start .. window_end)
+    | lookup kind=leftouter sites       on location_guid
+    | lookup kind=leftouter products    on product_id
+    | lookup kind=leftouter clients     on client_id
+    | lookup kind=leftouter reasoncodes on reason_code_id
+    | join kind=leftouter (reasons) on
+          $left.ordered_id == $right.reason_order_id,
+          $left.location_guid == $right.location_guid
+    | lookup kind=leftouter containers  on shipcontainer_id
+    | lookup kind=leftouter shipments   on shipment_id
+    // Case 1: relevant reason code on the order itself.
+    // Case 2: relevant reason recorded inside the window.
+    | where code in (reason_codes)
+        and (isnull(reason_dt) or reason_dt between (window_start .. window_end))
+    | project
+        ["Rx ID"]        = ordered_id,
+        ["Pharmacy"]     = location_name,
+        ["Product"]      = product_name,
+        ["Client"]       = client_name,
+        ["Reason Code"]  = code,
+        ["Reason"]       = description,
+        ["ReasonDT"]     = reason_dt,
+        ["Dose Activity"]= actual_activity,
+        ["Cal Date"]     = format_datetime(calibration_date, 'yyyy-MM-dd'),
+        ["Cal Time"]     = format_timespan(calibration_time, 'hh:mm:ss'),
+        ["Order Date"]   = format_datetime(order_date, 'yyyy-MM-dd'),
+        ["Order Time"]   = format_timespan(order_time, 'hh:mm:ss'),
+        ["Filled Date"]  = format_datetime(filled_date, 'yyyy-MM-dd'),
+        ["Filled Time"]  = iff(filled_time == time(0s), "", format_timespan(filled_time, 'hh:mm:ss')),
+        ["Packed Date"]  = format_datetime(packed_date, 'yyyy-MM-dd'),
+        ["Packed Time"]  = format_timespan(packed_time, 'hh:mm:ss'),
+        ["Shipped Date"] = format_datetime(shipped_date, 'yyyy-MM-dd'),
+        ["Shipped Time"] = format_timespan(shipped_time, 'hh:mm:ss'),
+        ["Delivery Date"]= format_datetime(delivered_date, 'yyyy-MM-dd'),
+        ["Delivery Time"]= format_timespan(delivered_time, 'hh:mm:ss')
+    | sort by ["Pharmacy"] asc, ["Cal Date"] desc
+}

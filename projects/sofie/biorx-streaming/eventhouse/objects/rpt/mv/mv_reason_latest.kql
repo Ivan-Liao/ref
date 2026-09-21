@@ -1,0 +1,8 @@
+// Most recent reason row per order/location  (reason_ranking + current_reason)
+.create materialized-view with (backfill=true, docstring="Most recent reason per order")
+    mv_reason_latest on table stg_reason_flat
+{
+    stg_reason_flat
+    | where table_name == "ordered"
+    | summarize arg_max(dt, *) by record_id, location_guid
+}

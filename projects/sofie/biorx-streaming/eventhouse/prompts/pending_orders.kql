@@ -1,0 +1,154 @@
+// =====================================================================
+// Pending Orders (no shipping, no reason code) — Fabric Eventhouse (KQL)
+//
+// Source: master.* tables (the original transactional database), NOT the
+// stg_*_flat mart tables used in ActionableOrders().
+//
+// NOTE: table names below (e.g. `ordered`, `reason`, `reasoncode`,
+// `shipcontainer`, `shipment`, `locations`, `product`, `client`) assume
+// the master.* tables land in the Eventhouse with the same base name and
+// no schema prefix. Rename on the .create lines if your ingested table
+// names differ.
+//
+// Layer 1: materialized views keeping only the latest row per key
+//          (equivalent of ROW_NUMBER() ... ORDER BY LastModified DESC = 1).
+// Layer 2: a stored function joining them, matching the SQL's filters:
+//          not yet packed, no current reason code, not deleted, not Filled=2.
+//
+// Per the same standing requirement as ActionableOrders(), this restricts
+// CalibrationDate to 1 month in the past through 1 month in the future
+// (the source SQL used -14..0 days; widen/narrow window_start/window_end
+// below if you want to match the SQL exactly instead).
+// =====================================================================
+
+
+// ---------------------------------------------------------------------
+// LAYER 1 — deduplicating materialized views
+// ---------------------------------------------------------------------
+
+// Latest version of each order, per OrderedID + LocationGUID.
+.create async materialized-view with (backfill=true, docstring="Latest row per OrderedID/LocationGUID")
+    MV_master_ordered_latest on table ordered
+{
+    ordered
+    | summarize arg_max(LastModified, *) by OrderedID, LocationGUID
+}
+
+// Latest 'ordered' reason row per order/location (raw reason table; Code is
+// resolved later in the function via MV_master_reasoncode_latest, matching
+// the LEFT JOIN inside the SQL's reason_ranking CTE).
+.create async materialized-view with (backfill=true, docstring="Most recent 'ordered' reason per order")
+    MV_master_reason_current on table reason
+{
+    reason
+    | where TableName == "ordered"
+    | summarize arg_max(DT, *) by RecordID, LocationGUID
+}
+
+.create materialized-view with (backfill=true) MV_master_reasoncode_latest on table reasoncode
+{
+    reasoncode | summarize arg_max(LastModified, *) by ReasonCodeID
+}
+
+.create async materialized-view with (backfill=true, docstring="Latest row per ShipContainerID/LocationGUID")
+    MV_master_shipcontainer_latest on table shipcontainer
+{
+    shipcontainer
+    | summarize arg_max(LastModified, *) by ShipContainerID, LocationGUID
+}
+
+.create async materialized-view with (backfill=true, docstring="Latest row per ShipmentID/LocationGUID")
+    MV_master_shipment_latest on table shipment
+{
+    shipment
+    | summarize arg_max(LastModified, *) by ShipmentID, LocationGUID
+}
+
+.create materialized-view with (backfill=true) MV_master_locations_latest on table locations
+{
+    locations | summarize arg_max(LastModified, *) by LocationGUID
+}
+
+.create materialized-view with (backfill=true) MV_master_product_latest on table product
+{
+    product | summarize arg_max(LastModified, *) by Product
+}
+
+.create materialized-view with (backfill=true) MV_master_client_latest on table client
+{
+    client | summarize arg_max(LastModified, *) by ClientID
+}
+
+
+// ---------------------------------------------------------------------
+// LAYER 2 — reporting function
+// ---------------------------------------------------------------------
+
+.create-or-alter function with (
+    docstring = "Orders calibrated in the window that are not yet packed and carry no current reason code",
+    folder    = "Reporting")
+PendingOrders()
+{
+    let window_start = startofday(now(-30d));
+    let window_end   = startofday(now(+30d));
+    //
+    let reasons =
+        materialized_view('MV_master_reason_current')
+        | project ReasonOrderedID = RecordID,
+                  LocationGUID,
+                  ReasonCodeID;
+    let reasoncodes =
+        materialized_view('MV_master_reasoncode_latest')
+        | project ReasonCodeID, Code;
+    // Resolve Code onto each current reason row (mirrors the LEFT JOIN
+    // inside reason_ranking in the SQL), then keep just what's needed.
+    let current_reason =
+        reasons
+        | lookup kind=leftouter reasoncodes on ReasonCodeID
+        | project ReasonOrderedID, LocationGUID, Code;
+    let containers =
+        materialized_view('MV_master_shipcontainer_latest')
+        | project ShipContainerID, LocationGUID, PackedDate, DeliveredShipmentID;
+    let shipments =
+        materialized_view('MV_master_shipment_latest')
+        | project ShipmentID, LocationGUID, ShipDate;
+    let sites =
+        materialized_view('MV_master_locations_latest')
+        | project LocationGUID, LocationName;
+    let products =
+        materialized_view('MV_master_product_latest')
+        | project Product, ProductName = Name;
+    let clients =
+        materialized_view('MV_master_client_latest')
+        | project ClientID, ClientName = Name;
+    //
+    materialized_view('MV_master_ordered_latest')
+    | where CalibrationDate between (window_start .. window_end)
+        and Deleted == false
+        and Filled != 2
+    | join kind=leftouter (containers) on
+          $left.ShipContainerID == $right.ShipContainerID,
+          $left.LocationGUID == $right.LocationGUID
+    | join kind=leftouter (shipments) on
+          $left.DeliveredShipmentID == $right.ShipmentID,
+          $left.LocationGUID == $right.LocationGUID
+    | join kind=leftouter (current_reason) on
+          $left.OrderedID == $right.ReasonOrderedID,
+          $left.LocationGUID == $right.LocationGUID
+    | lookup kind=leftouter sites    on LocationGUID
+    | lookup kind=leftouter products on $left.ProductID == $right.Product
+    | lookup kind=leftouter clients  on ClientID
+    // not yet packed (or no shipcontainer record at all), and no current reason code
+    | where isnull(PackedDate)
+        and isempty(Code)
+    | project
+        ["Rx ID"]         = OrderedID,
+        ["Pharmacy"]      = LocationName,
+        ["Product"]       = ProductName,
+        ["Client"]        = ClientName,
+        ["Cal Date"]      = format_datetime(CalibrationDate, 'yyyy-MM-dd'),
+        ["Cal Time"]      = format_timespan(CalibrationTime, 'hh:mm:ss'),
+        ["Filled Date"]   = format_datetime(FilledDate, 'yyyy-MM-dd'),
+        ["Ship Date"]     = format_datetime(ShipDate, 'yyyy-MM-dd')
+    | sort by ["Pharmacy"] asc, ["Cal Date"] desc
+}

@@ -1,0 +1,80 @@
+.create-or-alter function with (
+    docstring = "Today's order status counts (Total/Filled/Packed/Shipped/Delivered), filterable by pharmacy/client/product",
+    folder    = "Reporting")
+order_status_counts(_pharmacy:string, _client:string, _product:string)
+{
+    let _today = startofday(now());
+    let reasons =
+        materialized_view('mv_reason_latest')
+        | project reason_ordered_id = record_id,
+                  location_guid,
+                  reason_code_id,
+                  reason_dt = dt;
+    let reasoncodes =
+        materialized_view('mv_reasoncode_latest')
+        | project reason_code_id, code, description;
+    // Get the current reason for each order.
+    let current_reason =
+        reasons
+        | lookup kind=leftouter reasoncodes on reason_code_id
+        | project reason_ordered_id, location_guid, code, description, reason_dt;
+    let sites =
+        materialized_view('mv_locations_latest')
+        | project location_guid, location_name;
+    let products =
+        materialized_view('mv_product_latest')
+        | project product_id, product_name = name;
+    let clients =
+        materialized_view('mv_client_latest')
+        | project client_id, client_name = name;
+    let containers =
+        materialized_view('mv_shipcontainer_latest')
+        | project ship_container_id, shipment_id, packed_date, delivered_shipment_id,
+                  delivered_date, location_guid;
+    let shipments =
+        materialized_view('mv_shipment_latest')
+        | project shipment_id, ship_date, location_guid;
+    //
+    let _pharmacy_list = iff(_pharmacy == "", dynamic([]), todynamic(_pharmacy));
+    let _client_list   = iff(_client   == "", dynamic([]), todynamic(_client));
+    let _product_list  = iff(_product  == "", dynamic([]), todynamic(_product));
+    materialized_view('mv_ordered_latest')
+    // Single-day equality predicate instead of a between-range comparison,
+    // since this function only ever needs "today" -- lets Kusto use a
+    // tighter match against the materialized view's extents.
+    | where calibration_date == _today
+    // Resolve names first and filter down to the requested pharmacy/client/product
+    // BEFORE the container/shipment/reason joins below, so those joins run
+    // against a much smaller row set instead of the full day's result.
+    | lookup kind=leftouter sites    on location_guid
+    | lookup kind=leftouter products on product_id
+    | lookup kind=leftouter clients  on client_id
+    | where (_pharmacy == "" or location_name in (_pharmacy_list))
+        and (_client == "" or client_name in (_client_list))
+        and (_product == "" or product_name in (_product_list))
+    | join kind=leftouter (containers) on
+          $left.ship_container_id == $right.ship_container_id,
+          $left.location_guid == $right.location_guid
+    | join kind=leftouter (shipments) on
+          $left.delivered_shipment_id == $right.shipment_id,
+          $left.location_guid == $right.location_guid
+    | join kind=leftouter (current_reason) on
+          $left.ordered_id == $right.reason_ordered_id,
+          $left.location_guid == $right.location_guid
+    | summarize
+        ["Total Orders"]    = dcount(ordered_id),
+        ["Total Filled"]    = dcountif(ordered_id, isnotempty(filled_date)),
+        ["Total Packed"]    = dcountif(ordered_id, isnotempty(packed_date)),
+        ["Total Shipped"]   = dcountif(ordered_id, isnotempty(ship_date)),
+        ["Total Delivered"] = dcountif(ordered_id, isnotempty(delivered_date))
+    // Multi Stat needs one row per stat (Metric/Value), not one row with
+    // five columns -- pivot wide-to-long so each stat fills its own slot.
+    | project Stats = pack_array(
+        pack("Metric", "Total Orders",    "Value", ["Total Orders"]),
+        pack("Metric", "Total Filled",    "Value", ["Total Filled"]),
+        pack("Metric", "Total Packed",    "Value", ["Total Packed"]),
+        pack("Metric", "Total Shipped",   "Value", ["Total Shipped"]),
+        pack("Metric", "Total Delivered", "Value", ["Total Delivered"]))
+    | mv-expand Stats
+    | evaluate bag_unpack(Stats)
+}

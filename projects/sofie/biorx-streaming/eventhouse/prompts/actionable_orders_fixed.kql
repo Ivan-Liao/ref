@@ -1,0 +1,76 @@
+.create-or-alter function with (
+    docstring = "Orders calibrated between _from and _to, optionally filtered by client/location/product",
+    folder    = "Reporting")
+ActionableOrders(_from:datetime, _to:datetime, _client:string, _location:string, _product:string)
+{
+    let reasons =
+        materialized_view('mv_reason_latest')
+        | project reason_ordered_id = record_id,
+                  location_guid,
+                  reason_code_id,
+                  reason_dt = dt;
+    let reasoncodes =
+        materialized_view('mv_reasoncode_latest')
+        | project reason_code_id, code, description;
+    // Get the current reason for each order.
+    let current_reason =
+        reasons
+        | lookup kind=leftouter reasoncodes on reason_code_id
+        | project reason_ordered_id, location_guid, code, description, reason_dt;
+    let sites =
+        materialized_view('mv_locations_latest')
+        | project location_guid, location_name;
+    let products =
+        materialized_view('mv_product_latest')
+        | project product_id, product_name = name;
+    let clients =
+        materialized_view('mv_client_latest')
+        | project client_id, client_name = name;
+    let containers =
+        materialized_view('mv_shipcontainer_latest')
+        | project ship_container_id, shipment_id, packed_date, packed_time,
+                  delivered_date, delivered_time;
+    let shipments =
+        materialized_view('mv_shipment_latest')
+        | project shipment_id, ship_date, ship_time;
+    //
+    materialized_view('mv_ordered_latest')
+    | where calibration_date between (_from .. _to)
+        and (_client == "" or client_id == _client)
+        and (_location == "" or location_guid == _location)
+        and (_product == "" or product_id == _product)
+    | join kind=leftouter (containers) on
+          $left.ship_container_id == $right.ship_container_id,
+          $left.location_guid == $right.location_guid
+    | join kind=leftouter (shipments) on
+          $left.delivered_shipment_id == $right.shipment_id,
+          $left.location_guid == $right.location_guid
+    | join kind=leftouter (current_reason) on
+          $left.ordered_id == $right.reason_ordered_id,
+          $left.location_guid == $right.location_guid
+    | lookup kind=leftouter sites       on location_guid
+    | lookup kind=leftouter products    on product_id
+    | lookup kind=leftouter clients     on client_id
+    | project
+        ["Rx ID"]        = ordered_id,
+        ["Pharmacy"]     = location_name,
+        ["Product"]      = product_name,
+        ["Client"]       = client_name,
+        ["Reason Code"]  = code,
+        ["Reason"]       = description,
+        ["ReasonDT"]     = reason_dt,
+        ["Dose Activity"]= actual_activity,
+        ["Cal Date"]     = format_datetime(calibration_date, 'yyyy-MM-dd'),
+        ["Cal Time"]     = format_timespan(calibration_time, 'hh:mm:ss'),
+        ["Order Date"]   = format_datetime(order_date, 'yyyy-MM-dd'),
+        ["Order Time"]   = format_timespan(order_time, 'hh:mm:ss'),
+        ["Filled Date"]  = format_datetime(filled_date, 'yyyy-MM-dd'),
+        ["Filled Time"]  = iff(filled_time == time(0s), "", format_timespan(filled_time, 'hh:mm:ss')),
+        ["Packed Date"]  = format_datetime(packed_date, 'yyyy-MM-dd'),
+        ["Packed Time"]  = format_timespan(packed_time, 'hh:mm:ss'),
+        ["Shipped Date"] = format_datetime(ship_date, 'yyyy-MM-dd'),
+        ["Shipped Time"] = format_timespan(ship_time, 'hh:mm:ss'),
+        ["Delivery Date"]= format_datetime(delivered_date, 'yyyy-MM-dd'),
+        ["Delivery Time"]= format_timespan(delivered_time, 'hh:mm:ss')
+    | sort by ["Pharmacy"] asc, ["Cal Date"] desc
+}

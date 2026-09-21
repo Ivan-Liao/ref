@@ -1,29 +1,30 @@
-# Create 
+# Create database objects
 
-raw_shipcontainer.kql
-stg_shipcontainer_flat.kql
-stg_ordered_flat.kql
-shipcontainer_flat_function.kql
-func_ordered_flat.kql
-
+1. Create all stg tables
+2. Create all func_stg functions
+3. Policy updates for all stg tables
 ```
-.alter table stg_shipcontainer_flat policy update 
-@'[{
-    "IsEnabled": true, 
-    "Source": "raw_shipcontainer", 
-    "Query": "shipcontainer_flat_function()", 
-    "IsTransactional": false, 
-    "PropagateIngestionProperties": true}]';
-
-.alter table stg_ordered_flat policy update @'[{"IsEnabled": true,"Source": "raw_ordered","Query": "func_stg_ordered_flat()","IsTransactional": false,"PropagateIngestionProperties": true}]'
-
-.alter table stg_client_flat policy update @'[{"IsEnabled": true,"Source": "raw_client","Query": "func_stg_client_flat()","IsTransactional": false,"PropagateIngestionProperties": true}]'
-
-
+.execute database script <|
+.alter table stg_ordered_flat policy update @'[{"IsEnabled": true,"Source": "raw_ordered","Query": "func_stg_ordered_flat()","IsTransactional": false,"PropagateIngestionProperties": true}]';
+.alter table stg_client_flat policy update @'[{"IsEnabled": true,"Source": "raw_client","Query": "func_stg_client_flat()","IsTransactional": false,"PropagateIngestionProperties": true}]';
+.alter table stg_locations_flat policy update @'[{"IsEnabled": true,"Source": "raw_locations","Query": "func_stg_locations_flat()","IsTransactional": false,"PropagateIngestionProperties": true}]';
+.alter table stg_product_flat policy update @'[{"IsEnabled": true,"Source": "raw_product","Query": "func_stg_product_flat()","IsTransactional": false,"PropagateIngestionProperties": true}]';
+.alter table stg_reason_flat policy update @'[{"IsEnabled": true,"Source": "raw_reason","Query": "func_stg_reason_flat()","IsTransactional": false,"PropagateIngestionProperties": true}]';
+.alter table stg_reasoncode_flat policy update @'[{"IsEnabled": true,"Source": "raw_reasoncode","Query": "func_stg_reasoncode_flat()","IsTransactional": false,"PropagateIngestionProperties": true}]';
+.alter table stg_shipcontainer_flat policy update @'[{"IsEnabled": true,"Source": "raw_shipcontainer","Query": "func_stg_shipcontainer_flat()","IsTransactional": false,"PropagateIngestionProperties": true}]';
+.alter table stg_shipment_flat policy update @'[{"IsEnabled": true,"Source": "raw_shipment","Query": "func_stg_shipment_flat()","IsTransactional": false,"PropagateIngestionProperties": true}]';
+```
+4. Backfill
+```
+.execute database script <|
 .append stg_ordered_flat <| func_stg_ordered_flat();
 .append stg_client_flat <| func_stg_client_flat();
-.append stg_ordered_flat <| func_stg_ordered_flat();
-.append stg_shipcontainer_flat <| shipcontainer_flat_function();
+.append stg_locations_flat <| func_stg_locations_flat();
+.append stg_product_flat <| func_stg_product_flat();
+.append stg_reasoncode_flat <| func_stg_reasoncode_flat();
+.append stg_reason_flat <| func_stg_reason_flat();
+.append stg_shipment_flat <| func_stg_shipment_flat();
+.append stg_shipcontainer_flat <| func_stg_shipcontainer_flat();
 ```
 
 # Materialized View
