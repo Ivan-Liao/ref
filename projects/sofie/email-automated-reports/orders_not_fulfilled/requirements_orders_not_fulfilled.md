@@ -8,6 +8,7 @@
 - [6.0 Next Steps](#60-next-steps)
 - [7.0 References](#70-references)
 - [8.0 Changlog](#80-changlog)
+  - [2026-09-18](#2026-09-18)
   - [2026-08-12](#2026-08-12)
 
 # Order not Fulfilled (daily email csv report)
@@ -70,7 +71,6 @@ We want to address the issue of unfulfilled orders in a timely manner based on t
 1. [Link to architecture diagram 2.0](https://viewer.diagrams.net/?tags=%7B%7D&lightbox=1&highlight=0000ff&edit=_blank&layers=1&nav=1&title=CSV%20Automated%20Emails%20for%20Unfulfilled%20Orders&dark=auto#Uhttps%3A%2F%2Fdrive.google.com%2Fuc%3Fid%3D186-DBOhJdZMVcRPczB89Of2NXASOqNBR%26export%3Ddownload#%7B%22pageId%22%3A%22L0mPaQPRMhuCCB-t4P-Q%22%7D)
 
 # 6.0 Next Steps
-1. Automated pipeline with Azure Synapse pipeline and Logic app.  The same developed SQL query will be used.
    
 # 7.0 References
 1. [Link to Reason Code Mapping](https://zevacor365.sharepoint.com/:x:/r/sites/BI/_layouts/15/Doc.aspx?sourcedoc=%7B6CEB8972-8FB2-4BD1-9171-5A159517ECDC%7D&file=Reason%20Codes%20Mapping%20for%20Operations%20and%20Sales%26Billing.xlsx&action=default&mobileredirect=true&DefaultItemOpen=1)
@@ -79,6 +79,10 @@ We want to address the issue of unfulfilled orders in a timely manner based on t
 
 
 # 8.0 Changlog
+
+## 2026-09-18
+1. Automated pipeline with Azure Synapse pipeline and Logic app.  The same developed SQL query was used.  
+   1. Previously orders from Friday, Saturday, and Sunday were aggregated into one report or attached as multiple files for Monday's email.  Now, there will always be just one file sent in an email for the orders from the previous day.  There will often not be a file on Monday because there are usually no orders on Sunday.
 
 ## 2026-08-12
 1. Orders with reason code 220 (SOFIE Cancelled - Order Entry Error / Duplicate Order) will now be added.  Previously the PowerBI report had filtered these out.

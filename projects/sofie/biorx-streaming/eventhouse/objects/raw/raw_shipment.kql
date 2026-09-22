@@ -1,0 +1,1 @@
+.create-merge table raw_shipment (schema:dynamic, payload:dynamic) 

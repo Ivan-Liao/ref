@@ -1,0 +1,1 @@
+.create-merge table raw_ordered (schema:dynamic, payload:dynamic) 

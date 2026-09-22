@@ -1,5 +1,6 @@
 - [Functions (built in)](#functions-built-in)
 - [Functions](#functions)
+  - [Parameterization](#parameterization)
 - [Limitations](#limitations)
 - [Materialized view](#materialized-view)
 - [Policy Updates](#policy-updates)
@@ -33,7 +34,34 @@
 trips_by_min_passenger_count(3)
 ```
 
+## Parameterization
+```
+// dynamic type to enable multi select
+// parameters need to be created in eventhouse dashboard
+// drop down menu can be prepopulated and queried from eventhouse
+   // mv_locations_latest | project location_name | distinct location_name | sort by location_name
+
+
+
+order_status_counts(_pharmacy:string, _client:string, _product:string)
+...
+let _pharmacy_list = iff(_pharmacy == "", dynamic([]), todynamic(_pharmacy));
+let _client_list   = iff(_client   == "", dynamic([]), todynamic(_client));
+let _product_list  = iff(_product  == "", dynamic([]), todynamic(_product));
+...
+| where (_pharmacy == "" or location_name in (_pharmacy_list))
+        and (_client == "" or client_name in (_client_list))
+        and (_product == "" or product_name in (_product_list))
+
+```
+
+
 # Limitations 
+1. Tables sorting can only be done one column at a time
+   1. Workaround through sort by command in kql function
+2. Datetime types are shown in a single default format only
+   1. Workaround through string type and formatting upstream
+      1. ["Cal Date"] = format_datetime(calibration_date, 'yyyy-MM-dd')
 
 
 # Materialized view

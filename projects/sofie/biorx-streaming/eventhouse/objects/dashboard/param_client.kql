@@ -1,0 +1,5 @@
+materialized_view('mv_ordered_latest')
+| where calibration_date == startofday(now())
+| lookup kind=leftouter (materialized_view('mv_client_latest') | project client_id, client_name = name) on client_id
+| distinct client_name
+| sort by client_name asc
