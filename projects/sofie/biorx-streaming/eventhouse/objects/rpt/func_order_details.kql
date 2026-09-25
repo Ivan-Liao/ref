@@ -56,9 +56,17 @@ func_order_details(_from:string = "", _to:string = "", _pharmacy:string = "", _c
         and (_pharmacy == "" or location_name in (_pharmacy_list))
         and (_client == "" or client_name in (_client_list))
         and (_product == "" or product_name in (_product_list))
+    | extend order_status = case (
+        filled == 0 and is_deleted == 0, "Unfilled",
+        is_deleted == 1, "Deleted",
+        isnotempty(ship_date) or processed == -2, "Shipped",
+        filled == 1 and is_deleted == 0, "Filled",
+        "Unknown"
+    )
     | project
         ["Rx ID"]        = ordered_id,
         ["Pharmacy"]     = location_name,
+        ["Order Status"] = order_status,
         ["Product"]      = product_name,
         ["Client"]       = client_name,
         ["Reason Code"]  = code,

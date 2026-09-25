@@ -64,17 +64,22 @@ order_status_counts(_pharmacy:string, _client:string, _product:string)
     | summarize
         ["Total Orders"]    = dcount(ordered_id),
         ["Total Filled"]    = dcountif(ordered_id, isnotempty(filled_date)),
+        ["Total Deleted"]    = dcountif(ordered_id, is_deleted == 1),
         ["Total Packed"]    = dcountif(ordered_id, isnotempty(packed_date)),
         ["Total Shipped"]   = dcountif(ordered_id, isnotempty(ship_date)),
         ["Total Delivered"] = dcountif(ordered_id, isnotempty(delivered_date))
+    | extend 
+        ["Total Unfilled"]  = ["Total Orders"] - ["Total Filled"] - ["Total Deleted"]
     // Multi Stat needs one row per stat (Metric/Value), not one row with
-    // five columns -- pivot wide-to-long so each stat fills its own slot.
+    // seven columns -- pivot wide-to-long so each stat fills its own slot.
     | project Stats = pack_array(
         pack("Metric", "Total Orders",    "Value", ["Total Orders"]),
         pack("Metric", "Total Filled",    "Value", ["Total Filled"]),
         pack("Metric", "Total Packed",    "Value", ["Total Packed"]),
         pack("Metric", "Total Shipped",   "Value", ["Total Shipped"]),
-        pack("Metric", "Total Delivered", "Value", ["Total Delivered"]))
+        pack("Metric", "Total Delivered", "Value", ["Total Delivered"]),
+        pack("Metric", "Total Deleted",    "Value", ["Total Deleted"]),
+        pack("Metric", "Total Unfilled",    "Value", ["Total Unfilled"]))
     | mv-expand Stats
     | evaluate bag_unpack(Stats)
 }
