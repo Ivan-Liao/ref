@@ -59,12 +59,16 @@ func_order_details(_from:string = "", _to:string = "", _pharmacy:string = "", _c
     | extend order_status = case (
         filled == 0 and is_deleted == 0, "Unfilled",
         is_deleted == 1, "Deleted",
+        isnotempty(delivered_date), "Delivered",
+        processed == -2, "Redirected Sent Shipped",
+        client_bill_id == 0, "Redirected Received Shipped",
         isnotempty(ship_date) or processed == -2, "Shipped",
         filled == 1 and is_deleted == 0, "Filled",
         "Unknown"
     )
+    | extend late_minutes = datetime_diff('minute', delivered_date + delivered_time, calibration_date + calibration_time)
     | project
-        ["Rx ID"]        = ordered_id,
+        ["Rx ID"]        = tostring(ordered_id),
         ["Pharmacy"]     = location_name,
         ["Order Status"] = order_status,
         ["Product"]      = product_name,
@@ -83,7 +87,8 @@ func_order_details(_from:string = "", _to:string = "", _pharmacy:string = "", _c
         ["Packed Time"]  = packed_time,
         ["Shipped Date"] = ship_date,
         ["Shipped Time"] = ship_time,
-        ["Delivery Date"]= delivered_date,
-        ["Delivery Time"]= delivered_time
+        ["Delivered Date"]= delivered_date,
+        ["Delivered Time"]= delivered_time,
+        ["Delivery Late Minutes"] = late_minutes
     | sort by ["Pharmacy"] asc, ["Cal Date"] desc, ["Cal Time"] desc
 }
