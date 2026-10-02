@@ -67,7 +67,9 @@ order_status_counts(_pharmacy:string, _client:string, _product:string)
         ["Total Deleted"]    = dcountif(ordered_id, is_deleted == 1),
         ["Total Packed"]    = dcountif(ordered_id, isnotempty(packed_date)),
         ["Total Shipped"]   = dcountif(ordered_id, isnotempty(ship_date)),
-        ["Total Delivered"] = dcountif(ordered_id, isnotempty(delivered_date))
+        ["Total Delivered"] = dcountif(ordered_id, isnotempty(delivered_date)),
+        ["Total Redirected Shipped"] = dcountif(ordered_id, client_bill_id == 0 and isnotempty(ship_date)),
+        ["Total Redirected Delivered"] = dcountif(ordered_id, client_bill_id == 0 and isnotempty(delivered_date))
     | extend 
         ["Total Unfilled"]  = ["Total Orders"] - ["Total Filled"] - ["Total Deleted"]
     // Multi Stat needs one row per stat (Metric/Value), not one row with
@@ -79,7 +81,12 @@ order_status_counts(_pharmacy:string, _client:string, _product:string)
         pack("Metric", "Total Shipped",   "Value", ["Total Shipped"]),
         pack("Metric", "Total Delivered", "Value", ["Total Delivered"]),
         pack("Metric", "Total Deleted",    "Value", ["Total Deleted"]),
-        pack("Metric", "Total Unfilled",    "Value", ["Total Unfilled"]))
+        pack("Metric", "Total Unfilled",    "Value", ["Total Unfilled"]),
+        // note this is actually the total redirected sent shipped
+        pack("Metric", "Total Redirected Shipped",    "Value", ["Total Redirected Shipped"]), 
+        // note this is actually the total redirected sent delivered
+        pack("Metric", "Total Redirected Delivered",    "Value", ["Total Redirected Delivered"])
+        )
     | mv-expand Stats
     | evaluate bag_unpack(Stats)
 }

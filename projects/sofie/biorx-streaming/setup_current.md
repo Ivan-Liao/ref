@@ -9,7 +9,7 @@
    binlog_format = ROW
    binlog_row_image = FULL
    expire_log_seconds = 604800
-   log_slave_updates = ON
+   log_slave_updates = ON # necessary when the database that cdc events is being retrieved from is a replication slave
    ```
 3. user creation sfbiorxcdc
    1. password with Elango
