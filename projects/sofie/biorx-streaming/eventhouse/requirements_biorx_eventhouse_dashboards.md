@@ -17,12 +17,15 @@
 # 1.0 Overview
 Fabric Eventhouse dashboards are a native dashboarding solution. 
 
+Dashboard ([link](https://app.fabric.microsoft.com/groups/7ebbb5d0-48f3-42a1-a1a1-503631ad2535/kustodashboards/d37220d3-db2e-4ade-87d7-3a8bd5036890?experience=fabric-developer&extensionScenario=openArtifact&v-_pharmacy=all&v-_product=all&v-_client=all&page=9a955cbb-83e2-44ce-9971-7831f65a6d6f&v-_from=24hours&v-_to=now&v-order_status=all))
+
 # 2.0 Objectives
 We want git versioned Eventhouse dashboards for realtime biorx data. Specifically, we want to monitor the counts of the order statuses as well as the row level order details.
 
 # 3.0 Stakeholders
 1. Operations team: William Crisp, Micah Bounds, Julian Nwoko, Jerrod Brown, Casey Melby, Andrea Tremblay
-2. Sofie BI team: Ivan Liao, Elangovan Srinivasan, Srihari Ramaiah, Kal ICB, Sean Murphy
+2. Sofie IT team: Vincent Oliveri, Kulsoom Naeem
+3. Sofie BI team: Ivan Liao, Elangovan Srinivasan, Srihari Ramaiah, Kal ICB, Sean Murphy
 
 # 4.0 Architecture
 [Architecture Diagram](https://viewer.diagrams.net/?tags=%7B%7D&lightbox=1&highlight=0000ff&edit=_blank&layers=1&nav=1&title=BioRx%20Real%20Time%20Architecture.drawio&dark=auto#Uhttps%3A%2F%2Fdrive.google.com%2Fuc%3Fid%3D1XWn--OlKma_YzSjIjk1e1js3wuu7Clr5%26export%3Ddownload)
