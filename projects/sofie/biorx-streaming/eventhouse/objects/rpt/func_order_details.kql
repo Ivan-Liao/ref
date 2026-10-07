@@ -35,6 +35,26 @@ func_order_details(_from:string = "", _to:string = "", _pharmacy:string = "", _o
     let shipments =
         materialized_view('mv_shipment_latest')
         | project shipment_id, ship_date, ship_time, location_guid;
+    let ordered_link_redirect_sent = 
+        materialized_view('mv_ordered_latest')
+        | project-rename link_redirect_sent_ordered_id = ordered_id, link_redirect_sent_calibration_date = calibration_date,
+            link_redirect_sent_calibration_time = calibration_time, link_redirect_sent_location_guid = location_guid;
+    let ordered_link_redirect_received = 
+        materialized_view('mv_ordered_latest')
+        | project-rename link_redirect_received_ordered_id = ordered_id, link_redirect_received_calibration_date = calibration_date,
+            link_redirect_received_calibration_time = calibration_time, link_redirect_received_location_guid = location_guid;
+    let orderedredirect_sent = 
+        materialized_view('mv_orderedredirect_latest')
+        | project-rename sent_ordered_id = ordered_id, sent_exchanged_id = exchanged_id;
+    let orderedredirect_received = 
+        materialized_view('mv_orderedredirect_latest')
+        | project-rename received_ordered_id = ordered_id;
+    let redirect_received_sites =
+        materialized_view('mv_locations_latest')
+        | project-rename link_redirect_received_location_guid = location_guid, received_facility_name = location_name;
+    let redirect_sent_sites =
+        materialized_view('mv_locations_latest')
+        | project-rename link_redirect_sent_location_guid = location_guid, sent_facility_name = location_name;
     let _pharmacy_list = iff(_pharmacy == "", dynamic([]), todynamic(_pharmacy));
     let _client_list   = iff(_client   == "", dynamic([]), todynamic(_client));
     let _product_list  = iff(_product  == "", dynamic([]), todynamic(_product));
@@ -53,25 +73,45 @@ func_order_details(_from:string = "", _to:string = "", _pharmacy:string = "", _o
     | lookup kind=leftouter sites       on location_guid
     | lookup kind=leftouter products    on product_id
     | lookup kind=leftouter clients     on client_id
+    | join kind=leftouter orderedredirect_sent on 
+        $left.ordered_id == $right.sent_ordered_id
+    | join kind=leftouter orderedredirect_received on 
+        $left.ordered_id == $right.exchanged_id
+    | join kind=leftouter ordered_link_redirect_sent on 
+        $left.sent_exchanged_id == $right.link_redirect_sent_ordered_id
+    | join kind=leftouter ordered_link_redirect_received on 
+        $left.received_ordered_id == $right.link_redirect_received_ordered_id
+    | lookup kind=leftouter redirect_received_sites     on link_redirect_received_location_guid
+    | lookup kind=leftouter redirect_sent_sites     on link_redirect_sent_location_guid
+    | extend redirect_facility_name = coalesce(sent_facility_name,received_facility_name)
+    | extend redirect_cal_date = coalesce(link_redirect_sent_calibration_date,link_redirect_received_calibration_date)
+    | extend redirect_cal_time = coalesce(link_redirect_received_calibration_time,link_redirect_sent_calibration_time)
     | extend order_status = case (
         filled == 0 and is_deleted == 0, "Unfilled",
         is_deleted == 1, "Deleted",
         client_bill_id == 0 and isnotempty(delivered_date), "Redirected Received Delivered",
         isnotempty(delivered_date), "Delivered",
         client_bill_id == 0 and isnotempty(ship_date), "Redirected Received Shipped",
+        processed == -2 and isnull(redirect_cal_date), "Redirected Sent Unfilled",
         processed == -2, "Redirected Sent Shipped",
         isnotempty(ship_date), "Shipped",
         filled == 1 and is_deleted == 0, "Filled",
         "Unknown"
     )
     | extend late_minutes = datetime_diff('minute', delivered_date + delivered_time, calibration_date + calibration_time)
+    | extend final_redirect_ordered_id = case (
+        order_status == "Redirected Received Shipped",received_ordered_id,
+        order_status == "Redirected Sent Shipped",sent_exchanged_id,
+        order_status == "Redirected Received Delivered",received_ordered_id,
+        999999999
+    )
     | where calibration_date between (_from_resolved .. _to_resolved)
         and (_pharmacy == "" or location_name in (_pharmacy_list))
         and (_client == "" or client_name in (_client_list))
         and (_product == "" or product_name in (_product_list))
         and (_order_status == "" or order_status in (_order_status_list))
     | project
-        ["Rx Number"]        = tostring(ordered_id),
+        ["Rx Number"]    = tostring(ordered_id),
         ["Order Status"] = order_status,
         ["Pharmacy"]     = location_name,
         ["Product"]      = product_name,
@@ -80,18 +120,22 @@ func_order_details(_from:string = "", _to:string = "", _pharmacy:string = "", _o
         ["Reason"]       = description,
         ["ReasonDT"]     = reason_dt,
         ["Dose Activity"]= actual_activity,
-        ["Cal Date"]     = calibration_date,
+        ["Cal Date"]     = format_datetime(calibration_date, 'yyyy-MM-dd'),
         ["Cal Time"]     = calibration_time,
-        ["Order Date"]   = order_date,
+        ["Order Date"]   = format_datetime(order_date, 'yyyy-MM-dd'),
         ["Order Time"]   = order_time,
-        ["Filled Date"]  = filled_date,
+        ["Filled Date"]  = format_datetime(filled_date, 'yyyy-MM-dd'),
         ["Filled Time"]  = filled_time,
-        ["Packed Date"]  = packed_date,
+        ["Packed Date"]  = format_datetime(packed_date, 'yyyy-MM-dd'),
         ["Packed Time"]  = packed_time,
-        ["Shipped Date"] = ship_date,
+        ["Shipped Date"] = format_datetime(ship_date, 'yyyy-MM-dd'),
         ["Shipped Time"] = ship_time,
-        ["Delivered Date"]= delivered_date,
+        ["Delivered Date"]= format_datetime(delivered_date, 'yyyy-MM-dd'),
         ["Delivered Time"]= delivered_time,
-        ["Delivery Late Minutes"] = late_minutes
+        ["Delivery Late Minutes"] = late_minutes,
+        ["Redirect Rx Number"] = tostring(final_redirect_ordered_id),
+        ["Redirect Pharmacy"] = redirect_facility_name,
+        ["Redirect Cal Date"] = format_datetime(redirect_cal_date, 'yyyy-MM-dd'),
+        ["Redirect Cal Time"] = redirect_cal_time
     | sort by ["Pharmacy"] asc, ["Cal Date"] desc, ["Cal Time"] desc
 }

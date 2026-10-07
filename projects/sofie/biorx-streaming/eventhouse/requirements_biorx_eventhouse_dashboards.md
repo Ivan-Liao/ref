@@ -10,7 +10,8 @@
 - [7.0 References](#70-references)
   - [7.1 Research on Eventhouse dashboards versus PowerBI](#71-research-on-eventhouse-dashboards-versus-powerbi)
 - [8.0 Changlog](#80-changlog)
-  - [8.1 October 1, 2026](#81-october-1-2026)
+  - [8.1 October 7, 2026](#81-october-7-2026)
+  - [8.2 October 1, 2026](#82-october-1-2026)
 
 # Biorx Eventhouse Real Time Data Dashboard 2026
 
@@ -31,10 +32,7 @@ We want git versioned Eventhouse dashboards for realtime biorx data. Specificall
 [Architecture Diagram](https://viewer.diagrams.net/?tags=%7B%7D&lightbox=1&highlight=0000ff&edit=_blank&layers=1&nav=1&title=BioRx%20Real%20Time%20Architecture.drawio&dark=auto#Uhttps%3A%2F%2Fdrive.google.com%2Fuc%3Fid%3D1XWn--OlKma_YzSjIjk1e1js3wuu7Clr5%26export%3Ddownload)
 
 # 5.0 Next Steps
-1.  Bring in inventory and orderedredirect tables
-2.  Redirect data
-   1. Put transferred site (possibly in a separate redirected report page)
-   2. Cal time at redirected from or to pharmacy
+1.  Bring in inventory table
 
 # 6.0 Requirements
 
@@ -48,6 +46,9 @@ Order Statuses tracked
 5. Total Packed
 6. Total Shipped
 7. Total Delivered
+8. Total Redirected Unfilled
+9. Total Redirected Shipped
+10. Total Redirected Delivered
 
 ## 6.2 Order Details report
 
@@ -76,6 +77,14 @@ Order Statuses tracked
 22. Delivered Late Minutes
     1.  Note that this is the difference in minutes between the Delivered Time and the Calibration Time.
     2.  Note that negative numbers means it was delivered early.
+23. Redirect Rx Number
+    1.  Rx Number for the corresponding phamarcy in the redirect relationship
+24. Redirect Pharmacy
+    1.  Pharmacy in the redirect relationship
+25. Redirect Cal Date
+    1.  Cal date for the corresponding phamarcy in the redirect relationship
+26. Redirect Cal Time
+    1.  Cal time for the corresponding phamarcy in the redirect relationship
 
 ___
 
@@ -106,7 +115,24 @@ ___
 
 # 8.0 Changlog
 
-## 8.1 October 1, 2026
+## 8.1 October 7, 2026
+1. Brought in data from orderedredirect table
+2. Order Status Counts page
+   1. Added count for Total Redirected Unfilled
+3. Order Details page
+   1. New columns
+      1. Redirect Rx Number
+         1. Rx Number for the corresponding phamarcy in the redirect relationship
+      2. Redirect Pharmacy
+         1. Pharmacy in the redirect relationship
+      3. Redirect Cal Date
+         1. Cal date for the corresponding phamarcy in the redirect relationship
+      4. Redirect Cal Time
+         1. Cal Time for the corresponding phamarcy in the redirect relationship
+   2. New Order status "Redirected Sent Unfilled"
+   3. Pure dates were reformatted to remove the time part
+
+## 8.2 October 1, 2026
 1. Documented workflow to export to CSV
 2. "Order Status Counts" page
    1. Added counts for "Total Redirected Shipped" and "Total Redirected Delivered"

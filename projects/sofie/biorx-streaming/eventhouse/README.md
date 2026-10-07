@@ -13,8 +13,9 @@
 .alter table stg_reasoncode_flat policy update @'[{"IsEnabled": true,"Source": "raw_reasoncode","Query": "func_stg_reasoncode_flat()","IsTransactional": false,"PropagateIngestionProperties": true}]';
 .alter table stg_shipcontainer_flat policy update @'[{"IsEnabled": true,"Source": "raw_shipcontainer","Query": "func_stg_shipcontainer_flat()","IsTransactional": false,"PropagateIngestionProperties": true}]';
 .alter table stg_shipment_flat policy update @'[{"IsEnabled": true,"Source": "raw_shipment","Query": "func_stg_shipment_flat()","IsTransactional": false,"PropagateIngestionProperties": true}]';
+.alter table stg_orderedredirect_flat policy update @'[{"IsEnabled": true,"Source": "raw_orderedredirect","Query": "func_stg_orderedredirect_flat()","IsTransactional": false,"PropagateIngestionProperties": true}]';
 ```
-4. Backfill
+1. Backfill
 ```
 .execute database script <|
 .append stg_ordered_flat <| func_stg_ordered_flat();
@@ -25,6 +26,7 @@
 .append stg_reason_flat <| func_stg_reason_flat();
 .append stg_shipment_flat <| func_stg_shipment_flat();
 .append stg_shipcontainer_flat <| func_stg_shipcontainer_flat();
+.append stg_orderedredirect_flat <| func_stg_orderedredirect_flat();
 ```
 
 # Materialized View

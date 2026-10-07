@@ -1,0 +1,73 @@
+.create-or-alter function with
+(
+    folder = "CDC",
+    docstring = "Flattens raw_orderedredirect MariaDB CDC payloads"
+)
+func_stg_orderedredirect_flat()
+{
+    raw_orderedredirect
+    | extend p = todynamic(payload)
+    | where tostring(p.source.table) == "orderedredirect"
+    | where tostring(p.op) in ("r", "c", "u", "d")
+    | extend row_data = coalesce(
+        todynamic(p.after),
+        todynamic(p.before)
+    )
+    | project
+        cdc_operation = tostring(p.op),
+
+        cdc_event_datetime =
+            unixtime_milliseconds_todatetime(
+                tolong(p.ts_ms)
+            ),
+
+        source_event_datetime =
+            unixtime_milliseconds_todatetime(
+                tolong(p.source.ts_ms)
+            ),
+
+        ts_ns = coalesce(
+            tolong(p.ts_ns),
+            tolong(p.ts_ms) * 1000000
+        ),
+
+        is_deleted =
+            tostring(p.op) == "d"
+            or toint(row_data.Deleted) == 1,
+
+        location_guid = tostring(row_data.LocationGUID),
+        orderedredirect_id = tolong(row_data.OrderedRedirectID),
+
+        created_dt =
+            unixtime_milliseconds_todatetime(
+                tolong(row_data.CreatedDT)
+            ),
+
+        created_by_id = tolong(row_data.CreatedByID),
+
+        deleted_dt =
+            unixtime_milliseconds_todatetime(
+                tolong(row_data.DeletedDT)
+            ),
+
+        deleted_by_id = tolong(row_data.DeletedByID),
+        deleted = toint(row_data.Deleted),
+        synced = toint(row_data.Synced),
+        status = toint(row_data.Status),
+
+        transmission_dt =
+            unixtime_milliseconds_todatetime(
+                tolong(row_data.TransmissionDT)
+            ),
+
+        facility_name = tostring(row_data.FacilityName),
+        facility_hosp_dbaid = tolong(row_data.FacilityHospDBAID),
+        client_id = tolong(row_data.ClientID),
+        client_name = tostring(row_data.ClientName),
+        client_hosp_dbaid = tolong(row_data.ClientHospDBAID),
+        web_order_id = tolong(row_data.WebOrderID),
+        ordered_id = tolong(row_data.OrderedID),
+        exchanged_id = tolong(row_data.ExchangedID),
+        transfer_ip = tostring(row_data.TransferIP),
+        transfer_database = tostring(row_data.TransferDatabase)
+}

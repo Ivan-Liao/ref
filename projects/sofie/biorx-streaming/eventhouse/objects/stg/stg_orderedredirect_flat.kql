@@ -1,0 +1,29 @@
+.create table stg_orderedredirect_flat
+(
+    cdc_operation: string,
+    cdc_event_datetime: datetime,
+    source_event_datetime: datetime,
+    ts_ns: long,
+    is_deleted: bool,
+
+    location_guid: string,
+    orderedredirect_id: long,
+    created_dt: datetime,
+    created_by_id: long,
+    deleted_dt: datetime,
+    deleted_by_id: long,
+    deleted: int,
+    synced: int,
+    status: int,
+    transmission_dt: datetime,
+    facility_name: string,
+    facility_hosp_dbaid: long,
+    client_id: long,
+    client_name: string,
+    client_hosp_dbaid: long,
+    web_order_id: long,
+    ordered_id: long,
+    exchanged_id: long,
+    transfer_ip: string,
+    transfer_database: string
+)

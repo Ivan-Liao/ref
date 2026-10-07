@@ -68,6 +68,7 @@ order_status_counts(_pharmacy:string, _client:string, _product:string)
         ["Total Packed"]    = dcountif(ordered_id, isnotempty(packed_date)),
         ["Total Shipped"]   = dcountif(ordered_id, isnotempty(ship_date)),
         ["Total Delivered"] = dcountif(ordered_id, isnotempty(delivered_date)),
+        ["Total Redirected Unfilled"] = dcountif(ordered_id, processed == -2),
         ["Total Redirected Shipped"] = dcountif(ordered_id, client_bill_id == 0 and isnotempty(ship_date)),
         ["Total Redirected Delivered"] = dcountif(ordered_id, client_bill_id == 0 and isnotempty(delivered_date))
     | extend 
@@ -82,6 +83,7 @@ order_status_counts(_pharmacy:string, _client:string, _product:string)
         pack("Metric", "Total Delivered", "Value", ["Total Delivered"]),
         pack("Metric", "Total Deleted",    "Value", ["Total Deleted"]),
         pack("Metric", "Total Unfilled",    "Value", ["Total Unfilled"]),
+        pack("Metric", "Total Redirected Unfilled",    "Value", ["Total Redirected Unfilled"]), 
         // note this is actually the total redirected sent shipped
         pack("Metric", "Total Redirected Shipped",    "Value", ["Total Redirected Shipped"]), 
         // note this is actually the total redirected sent delivered
