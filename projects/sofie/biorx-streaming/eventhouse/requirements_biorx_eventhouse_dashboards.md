@@ -10,8 +10,9 @@
 - [7.0 References](#70-references)
   - [7.1 Research on Eventhouse dashboards versus PowerBI](#71-research-on-eventhouse-dashboards-versus-powerbi)
 - [8.0 Changlog](#80-changlog)
-  - [8.1 October 7, 2026](#81-october-7-2026)
-  - [8.2 October 1, 2026](#82-october-1-2026)
+  - [October 9, 2026](#october-9-2026)
+  - [October 7, 2026](#october-7-2026)
+  - [October 1, 2026](#october-1-2026)
 
 # Biorx Eventhouse Real Time Data Dashboard 2026
 
@@ -115,7 +116,13 @@ ___
 
 # 8.0 Changlog
 
-## 8.1 October 7, 2026
+## October 9, 2026
+1. New column "Is Redirect Recalibrated"
+   1. "Yes" if the redirected cal time is different from the original cal time. Green conditional formatting.
+   2. "No" if the redirected cal time is the same as the original cal time. Red conditional formatting.
+   3. Empty if not a redirected order.
+
+## October 7, 2026
 1. Brought in data from orderedredirect table
 2. Order Status Counts page
    1. Added count for Total Redirected Unfilled
@@ -132,7 +139,7 @@ ___
    2. New Order status "Redirected Sent Unfilled"
    3. Pure dates were reformatted to remove the time part
 
-## 8.2 October 1, 2026
+## October 1, 2026
 1. Documented workflow to export to CSV
 2. "Order Status Counts" page
    1. Added counts for "Total Redirected Shipped" and "Total Redirected Delivered"

@@ -105,6 +105,12 @@ func_order_details(_from:string = "", _to:string = "", _pharmacy:string = "", _o
         order_status == "Redirected Received Delivered",received_ordered_id,
         999999999
     )
+    | extend is_redirect_recalibrated = case (
+        isnull(redirect_cal_time), "",
+        redirect_cal_time == calibration_time, "No",
+        redirect_cal_time != calibration_time, "Yes",
+        ""
+    )
     | where calibration_date between (_from_resolved .. _to_resolved)
         and (_pharmacy == "" or location_name in (_pharmacy_list))
         and (_client == "" or client_name in (_client_list))
@@ -136,6 +142,7 @@ func_order_details(_from:string = "", _to:string = "", _pharmacy:string = "", _o
         ["Redirect Rx Number"] = tostring(final_redirect_ordered_id),
         ["Redirect Pharmacy"] = redirect_facility_name,
         ["Redirect Cal Date"] = format_datetime(redirect_cal_date, 'yyyy-MM-dd'),
-        ["Redirect Cal Time"] = redirect_cal_time
+        ["Redirect Cal Time"] = redirect_cal_time,
+        ["Is Redirect Recalibrated"] = is_redirect_recalibrated
     | sort by ["Pharmacy"] asc, ["Cal Date"] desc, ["Cal Time"] desc
 }
