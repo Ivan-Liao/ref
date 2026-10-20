@@ -87,7 +87,7 @@ func_order_details(_from:string = "", _to:string = "", _pharmacy:string = "", _o
     | extend redirect_cal_date = coalesce(link_redirect_sent_calibration_date,link_redirect_received_calibration_date)
     | extend redirect_cal_time = coalesce(link_redirect_received_calibration_time,link_redirect_sent_calibration_time)
     | extend order_status = case (
-        filled == 0 and is_deleted == 0, "Unfilled",
+        filled == 0 and is_deleted == 0 and isempty(ship_date), "Unfilled",
         is_deleted == 1, "Deleted",
         client_bill_id == 0 and isnotempty(delivered_date), "Redirected Received Delivered",
         isnotempty(delivered_date), "Delivered",

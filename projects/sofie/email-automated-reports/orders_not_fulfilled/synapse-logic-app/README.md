@@ -164,13 +164,89 @@ Azure Synapse lake database > Synapse pipeline (ADLS read > ADLS sink)> Logic Ap
    2. File path with filename expression
       1. concat('orders_not_fulfilled_', formatDateTime(utcNow(), 'yyyy-MM-dd'), '.csv')
    3. Get blob content (V2) and point to the container/blob path used by the Copy Data sink
-5. Office 365 Outlook: Send an email (V2) 
+5. Condition
+   1. Remember checkmark
+   2. basic
+   3.    empty(body('Get_blob_content_(V2)'))
+   4. better
+```
+greater(
+  length(
+    trim(
+      replace(
+        replace(
+          replace(
+            join(
+              skip(
+                split(
+                  replace(
+                    body('Get_blob_content_(V2)'),
+                    decodeUriComponent('%0D'),
+                    ''
+                  ),
+                  decodeUriComponent('%0A')
+                ),
+                1
+              ),
+              ''
+            ),
+            ',',
+            ''
+          ),
+          decodeUriComponent('%0A'),
+          ''
+        ),
+        ' ',
+        ''
+      )
+    )
+  ),
+  0
+)
+
+greater(
+  length(
+    trim(
+      replace(
+        replace(
+          replace(
+            join(
+              skip(
+                split(
+                  replace(
+                    body('Get_blob_content_(V2)'),
+                    decodeUriComponent('%0D'),  // Remove carriage returns (\r)
+                    ''
+                  ),
+                  decodeUriComponent('%0A')    // Split the CSV at line feeds (\n)
+                ),
+                1                              // Skip the first line (CSV header)
+              ),
+              ''                               // Join remaining rows without a separator
+            ),
+            ',',                              // Remove commas from remaining rows
+            ''
+          ),
+          decodeUriComponent('%0A'),           // Remove any remaining line feeds
+          ''
+        ),
+        ' ',                                  // Remove ordinary spaces
+        ''
+      )
+    )
+  ),
+  0                                          // True only if non-empty content remains
+)
+
+```
+6. Office 365 Outlook: Send an email (V2) 
    1. To:
    2. Subject:
    3. Body:
    4. Add new parameter and check attachments
       1. Name: concat('orders_not_fulfilled_', formatDateTime(utcNow(), 'yyyy-MM-dd'), '.csv')
       2. File content: outputs('Get_blob_content_(V2)')?['body']
+         1. base64(body('Get_blob_content_(V2)'))
 
 # Back to Synapse pipeline
 1. Add Web activity action linked to Success path

@@ -83,7 +83,7 @@ order_status_counts(_pharmacy:string, _client:string, _product:string)
         pack("Metric", "Total Delivered", "Value", ["Total Delivered"]),
         pack("Metric", "Total Deleted",    "Value", ["Total Deleted"]),
         pack("Metric", "Total Unfilled",    "Value", ["Total Unfilled"]),
-        pack("Metric", "Total Redirected Unfilled",    "Value", ["Total Redirected Unfilled"]), 
+        pack("Metric", "Total Redirected Orders",    "Value", ["Total Redirected Unfilled"]), 
         // note this is actually the total redirected sent shipped
         pack("Metric", "Total Redirected Shipped",    "Value", ["Total Redirected Shipped"]), 
         // note this is actually the total redirected sent delivered

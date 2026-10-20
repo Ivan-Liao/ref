@@ -8,8 +8,9 @@
   - [6.1 Order Status Counts Report](#61-order-status-counts-report)
   - [6.2 Order Details report](#62-order-details-report)
 - [7.0 References](#70-references)
-  - [7.1 Research on Eventhouse dashboards versus PowerBI](#71-research-on-eventhouse-dashboards-versus-powerbi)
-- [8.0 Changlog](#80-changlog)
+  - [7.1 Dashboard tips and tricks](#71-dashboard-tips-and-tricks)
+  - [7.2 Research on Eventhouse dashboards versus PowerBI](#72-research-on-eventhouse-dashboards-versus-powerbi)
+- [8.0 Changelog](#80-changelog)
   - [October 9, 2026](#october-9-2026)
   - [October 7, 2026](#october-7-2026)
   - [October 1, 2026](#october-1-2026)
@@ -28,6 +29,7 @@ We want git versioned Eventhouse dashboards for realtime biorx data. Specificall
 1. Operations team: William Crisp, Micah Bounds, Julian Nwoko, Jerrod Brown, Casey Melby, Andrea Tremblay
 2. Sofie IT team: Vincent Oliveri, Kulsoom Naeem
 3. Sofie BI team: Ivan Liao, Elangovan Srinivasan, Srihari Ramaiah, Kal ICB, Sean Murphy
+4. Sofie Sales team: Adam Cooper, Dawn Allen, Joseph Cascone, Malia Proskey, Mike Parisi, Phyllis Hoelsworth, Tim Rieman
 
 # 4.0 Architecture
 [Architecture Diagram](https://viewer.diagrams.net/?tags=%7B%7D&lightbox=1&highlight=0000ff&edit=_blank&layers=1&nav=1&title=BioRx%20Real%20Time%20Architecture.drawio&dark=auto#Uhttps%3A%2F%2Fdrive.google.com%2Fuc%3Fid%3D1XWn--OlKma_YzSjIjk1e1js3wuu7Clr5%26export%3Ddownload)
@@ -103,7 +105,17 @@ ___
    
 # 7.0 References
 
-## 7.1 Research on Eventhouse dashboards versus PowerBI
+## 7.1 Dashboard tips and tricks
+1. The left side panel has tabs for the various available reports.
+2. Use the filters in the top of the report.  Select / Deselect all as well as multi-select is available.
+3. Export as csv or excel by right click any row in a table and clicking "Export to csv"
+4. You can pin any column by clicking on the 3 vertical dots on any column in a table.
+5. You can filter by any specific value through the filter icon on every column in a table.
+6. You can sort by any column by right clicking a column and pressing "Sort Ascending" or "Sort Descending".  There is currently no way to sort by multiple columns.  The default sort is by Pharmacy Ascending, Cal Date Desc, Cal Time Desc.
+7. You can choose specific columns to display by right clicking on any column and clicking "Choose Columns".  This can be reset by right clicking on any column and selecting "Reset Columns".
+8. There is a reset button in the top right to reset all filters.
+
+## 7.2 Research on Eventhouse dashboards versus PowerBI
 1. PowerBI has more visual report support and flexibility.
 2. PowerBI provides less native refresh cadence support below 30 minutes.
    1. Eventhouse dashboard refresh cadence natively supports as fast as 10 seconds.
@@ -114,7 +126,7 @@ ___
    4. PowerBI returns results to the visual
    5. Kusto source system costs still apply
 
-# 8.0 Changlog
+# 8.0 Changelog
 
 ## October 9, 2026
 1. New column "Is Redirect Recalibrated"
