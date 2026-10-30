@@ -35,6 +35,18 @@ We want git versioned Eventhouse dashboards for realtime biorx data. Specificall
 [Architecture Diagram](https://viewer.diagrams.net/?tags=%7B%7D&lightbox=1&highlight=0000ff&edit=_blank&layers=1&nav=1&title=BioRx%20Real%20Time%20Architecture.drawio&dark=auto#Uhttps%3A%2F%2Fdrive.google.com%2Fuc%3Fid%3D1XWn--OlKma_YzSjIjk1e1js3wuu7Clr5%26export%3Ddownload)
 
 # 5.0 Next Steps
+1.  The sales team has requested the following enhancements to the real-time report
+    1.  Allow users to pin the selection and save between session
+    2.  Enable the report to be accessed through Salesforce, work with Adam and confirm url is working.
+    3.  Add Account owner as an additional filter
+    4.  New Report tabs (other than the details tab) – Past Orders (30 days), current week’s orders, and future orders (30 days)
+    5.  Introduce role-based views to make it easier for CAEs
+    6.  Alerts for CAEs (possible via Fabric Activator in email or Teams)
+    7.  Predictive alerts (for when order is in trouble, etc.)
+2.  Operations team requested the following
+    1.  is_recalibrated
+    2.  is_same_day_recalibrated, know that recalibration happens on impacted day or not flag
+because of issue today, what was impact on customer (daily_customer_impact)
 1.  Bring in inventory table
 
 # 6.0 Requirements

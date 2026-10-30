@@ -31,6 +31,11 @@
        1.  Multiple filters / criteria possible
     4.  Conditionals if
     5.  Win + . to open emoji window
+2.  Bookmarks
+    1.  Hover over the table visual and select the Personalize this visual icon in the visual’s header.
+    2.  Add, remove, or reorder the fields in the pane that opens.
+    3.  Save the result as a personal bookmark. Use Bookmarks > Add a personal bookmark, or Personal bookmarks > Add, depending on your UI version.
+    4.  In later sessions, open that bookmark to restore the layout
 
 # Gateway
 1. Acts as a secure, encrypted bridge between PowerBI and onprem data sources

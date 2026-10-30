@@ -36,7 +36,7 @@ We want an email sent at 4 pm EST daily with a csv attachment containing the ord
 3. Sofie BI team: Ivan Liao, Elangovan Srinivasan
 4. Email list maintainer: Ivan Liao
 5. Email recipients
-   1. Operations team: "William Crisp" <william.crisp@sofie.com>; "Jerrod Brown" <jerrod.brown@sofie.com>; "Casey Melby" <casey.melby@sofie.com>; "Micah Bounds" <Micah.Bounds@sofie.com>; "Andrea Tremblay" <Andrea.Tremblay@sofie.com>; "Eric Kroencke" <Eric.Kroencke@sofie.com>; "Elangovan Srinivasan" <elangovan.srinivasan@sofie.com>; "Distro-Pharmacy-Managers" <Distro-Pharmacy-Managers@sofie.com>;
+   1. Operations team: william.crisp@sofie.com, jerrod.brown@sofie.com, casey.melby@sofie.com, Micah.Bounds@sofie.com, Andrea.Tremblay@sofie.com, Eric.Kroencke@sofie.com, elangovan.srinivasan@sofie.com, Distro-Pharmacy-Managers@sofie.com, ivan.liao@sofie.com
 
 # 4.0 Technical Requirements
 1. Daily email to designated email list at 4 pm EST.  Covers past 2 weeks of orders.

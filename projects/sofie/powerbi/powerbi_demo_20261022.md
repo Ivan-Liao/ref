@@ -9,7 +9,6 @@
 2. **Developer**: Handles QA validation with stakeholders.
    1. Publish dashboard in Power BI (QA) Workspace
    2. If validation fails, the dashboard goes back to development.
-   3. If validation succeeds, handoff .pbix file to Admin through email or Teams
 3. **Admin**: Performs QA validation as gatekeeper.
    1. If validation fails, the dashboard goes back to development.
 4. **Admin**: On validation success, performs Prod dashboard versioning.
