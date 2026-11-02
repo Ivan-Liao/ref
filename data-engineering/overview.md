@@ -210,6 +210,14 @@
    1. queries connected to distinct external data sources
 2. S3 path
 3. https://raw.githubusercontent.com
+4. Data Sharing
+   1. Direct access to database > data warehouse
+   2. Internal Sharepoint to Azure ecosystem > data warehouse
+   3. Extract to Cloud storage to > data warehouse
+   4. Extract to sFTP > data warehouse
+   5. Access to APIs > data warehouse
+   6. Application view extract > data warehouse
+   7. Data scraping > data warehouse
 
 # Storage
 1. Cache / Real Time

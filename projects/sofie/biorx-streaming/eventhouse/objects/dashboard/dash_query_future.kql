@@ -1,0 +1,2 @@
+| where calibration_date >= startofday(now()) + 1d
+    and calibration_date < startofday(now()) + 31d
