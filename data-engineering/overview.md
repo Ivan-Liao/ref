@@ -1,6 +1,9 @@
 - [Column types](#column-types)
 - [Data Modeling](#data-modeling)
-- [Dataset Types](#dataset-types)
+- [Dataset types](#dataset-types)
+- [Table Field Types](#table-field-types)
+  - [Field types and examples](#field-types-and-examples)
+  - [Naming Conventions](#naming-conventions)
   - [Lists](#lists)
 - [The 4 Vs](#the-4-vs)
 - [Distributed Processing](#distributed-processing)
@@ -96,16 +99,76 @@
    1. Referential Integrity (foreign key exists in associated entity table)
    2. Entity Integrity (no null primary key)
 
-# Dataset Types
-1. String
-2. Number
-3. Float
-4. Boolean
-5. Object / Dynamic
-6. Geospatial
-   1. use cases
-      1. Patient routing
+# Dataset types
+1. Ordering system
+2. Inventory system
+3. Ticketing system
 
+# Table Field Types
+The following is a list of common database table field types commonly found in transactional databases, analytical data warehouses, APIs, and reporting systems.
+
+There are **45 field categories** with descriptions, examples, and typical database data types. The examples use an order-management system as a reference, but most apply to any database.
+
+## Field types and examples
+
+| # | Field category | Description | Example field names | Typical data types |
+|---:|---|---|---|---|
+| 1 | **Primary key fields** | Unique identifiers for individual records. | `id`, `order_id`, `customer_id` | INT, BIGINT, UUID |
+| 2 | **Foreign key fields** | References to records in another table. | `customer_id`, `product_id`, `location_id` | INT, BIGINT, UUID |
+| 3 | **External key fields** | Identifiers originating from external systems. | `external_order_id`, `erp_id`, `legacy_id` | VARCHAR, UUID |
+| 4 | **Composite key fields** | Multiple fields used together to uniquely identify a record. | `order_id + product_id`, `tenant_id + record_id` | Multiple types |
+| 5 | **sequence fields** | Track sequential ordering. | `sequence_id` | INT, BIGINT |
+| 6 | **Time Related Fields** | fields related to date, time, or duration | `created_at`, `created_datetime`, `insert_timestamp` | DATETIME, TIMESTAMP, DATE, INTERVAL, INT, BIGINT |
+| 6.1 | **metadata timestamps** | Record when a database record was initially created, cdc extracted, ingested, updated, deleted. | `created_at`, `created_datetime`, `updated_at`, `last_modified`, `deleted_at`, `ingested_at`  | DATETIME, TIMESTAMP |
+| 6.2 | **Event timestamps** | Record when a business event occurred. | `ordered_at`, `packed_at`, `shipped_at`, `delivered_at` | DATETIME, TIMESTAMP |
+| 6.3 | **Event dates** | Store the calendar date of a business event without necessarily storing its time. | `order_date`, `invoice_date`, `delivery_date` | DATE |
+| 6.4 | **Time fields** | Store a time of day independently of a date. | `opening_time`, `cutoff_time`, `scheduled_time` | TIME |
+| 6.5 | **Duration fields** | Represent the amount of time between events or processes. | `processing_duration`, `delivery_duration`, `elapsed_seconds` | INT, BIGINT, INTERVAL |
+| 6.6 | **Timezone fields** | Identify the timezone associated with a timestamp or schedule. | `timezone`, `timezone_name`, `utc_offset` | VARCHAR, INTERVAL |
+| 7 | **Categorical label fields** | Store values from a predefined set of categories. | `order_status`, `priority`, `payment_method` | VARCHAR, ENUM |
+| 7.1 | **Status fields** | Represent the current state of a record or process. | `order_status`, `shipment_status`, `approval_status` | VARCHAR, ENUM, INT |
+| 7.2 | **Type / classification fields** | Identify what kind of record or transaction something represents. | `order_type`, `customer_type`, `transaction_type` | VARCHAR, ENUM |
+| 8 | **Yes / No boolean flags** | Store binary true/false conditions. | `is_deleted`, `is_active`, `is_redirected`, `is_bulk`, `is_tracking_enabled`, `is_approval_required` | BOOLEAN, TINYINT |
+| 9 | **Free-text fields** | Store descriptive text that does not follow a fixed format. | `notes`, `comments`, `description` | VARCHAR, TEXT |
+| 10 | **Message / communication fields** | Store messages, notifications, or communication content. | `error_message`, `customer_message`, `notification_body` | VARCHAR, TEXT |
+| 11 | **JSON object fields** | Store structured key-value data or nested objects. | `metadata`, `payload`, `shipping_details` | JSON, TEXT |
+| 12 | **JSON array fields** | Store arrays of structured objects or values. | `order_items_list`, `attachments`, `event_history` | JSON, TEXT |
+| 13 | **Comma-separated list fields** | Store multiple values in a single string separated by delimiters. | `tags`, `permissions`, `associated_ids` | VARCHAR, TEXT |
+| 14 | **Numeric quantity fields** | Represent counts or quantities of items. | `quantity`, `units_ordered`, `package_count` | INT, BIGINT |
+| 15 | **Integer measurement fields** | Store whole-number measurements. | `weight_grams`, `distance_meters`, `age_days` | INT, BIGINT |
+| 16 | **Decimal measurement fields** | Store measurements requiring fractional precision. | `dose_amount`, `weight_kg`, `temperature` | DECIMAL, FLOAT |
+| 17 | **Currency / cost fields** | Represent monetary values or expenses. | `order_total`, `unit_cost`, `shipping_cost` | DECIMAL |
+| 18 | **Financial rate fields** | Store rates, percentages, or financial ratios. | `tax_rate`, `discount_percentage`, `commission_rate` | DECIMAL, FLOAT |
+| 19 | **Calculated / derived fields** | Store values calculated from other fields. | `total_amount`, `profit_margin`, `days_since_order` | DECIMAL, INT |
+| 20 | **Address fields** | Store physical or mailing address information. | `street_address`, `city`, `state`, `postal_code` | VARCHAR |
+| 21 | **Contact information fields** | Store contact details for individuals or organizations. | `email`, `phone_number`, `fax_number` | VARCHAR |
+| 22 | **Name / identity fields** | Store names of people, organizations, or entities. | `first_name`, `last_name`, `company_name` | VARCHAR |
+| 23 | **URL / hyperlink fields** | Store web addresses or links to external resources. | `tracking_url`, `document_url`, `website` | VARCHAR, TEXT |
+| 24 | **File path / storage reference fields** | Store file locations or object-storage references. | `file_path`, `blob_uri`, `attachment_location` | VARCHAR, TEXT |
+| 25 | **Binary / file data fields** | Store actual binary file contents. | `document_data`, `image_data`, `attachment_blob` | BLOB, VARBINARY |
+| 26 | **Geographic coordinate fields** | Store latitude, longitude, or spatial coordinates. | `latitude`, `longitude`, `coordinates` | DECIMAL, FLOAT, GEOMETRY |
+| 27 | **Geospatial fields** | Store geographic shapes, points, boundaries, or routes. | `delivery_location`, `service_area`, `route_geometry` | GEOMETRY, GEOGRAPHY |
+| 28 | **User / ownership fields** | Identify the user or system responsible for a record. | `created_by`, `updated_by`, `assigned_to` | INT, UUID, VARCHAR |
+| 29 | **Audit / change tracking fields** | Track who changed a record and what operation occurred. | `changed_by`, `change_type`, `cdc_operation` | VARCHAR, ENUM |
+| 30 | **Source system fields** | Identify where a record or event originated. | `source_system`, `source_database`, `source_table` | VARCHAR |
+| 31 | **Import / ingestion metadata fields** | Track when and how data entered a database or data pipeline. | `ingested_at`, `batch_id`, `pipeline_run_id` | TIMESTAMP, UUID, VARCHAR |
+| 32 | **Hash / checksum fields** | Store hashes used for comparison, integrity validation, or deduplication. | `record_hash`, `checksum`, `payload_hash` | CHAR, VARCHAR, BINARY |
+| 33 | **Ranking / scoring fields** | Store priority scores, rankings, or calculated ratings. | `priority_score`, `customer_rating`, `risk_score` | INT, DECIMAL, FLOAT |
+| 34 | **Version / schema metadata fields** | Identify the structure or format version of stored data. | `schema_version`, `payload_version`, `api_version` | INT, VARCHAR |
+
+## Naming Conventions
+Key standard terms
+1. id
+2. name
+3. at / datetime / timestamp / time / date / duration / from / to
+4. count / quantity
+5. amount
+6. cost
+7. rate / percentage
+8. seqeunce
+9. seconds / minutes / hours / days
+10. source / target
+   
 ## Lists
 
 | Feature | Comma-Separated String | JSON / Variant Type | Native Array / List Type |
