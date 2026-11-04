@@ -1,7 +1,8 @@
 - [Column types](#column-types)
 - [Data Modeling](#data-modeling)
 - [Dataset Types](#dataset-types)
-  - [The 4 Vs](#the-4-vs)
+  - [Lists](#lists)
+- [The 4 Vs](#the-4-vs)
 - [Distributed Processing](#distributed-processing)
 - [Monitoring and Reliability](#monitoring-and-reliability)
 - [Optimization](#optimization)
@@ -105,7 +106,17 @@
    1. use cases
       1. Patient routing
 
-## The 4 Vs
+## Lists
+
+| Feature | Comma-Separated String | JSON / Variant Type | Native Array / List Type |
+| --- | --- | --- | --- |
+| Query Performance | Poor (Full Table Scan) | Moderate to Good (with JSON indexes) | Excellent (Optimized storage & indexing) |
+| Type Safety | None (All text) | Moderate | High |
+| Portability | Universal | High (Most modern DBs) | "Low-Moderate (Vendor specific |  e.g. |  Postgres)" |
+| Data Integrity | None | Low-Moderate | High |
+| Human Readability | High | Moderate | Moderate |
+
+# The 4 Vs
 
 - [ ] Velocity
   - [ ] Orchestration (batch with what cadence or stream) 

@@ -38,7 +38,7 @@ We want git versioned Eventhouse dashboards for realtime biorx data. Specificall
 1.  The sales team has requested the following enhancements to the real-time report
     1.  Allow users to pin the selection and save between session
     2.  Enable the report to be accessed through Salesforce, work with Adam and confirm url is working.
-    3.  Add Account owner as an additional filter
+    3.  Add Account owner as an additional filter, who to reach out to Adam Cooper
     4.  New Report tabs (other than the details tab) – Past Orders (30 days), current week’s orders, and future orders (30 days)
     5.  Introduce role-based views to make it easier for CAEs
     6.  Alerts for CAEs (possible via Fabric Activator in email or Teams)
