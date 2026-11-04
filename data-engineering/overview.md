@@ -1,6 +1,16 @@
 - [Column types](#column-types)
 - [Data Modeling](#data-modeling)
 - [Dataset types](#dataset-types)
+  - [0. General](#0-general)
+  - [1. Healthcare \& Medicine](#1-healthcare--medicine)
+  - [2. Finance \& Banking](#2-finance--banking)
+  - [3. Retail, Commerce \& E-commerce](#3-retail-commerce--e-commerce)
+  - [4. Manufacturing \& Supply Chain](#4-manufacturing--supply-chain)
+  - [5. Transportation \& Travel](#5-transportation--travel)
+  - [6. Education \& Research](#6-education--research)
+  - [7. Government, Utilities \& Environment](#7-government-utilities--environment)
+  - [8. Technology, Telecommunications \& Digital Services](#8-technology-telecommunications--digital-services)
+  - [9. Additional dataset categories worth considering](#9-additional-dataset-categories-worth-considering)
 - [Table Field Types](#table-field-types)
   - [Field types and examples](#field-types-and-examples)
   - [Naming Conventions](#naming-conventions)
@@ -100,9 +110,126 @@
    2. Entity Integrity (no null primary key)
 
 # Dataset types
-1. Ordering system
-2. Inventory system
-3. Ticketing system
+Below is a list of **50 different dataset categories** spanning industries such as healthcare, finance, commerce, manufacturing, transportation, education, government, technology, and scientific research.
+
+The categories describe datasets based on the type of information they contain and the business purpose they serve. Each includes example tables or data entities and typical use cases.
+
+## 0. General
+| # | Dataset category | Description | Example tables / entities | Common use cases |
+|---:|---|---|---|---|
+| 1 | Person Entity records | Identifying information (demographics, preferences, profiles, history) about people | `patients`, `customers`, `students`, `users` | Client management, demographics analysis |
+| 2 | Account / Group Entity record | Customer bank accounts, organization profiles, group configurations | `accounts`, `security_groups` | account management |
+| 3 | Coverage record | All valid combinations of two entities like students and exams or products and campaigns | `fact_exam_coverage`, `fact_campaign_coverage` | account management |
+
+## 1. Healthcare & Medicine
+
+| # | Dataset category | Description | Example tables / entities | Common use cases |
+|---:|---|---|---|---|
+| 2 | Medical history | Historical medical conditions, diagnoses, and procedures. | `medical_history`, `diagnoses`, `conditions` | Clinical decision support, patient history |
+| 3 | Prescription & medication | Medication prescriptions, dosages, refills, and administration. | `prescriptions`, `medications`, `medication_history` | Medication tracking, prescription management |
+| 4 | Laboratory results | Medical tests, measurements, and diagnostic results. | `lab_results`, `test_orders`, `specimens` | Clinical analysis, abnormal result detection |
+| 5 | Medical imaging | Medical images and associated metadata. | `imaging_records`, `radiology_reports`, `image_metadata` | Radiology, diagnostic analysis |
+| 6 | Clinical encounters | Patient visits, appointments, and treatment interactions. | `appointments`, `encounters`, `visit_notes` | Patient care management, scheduling |
+| 7 | Healthcare billing & insurance | Medical charges, claims, reimbursements, and insurance coverage. | `medical_claims`, `insurance_policies`, `billing_transactions` | Revenue cycle management, insurance processing |
+| 8 | Clinical research & trials | Research participants, trial enrollment, treatments, and outcomes. | `clinical_trials`, `trial_participants`, `study_results` | Drug development, clinical research |
+
+## 2. Finance & Banking
+
+| # | Dataset category | Description | Example tables / entities | Common use cases |
+|---:|---|---|---|---|
+| 9 | Financial transactions | Records of monetary transactions between accounts or entities. | `transactions`, `transfers`, `payments` | Transaction monitoring, financial reporting |
+| 11 | Credit & lending | Loans, credit applications, repayment schedules, and credit history. | `loans`, `credit_applications`, `repayments` | Credit scoring, loan management |
+| 12 | Investment & securities | Stocks, bonds, funds, portfolios, and investment transactions. | `securities`, `portfolios`, `holdings`, `market_prices` | Portfolio analysis, investment management |
+| 13 | Accounting & general ledger | Financial records categorized by accounts and accounting periods. | `general_ledger`, `journal_entries`, `chart_of_accounts` | Financial statements, reconciliation |
+| 14 | Fraud & risk | Suspicious transactions, fraud indicators, and risk assessments. | `fraud_alerts`, `risk_scores`, `investigation_cases` | Fraud detection, compliance |
+| 15 | Foreign exchange & market data | Currency exchange rates and financial market observations. | `exchange_rates`, `market_quotes`, `historical_prices` | Currency conversion, market analysis |
+
+## 3. Retail, Commerce & E-commerce
+
+| # | Dataset category | Description | Example tables / entities | Common use cases |
+|---:|---|---|---|---|
+| 16 | Product catalog | Product information, descriptions, categories, and attributes. | `products`, `product_categories`, `product_attributes` | Product management, catalog search |
+| 18 | Orders & transactions | Customer purchases, order details, and transaction history. | `orders`, `order_items`, `sales_transactions` | Sales reporting, order management |
+| 19 | Inventory & stock | Available inventory, stock movements, and warehouse quantities. | `inventory`, `stock_movements`, `warehouse_stock` | Inventory management, replenishment |
+| 20 | Pricing & promotions | Product prices, discounts, coupons, and promotional campaigns. | `product_prices`, `discounts`, `promotions`, `coupons` | Pricing optimization, promotion analysis |
+| 21 | Shopping behavior | Website activity, product views, searches, and shopping cart interactions. | `page_views`, `search_events`, `cart_events` | Conversion analysis, customer behavior |
+| 22 | Returns & refunds | Returned merchandise, refund requests, and return reasons. | `returns`, `refunds`, `return_reasons` | Returns management, product quality analysis |
+| 23 | Customer reviews & feedback | Ratings, reviews, complaints, and customer satisfaction. | `product_reviews`, `ratings`, `customer_feedback` | Sentiment analysis, product improvement |
+
+## 4. Manufacturing & Supply Chain
+
+| # | Dataset category | Description | Example tables / entities | Common use cases |
+|---:|---|---|---|---|
+| 24 | Production & manufacturing | Production orders, manufacturing runs, and output quantities. | `production_orders`, `manufacturing_runs`, `production_output` | Production planning, efficiency analysis |
+| 25 | Equipment & machinery | Equipment details, operational states, and machine utilization. | `equipment`, `machine_status`, `equipment_utilization` | Asset management, operational monitoring |
+| 26 | Sensor & IoT telemetry | Continuous measurements from sensors and connected devices. | `sensor_readings`, `device_events`, `telemetry` | Predictive maintenance, anomaly detection |
+| 27 | Quality control | Product inspections, defect records, and quality measurements. | `quality_inspections`, `defects`, `quality_tests` | Quality assurance, defect reduction |
+| 28 | Procurement & purchasing | Supplier orders, purchase requests, and procurement transactions. | `purchase_orders`, `suppliers`, `purchase_order_items` | Procurement management, supplier analysis |
+| 29 | Supply chain logistics | Movement of materials and products between locations. | `shipments`, `transport_orders`, `shipment_tracking` | Supply chain visibility, logistics optimization |
+| 30 | Maintenance & repairs | Equipment maintenance schedules, work orders, and repair history. | `maintenance_orders`, `repair_logs`, `maintenance_schedules` | Preventive maintenance, downtime analysis |
+
+## 5. Transportation & Travel
+
+| # | Dataset category | Description | Example tables / entities | Common use cases |
+|---:|---|---|---|---|
+| 31 | Vehicle & fleet | Vehicle information, ownership, mileage, and fleet status. | `vehicles`, `fleet_assets`, `vehicle_assignments` | Fleet management, vehicle utilization |
+| 32 | GPS & location tracking | Geographic positions and movement history. | `gps_locations`, `vehicle_routes`, `location_events` | Route optimization, tracking |
+| 33 | Traffic & transportation | Traffic volume, congestion, road conditions, and travel times. | `traffic_counts`, `road_conditions`, `travel_times` | Traffic planning, congestion analysis |
+| 34 | Travel reservations | Flight, hotel, rental car, and travel bookings. | `reservations`, `flight_bookings`, `hotel_bookings` | Reservation management, travel analytics |
+| 35 | Public transportation | Transit schedules, passenger counts, and service operations. | `transit_routes`, `bus_schedules`, `ridership` | Transit planning, service optimization |
+
+## 6. Education & Research
+
+| # | Dataset category | Description | Example tables / entities | Common use cases |
+|---:|---|---|---|---|
+| 37 | Academic performance | Grades, assessments, attendance, and academic progress. | `grades`, `exam_results`, `attendance` | Performance analysis, student support |
+| 38 | Course & curriculum | Courses, subjects, instructors, and curriculum structures. | `courses`, `course_sections`, `curriculum` | Course management, curriculum planning |
+| 39 | Scientific research | Experimental observations, research measurements, and findings. | `experiments`, `observations`, `research_results` | Scientific analysis, research reproducibility |
+| 40 | Surveys & questionnaires | Responses to structured surveys and questionnaires. | `surveys`, `survey_questions`, `survey_responses` | Market research, public opinion, research analysis |
+
+## 7. Government, Utilities & Environment
+
+| # | Dataset category | Description | Example tables / entities | Common use cases |
+|---:|---|---|---|---|
+| 41 | Population & demographics | Population counts, age distributions, household characteristics. | `population`, `demographics`, `households` | Population planning, demographic analysis |
+| 42 | Tax & public revenue | Tax filings, tax payments, and government revenue. | `tax_returns`, `tax_payments`, `revenue_records` | Tax administration, revenue reporting |
+| 43 | Property & real estate | Property ownership, valuations, sales, and rental information. | `properties`, `property_sales`, `property_assessments` | Real estate analysis, property taxation |
+| 44 | Energy & utilities | Electricity, gas, and water consumption and distribution. | `utility_usage`, `energy_readings`, `meter_records` | Consumption forecasting, resource management |
+| 45 | Weather & climate | Weather observations, forecasts, and historical climate measurements. | `weather_observations`, `forecasts`, `climate_records` | Weather forecasting, climate research |
+| 46 | Environmental monitoring | Air quality, water quality, pollution, and environmental measurements. | `air_quality`, `water_samples`, `pollution_measurements` | Environmental compliance, sustainability |
+
+## 8. Technology, Telecommunications & Digital Services
+
+| # | Dataset category | Description | Example tables / entities | Common use cases |
+|---:|---|---|---|---|
+| 47 | Application logs & events | Records of application activity, errors, and system events. | `application_logs`, `error_events`, `system_events` | Troubleshooting, application monitoring |
+| 48 | User activity & authentication | Login attempts, user sessions, and access history. | `login_events`, `user_sessions`, `authentication_logs` | Security monitoring, usage analytics |
+| 49 | Network & infrastructure | Network traffic, server performance, and infrastructure metrics. | `network_metrics`, `server_metrics`, `infrastructure_events` | Infrastructure monitoring, capacity planning |
+| 50 | API & integration activity | API requests, responses, integration events, and processing results. | `api_requests`, `api_responses`, `integration_logs` | API monitoring, integration troubleshooting |
+
+---
+
+## 9. Additional dataset categories worth considering
+
+The 50 categories above cover major industries. The following are additional specialized datasets that are also common in enterprise environments.
+
+| # | Dataset category | Industry / domain | Example tables / entities |
+|---:|---|---|---|
+| 51 | Legal & case management | Legal | `cases`, `court_filings`, `legal_documents` |
+| 52 | Human resources & payroll | Human resources | `employees`, `payroll`, `compensation` |
+| 53 | Recruitment & hiring | Human resources | `job_applications`, `candidates`, `interviews` |
+| 54 | Insurance policies & underwriting | Insurance | `policies`, `underwriting_assessments`, `premiums` |
+| 55 | Insurance claims | Insurance | `claims`, `claim_payments`, `claim_adjustments` |
+| 56 | Marketing campaigns | Marketing | `campaigns`, `advertisements`, `campaign_performance` |
+| 57 | Advertising impressions & clicks | Digital advertising | `impressions`, `click_events`, `ad_conversions` |
+| 58 | Social media activity | Social media | `posts`, `comments`, `shares`, `followers` |
+| 59 | Content & media management | Media | `articles`, `videos`, `media_assets` |
+| 60 | Project & task management | Business operations | `projects`, `tasks`, `milestones` |
+| 61 | Customer support & service | Customer service | `support_tickets`, `service_requests`, `ticket_messages` |
+| 62 | Contracts & agreements | Business / legal | `contracts`, `contract_parties`, `contract_terms` |
+| 63 | Food & agriculture | Agriculture | `crop_yields`, `farm_operations`, `soil_samples` |
+| 64 | Hospitality & restaurant operations | Hospitality | `reservations`, `menus`, `restaurant_orders` |
+| 65 | Construction & infrastructure | Construction | `construction_projects`, `work_orders`, `inspection_records` |
 
 # Table Field Types
 The following is a list of common database table field types commonly found in transactional databases, analytical data warehouses, APIs, and reporting systems.

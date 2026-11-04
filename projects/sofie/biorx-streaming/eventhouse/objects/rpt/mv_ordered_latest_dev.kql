@@ -1,7 +1,6 @@
 // Latest row per ordered_id, plus min/max calibration datetime across all rows for that order.
 // Deleted rows are NOT filtered here so func_order_details can still report the "Deleted" status;
-// the history scan in func_order_details excludes deleted rows.
-.create-or-alter materialized-view with (backfill=true, docstring="Latest row per ordered_id with calibration history aggregates") mv_ordered_latest on table stg_ordered_flat
+.create async materialized-view with (backfill=true, docstring="Latest row per ordered_id with calibration history aggregates") mv_ordered_latest_dev on table stg_ordered_flat
 {
     stg_ordered_flat
     | extend calibration_dt = calibration_date + calibration_time
