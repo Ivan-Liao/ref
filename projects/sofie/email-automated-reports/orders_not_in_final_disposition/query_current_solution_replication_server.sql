@@ -59,7 +59,7 @@ SELECT
     l.LocationName  AS Pharmacy,
     p.Name          AS Product,
     c.Name          AS Client,
-    o.CalibrationDate,
+    DATE_FORMAT(o.CalibrationDate, '%Y-%m-%d') AS CalibrationDate,
     o.CalibrationTime,
     o.FilledDate,
     s.ShipDate
