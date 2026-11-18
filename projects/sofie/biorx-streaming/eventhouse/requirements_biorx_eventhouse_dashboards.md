@@ -35,19 +35,33 @@ We want git versioned Eventhouse dashboards for realtime biorx data. Specificall
 [Architecture Diagram](https://viewer.diagrams.net/?tags=%7B%7D&lightbox=1&highlight=0000ff&edit=_blank&layers=1&nav=1&title=BioRx%20Real%20Time%20Architecture.drawio&dark=auto#Uhttps%3A%2F%2Fdrive.google.com%2Fuc%3Fid%3D1XWn--OlKma_YzSjIjk1e1js3wuu7Clr5%26export%3Ddownload)
 
 # 5.0 Next Steps
+<-- * For current iteration tasks
+
+<-- ! For high priority asks
+
+Default text for later iteration tasks
+
 1.  The sales team has requested the following enhancements to the real-time report
-    1.  Allow users to pin the selection and save between session
-    2.  Enable the report to be accessed through Salesforce, work with Adam and confirm url is working.
-    3.  Add Account owner as an additional filter, who to reach out to Adam Cooper
-    4.  New Report tabs (other than the details tab) – Past Orders (30 days), current week’s orders, and future orders (30 days)
-    5.  Introduce role-based views to make it easier for CAEs
-    6.  Alerts for CAEs (possible via Fabric Activator in email or Teams)
-    7.  Predictive alerts (for when order is in trouble, etc.)
+    1.  <-- * Enable the report to be accessed through Salesforce, send another email to Adam and confirm url is working and if he has any questions about the report.
+    2.  <-- ! Add Account owner as an additional filter, Adam Cooper has not gotten back yet.
+    3.  Alerts for CAEs (possible via Fabric Activator in email or Teams). Would need the rules, but it possible.
+    4.  Predictive alerts (for when order is in trouble, etc.). Would need the rules, but it possible.
+    5.  Introduce role-based views to make it easier for CAEs. They would only see rows associated with them.
 2.  Operations team requested the following
-    1.  is_recalibrated
-    2.  is_same_day_recalibrated, know that recalibration happens on impacted day or not flag
-because of issue today, what was impact on customer (daily_customer_impact)
-1.  Bring in inventory table
+    1.  <-- * is_recalibrated
+    2.  <-- * is_same_day_recalibrated, know that recalibration happens on impacted day or not flag because of issue today, what was impact on customer (daily_customer_impact)
+    3.  <-- * Categorical date filter "Timeframe" for Today, Yesterday, Tomorrow, Past orders (45 days), Current week, Future orders (30 days)
+3.  Finance team asks
+    1.  <-- * 45 day past historical data
+    2.  Billable, unbillable logic
+    3.  Reason code history
+    4.  Notes field from biorx
+4.  Bug Fixes
+    1.  Fix discrepancy 167678, deleted at target pharmacy row but shows redirected sent shipped at source pharmacy
+    2.  Fix parameter distinct list dependant on current day. Make it a week at least
+5.  Backburner
+    1.  Bring in inventory table
+    2.  Retention policies
 
 # 6.0 Requirements
 
