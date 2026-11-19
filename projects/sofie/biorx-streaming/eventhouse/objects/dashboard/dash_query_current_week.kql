@@ -1,0 +1,7 @@
+let today = startofday(now());
+let days_since_monday = (toint(dayofweek(today) / 1d) + 6) % 7;
+let week_start = today - (days_since_monday * 1d);
+let week_end = week_start + 7d;
+base_order_details
+| where calibration_date >= week_start
+    and calibration_date < week_end

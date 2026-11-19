@@ -1,7 +1,21 @@
 - [Column types](#column-types)
 - [Data Modeling](#data-modeling)
-- [Dataset Types](#dataset-types)
-  - [The 4 Vs](#the-4-vs)
+- [Dataset types](#dataset-types)
+  - [0. General](#0-general)
+  - [1. Healthcare \& Medicine](#1-healthcare--medicine)
+  - [2. Finance \& Banking](#2-finance--banking)
+  - [3. Retail, Commerce \& E-commerce](#3-retail-commerce--e-commerce)
+  - [4. Manufacturing \& Supply Chain](#4-manufacturing--supply-chain)
+  - [5. Transportation \& Travel](#5-transportation--travel)
+  - [6. Education \& Research](#6-education--research)
+  - [7. Government, Utilities \& Environment](#7-government-utilities--environment)
+  - [8. Technology, Telecommunications \& Digital Services](#8-technology-telecommunications--digital-services)
+  - [9. Additional dataset categories worth considering](#9-additional-dataset-categories-worth-considering)
+- [Table Field Types](#table-field-types)
+  - [Field types and examples](#field-types-and-examples)
+  - [Naming Conventions](#naming-conventions)
+  - [Lists](#lists)
+- [The 4 Vs](#the-4-vs)
 - [Distributed Processing](#distributed-processing)
 - [Monitoring and Reliability](#monitoring-and-reliability)
 - [Optimization](#optimization)
@@ -95,17 +109,204 @@
    1. Referential Integrity (foreign key exists in associated entity table)
    2. Entity Integrity (no null primary key)
 
-# Dataset Types
-1. String
-2. Number
-3. Float
-4. Boolean
-5. Object / Dynamic
-6. Geospatial
-   1. use cases
-      1. Patient routing
+# Dataset types
+Below is a list of **50 different dataset categories** spanning industries such as healthcare, finance, commerce, manufacturing, transportation, education, government, technology, and scientific research.
 
-## The 4 Vs
+The categories describe datasets based on the type of information they contain and the business purpose they serve. Each includes example tables or data entities and typical use cases.
+
+## 0. General
+| # | Dataset category | Description | Example tables / entities | Common use cases |
+|---:|---|---|---|---|
+| 1 | Person Entity records | Identifying information (demographics, preferences, profiles, history) about people | `patients`, `customers`, `students`, `users` | Client management, demographics analysis |
+| 2 | Account / Group Entity record | Customer bank accounts, organization profiles, group configurations | `accounts`, `security_groups` | account management |
+| 3 | Coverage record | All valid combinations of two entities like students and exams or products and campaigns | `fact_exam_coverage`, `fact_campaign_coverage` | account management |
+
+## 1. Healthcare & Medicine
+
+| # | Dataset category | Description | Example tables / entities | Common use cases |
+|---:|---|---|---|---|
+| 2 | Medical history | Historical medical conditions, diagnoses, and procedures. | `medical_history`, `diagnoses`, `conditions` | Clinical decision support, patient history |
+| 3 | Prescription & medication | Medication prescriptions, dosages, refills, and administration. | `prescriptions`, `medications`, `medication_history` | Medication tracking, prescription management |
+| 4 | Laboratory results | Medical tests, measurements, and diagnostic results. | `lab_results`, `test_orders`, `specimens` | Clinical analysis, abnormal result detection |
+| 5 | Medical imaging | Medical images and associated metadata. | `imaging_records`, `radiology_reports`, `image_metadata` | Radiology, diagnostic analysis |
+| 6 | Clinical encounters | Patient visits, appointments, and treatment interactions. | `appointments`, `encounters`, `visit_notes` | Patient care management, scheduling |
+| 7 | Healthcare billing & insurance | Medical charges, claims, reimbursements, and insurance coverage. | `medical_claims`, `insurance_policies`, `billing_transactions` | Revenue cycle management, insurance processing |
+| 8 | Clinical research & trials | Research participants, trial enrollment, treatments, and outcomes. | `clinical_trials`, `trial_participants`, `study_results` | Drug development, clinical research |
+
+## 2. Finance & Banking
+
+| # | Dataset category | Description | Example tables / entities | Common use cases |
+|---:|---|---|---|---|
+| 9 | Financial transactions | Records of monetary transactions between accounts or entities. | `transactions`, `transfers`, `payments` | Transaction monitoring, financial reporting |
+| 11 | Credit & lending | Loans, credit applications, repayment schedules, and credit history. | `loans`, `credit_applications`, `repayments` | Credit scoring, loan management |
+| 12 | Investment & securities | Stocks, bonds, funds, portfolios, and investment transactions. | `securities`, `portfolios`, `holdings`, `market_prices` | Portfolio analysis, investment management |
+| 13 | Accounting & general ledger | Financial records categorized by accounts and accounting periods. | `general_ledger`, `journal_entries`, `chart_of_accounts` | Financial statements, reconciliation |
+| 14 | Fraud & risk | Suspicious transactions, fraud indicators, and risk assessments. | `fraud_alerts`, `risk_scores`, `investigation_cases` | Fraud detection, compliance |
+| 15 | Foreign exchange & market data | Currency exchange rates and financial market observations. | `exchange_rates`, `market_quotes`, `historical_prices` | Currency conversion, market analysis |
+
+## 3. Retail, Commerce & E-commerce
+
+| # | Dataset category | Description | Example tables / entities | Common use cases |
+|---:|---|---|---|---|
+| 16 | Product catalog | Product information, descriptions, categories, and attributes. | `products`, `product_categories`, `product_attributes` | Product management, catalog search |
+| 18 | Orders & transactions | Customer purchases, order details, and transaction history. | `orders`, `order_items`, `sales_transactions` | Sales reporting, order management |
+| 19 | Inventory & stock | Available inventory, stock movements, and warehouse quantities. | `inventory`, `stock_movements`, `warehouse_stock` | Inventory management, replenishment |
+| 20 | Pricing & promotions | Product prices, discounts, coupons, and promotional campaigns. | `product_prices`, `discounts`, `promotions`, `coupons` | Pricing optimization, promotion analysis |
+| 21 | Shopping behavior | Website activity, product views, searches, and shopping cart interactions. | `page_views`, `search_events`, `cart_events` | Conversion analysis, customer behavior |
+| 22 | Returns & refunds | Returned merchandise, refund requests, and return reasons. | `returns`, `refunds`, `return_reasons` | Returns management, product quality analysis |
+| 23 | Customer reviews & feedback | Ratings, reviews, complaints, and customer satisfaction. | `product_reviews`, `ratings`, `customer_feedback` | Sentiment analysis, product improvement |
+
+## 4. Manufacturing & Supply Chain
+
+| # | Dataset category | Description | Example tables / entities | Common use cases |
+|---:|---|---|---|---|
+| 24 | Production & manufacturing | Production orders, manufacturing runs, and output quantities. | `production_orders`, `manufacturing_runs`, `production_output` | Production planning, efficiency analysis |
+| 25 | Equipment & machinery | Equipment details, operational states, and machine utilization. | `equipment`, `machine_status`, `equipment_utilization` | Asset management, operational monitoring |
+| 26 | Sensor & IoT telemetry | Continuous measurements from sensors and connected devices. | `sensor_readings`, `device_events`, `telemetry` | Predictive maintenance, anomaly detection |
+| 27 | Quality control | Product inspections, defect records, and quality measurements. | `quality_inspections`, `defects`, `quality_tests` | Quality assurance, defect reduction |
+| 28 | Procurement & purchasing | Supplier orders, purchase requests, and procurement transactions. | `purchase_orders`, `suppliers`, `purchase_order_items` | Procurement management, supplier analysis |
+| 29 | Supply chain logistics | Movement of materials and products between locations. | `shipments`, `transport_orders`, `shipment_tracking` | Supply chain visibility, logistics optimization |
+| 30 | Maintenance & repairs | Equipment maintenance schedules, work orders, and repair history. | `maintenance_orders`, `repair_logs`, `maintenance_schedules` | Preventive maintenance, downtime analysis |
+
+## 5. Transportation & Travel
+
+| # | Dataset category | Description | Example tables / entities | Common use cases |
+|---:|---|---|---|---|
+| 31 | Vehicle & fleet | Vehicle information, ownership, mileage, and fleet status. | `vehicles`, `fleet_assets`, `vehicle_assignments` | Fleet management, vehicle utilization |
+| 32 | GPS & location tracking | Geographic positions and movement history. | `gps_locations`, `vehicle_routes`, `location_events` | Route optimization, tracking |
+| 33 | Traffic & transportation | Traffic volume, congestion, road conditions, and travel times. | `traffic_counts`, `road_conditions`, `travel_times` | Traffic planning, congestion analysis |
+| 34 | Travel reservations | Flight, hotel, rental car, and travel bookings. | `reservations`, `flight_bookings`, `hotel_bookings` | Reservation management, travel analytics |
+| 35 | Public transportation | Transit schedules, passenger counts, and service operations. | `transit_routes`, `bus_schedules`, `ridership` | Transit planning, service optimization |
+
+## 6. Education & Research
+
+| # | Dataset category | Description | Example tables / entities | Common use cases |
+|---:|---|---|---|---|
+| 37 | Academic performance | Grades, assessments, attendance, and academic progress. | `grades`, `exam_results`, `attendance` | Performance analysis, student support |
+| 38 | Course & curriculum | Courses, subjects, instructors, and curriculum structures. | `courses`, `course_sections`, `curriculum` | Course management, curriculum planning |
+| 39 | Scientific research | Experimental observations, research measurements, and findings. | `experiments`, `observations`, `research_results` | Scientific analysis, research reproducibility |
+| 40 | Surveys & questionnaires | Responses to structured surveys and questionnaires. | `surveys`, `survey_questions`, `survey_responses` | Market research, public opinion, research analysis |
+
+## 7. Government, Utilities & Environment
+
+| # | Dataset category | Description | Example tables / entities | Common use cases |
+|---:|---|---|---|---|
+| 41 | Population & demographics | Population counts, age distributions, household characteristics. | `population`, `demographics`, `households` | Population planning, demographic analysis |
+| 42 | Tax & public revenue | Tax filings, tax payments, and government revenue. | `tax_returns`, `tax_payments`, `revenue_records` | Tax administration, revenue reporting |
+| 43 | Property & real estate | Property ownership, valuations, sales, and rental information. | `properties`, `property_sales`, `property_assessments` | Real estate analysis, property taxation |
+| 44 | Energy & utilities | Electricity, gas, and water consumption and distribution. | `utility_usage`, `energy_readings`, `meter_records` | Consumption forecasting, resource management |
+| 45 | Weather & climate | Weather observations, forecasts, and historical climate measurements. | `weather_observations`, `forecasts`, `climate_records` | Weather forecasting, climate research |
+| 46 | Environmental monitoring | Air quality, water quality, pollution, and environmental measurements. | `air_quality`, `water_samples`, `pollution_measurements` | Environmental compliance, sustainability |
+
+## 8. Technology, Telecommunications & Digital Services
+
+| # | Dataset category | Description | Example tables / entities | Common use cases |
+|---:|---|---|---|---|
+| 47 | Application logs & events | Records of application activity, errors, and system events. | `application_logs`, `error_events`, `system_events` | Troubleshooting, application monitoring |
+| 48 | User activity & authentication | Login attempts, user sessions, and access history. | `login_events`, `user_sessions`, `authentication_logs` | Security monitoring, usage analytics |
+| 49 | Network & infrastructure | Network traffic, server performance, and infrastructure metrics. | `network_metrics`, `server_metrics`, `infrastructure_events` | Infrastructure monitoring, capacity planning |
+| 50 | API & integration activity | API requests, responses, integration events, and processing results. | `api_requests`, `api_responses`, `integration_logs` | API monitoring, integration troubleshooting |
+
+---
+
+## 9. Additional dataset categories worth considering
+
+The 50 categories above cover major industries. The following are additional specialized datasets that are also common in enterprise environments.
+
+| # | Dataset category | Industry / domain | Example tables / entities |
+|---:|---|---|---|
+| 51 | Legal & case management | Legal | `cases`, `court_filings`, `legal_documents` |
+| 52 | Human resources & payroll | Human resources | `employees`, `payroll`, `compensation` |
+| 53 | Recruitment & hiring | Human resources | `job_applications`, `candidates`, `interviews` |
+| 54 | Insurance policies & underwriting | Insurance | `policies`, `underwriting_assessments`, `premiums` |
+| 55 | Insurance claims | Insurance | `claims`, `claim_payments`, `claim_adjustments` |
+| 56 | Marketing campaigns | Marketing | `campaigns`, `advertisements`, `campaign_performance` |
+| 57 | Advertising impressions & clicks | Digital advertising | `impressions`, `click_events`, `ad_conversions` |
+| 58 | Social media activity | Social media | `posts`, `comments`, `shares`, `followers` |
+| 59 | Content & media management | Media | `articles`, `videos`, `media_assets` |
+| 60 | Project & task management | Business operations | `projects`, `tasks`, `milestones` |
+| 61 | Customer support & service | Customer service | `support_tickets`, `service_requests`, `ticket_messages` |
+| 62 | Contracts & agreements | Business / legal | `contracts`, `contract_parties`, `contract_terms` |
+| 63 | Food & agriculture | Agriculture | `crop_yields`, `farm_operations`, `soil_samples` |
+| 64 | Hospitality & restaurant operations | Hospitality | `reservations`, `menus`, `restaurant_orders` |
+| 65 | Construction & infrastructure | Construction | `construction_projects`, `work_orders`, `inspection_records` |
+
+# Table Field Types
+The following is a list of common database table field types commonly found in transactional databases, analytical data warehouses, APIs, and reporting systems.
+
+There are **45 field categories** with descriptions, examples, and typical database data types. The examples use an order-management system as a reference, but most apply to any database.
+
+## Field types and examples
+
+| # | Field category | Description | Example field names | Typical data types |
+|---:|---|---|---|---|
+| 1 | **Primary key fields** | Unique identifiers for individual records. | `id`, `order_id`, `customer_id` | INT, BIGINT, UUID |
+| 2 | **Foreign key fields** | References to records in another table. | `customer_id`, `product_id`, `location_id` | INT, BIGINT, UUID |
+| 3 | **External key fields** | Identifiers originating from external systems. | `external_order_id`, `erp_id`, `legacy_id` | VARCHAR, UUID |
+| 4 | **Composite key fields** | Multiple fields used together to uniquely identify a record. | `order_id + product_id`, `tenant_id + record_id` | Multiple types |
+| 5 | **sequence fields** | Track sequential ordering. | `sequence_id` | INT, BIGINT |
+| 6 | **Time Related Fields** | fields related to date, time, or duration | `created_at`, `created_datetime`, `insert_timestamp` | DATETIME, TIMESTAMP, DATE, INTERVAL, INT, BIGINT |
+| 6.1 | **metadata timestamps** | Record when a database record was initially created, cdc extracted, ingested, updated, deleted. | `created_at`, `created_datetime`, `updated_at`, `last_modified`, `deleted_at`, `ingested_at`  | DATETIME, TIMESTAMP |
+| 6.2 | **Event timestamps** | Record when a business event occurred. | `ordered_at`, `packed_at`, `shipped_at`, `delivered_at` | DATETIME, TIMESTAMP |
+| 6.3 | **Event dates** | Store the calendar date of a business event without necessarily storing its time. | `order_date`, `invoice_date`, `delivery_date` | DATE |
+| 6.4 | **Time fields** | Store a time of day independently of a date. | `opening_time`, `cutoff_time`, `scheduled_time` | TIME |
+| 6.5 | **Duration fields** | Represent the amount of time between events or processes. | `processing_duration`, `delivery_duration`, `elapsed_seconds` | INT, BIGINT, INTERVAL |
+| 6.6 | **Timezone fields** | Identify the timezone associated with a timestamp or schedule. | `timezone`, `timezone_name`, `utc_offset` | VARCHAR, INTERVAL |
+| 7 | **Categorical label fields** | Store values from a predefined set of categories. | `order_status`, `priority`, `payment_method` | VARCHAR, ENUM |
+| 7.1 | **Status fields** | Represent the current state of a record or process. | `order_status`, `shipment_status`, `approval_status` | VARCHAR, ENUM, INT |
+| 7.2 | **Type / classification fields** | Identify what kind of record or transaction something represents. | `order_type`, `customer_type`, `transaction_type` | VARCHAR, ENUM |
+| 8 | **Yes / No boolean flags** | Store binary true/false conditions. | `is_deleted`, `is_active`, `is_redirected`, `is_bulk`, `is_tracking_enabled`, `is_approval_required` | BOOLEAN, TINYINT |
+| 9 | **Free-text fields** | Store descriptive text that does not follow a fixed format. | `notes`, `comments`, `description` | VARCHAR, TEXT |
+| 10 | **Message / communication fields** | Store messages, notifications, or communication content. | `error_message`, `customer_message`, `notification_body` | VARCHAR, TEXT |
+| 11 | **JSON object fields** | Store structured key-value data or nested objects. | `metadata`, `payload`, `shipping_details` | JSON, TEXT |
+| 12 | **JSON array fields** | Store arrays of structured objects or values. | `order_items_list`, `attachments`, `event_history` | JSON, TEXT |
+| 13 | **Comma-separated list fields** | Store multiple values in a single string separated by delimiters. | `tags`, `permissions`, `associated_ids` | VARCHAR, TEXT |
+| 14 | **Numeric quantity fields** | Represent counts or quantities of items. | `quantity`, `units_ordered`, `package_count` | INT, BIGINT |
+| 15 | **Integer measurement fields** | Store whole-number measurements. | `weight_grams`, `distance_meters`, `age_days` | INT, BIGINT |
+| 16 | **Decimal measurement fields** | Store measurements requiring fractional precision. | `dose_amount`, `weight_kg`, `temperature` | DECIMAL, FLOAT |
+| 17 | **Currency / cost fields** | Represent monetary values or expenses. | `order_total`, `unit_cost`, `shipping_cost` | DECIMAL |
+| 18 | **Financial rate fields** | Store rates, percentages, or financial ratios. | `tax_rate`, `discount_percentage`, `commission_rate` | DECIMAL, FLOAT |
+| 19 | **Calculated / derived fields** | Store values calculated from other fields. | `total_amount`, `profit_margin`, `days_since_order` | DECIMAL, INT |
+| 20 | **Address fields** | Store physical or mailing address information. | `street_address`, `city`, `state`, `postal_code` | VARCHAR |
+| 21 | **Contact information fields** | Store contact details for individuals or organizations. | `email`, `phone_number`, `fax_number` | VARCHAR |
+| 22 | **Name / identity fields** | Store names of people, organizations, or entities. | `first_name`, `last_name`, `company_name` | VARCHAR |
+| 23 | **URL / hyperlink fields** | Store web addresses or links to external resources. | `tracking_url`, `document_url`, `website` | VARCHAR, TEXT |
+| 24 | **File path / storage reference fields** | Store file locations or object-storage references. | `file_path`, `blob_uri`, `attachment_location` | VARCHAR, TEXT |
+| 25 | **Binary / file data fields** | Store actual binary file contents. | `document_data`, `image_data`, `attachment_blob` | BLOB, VARBINARY |
+| 26 | **Geographic coordinate fields** | Store latitude, longitude, or spatial coordinates. | `latitude`, `longitude`, `coordinates` | DECIMAL, FLOAT, GEOMETRY |
+| 27 | **Geospatial fields** | Store geographic shapes, points, boundaries, or routes. | `delivery_location`, `service_area`, `route_geometry` | GEOMETRY, GEOGRAPHY |
+| 28 | **User / ownership fields** | Identify the user or system responsible for a record. | `created_by`, `updated_by`, `assigned_to` | INT, UUID, VARCHAR |
+| 29 | **Audit / change tracking fields** | Track who changed a record and what operation occurred. | `changed_by`, `change_type`, `cdc_operation` | VARCHAR, ENUM |
+| 30 | **Source system fields** | Identify where a record or event originated. | `source_system`, `source_database`, `source_table` | VARCHAR |
+| 31 | **Import / ingestion metadata fields** | Track when and how data entered a database or data pipeline. | `ingested_at`, `batch_id`, `pipeline_run_id` | TIMESTAMP, UUID, VARCHAR |
+| 32 | **Hash / checksum fields** | Store hashes used for comparison, integrity validation, or deduplication. | `record_hash`, `checksum`, `payload_hash` | CHAR, VARCHAR, BINARY |
+| 33 | **Ranking / scoring fields** | Store priority scores, rankings, or calculated ratings. | `priority_score`, `customer_rating`, `risk_score` | INT, DECIMAL, FLOAT |
+| 34 | **Version / schema metadata fields** | Identify the structure or format version of stored data. | `schema_version`, `payload_version`, `api_version` | INT, VARCHAR |
+
+## Naming Conventions
+Key standard terms
+1. id
+2. name
+3. at / datetime / timestamp / time / date / duration / from / to
+4. count / quantity
+5. amount
+6. cost
+7. rate / percentage
+8. seqeunce
+9. seconds / minutes / hours / days
+10. source / target
+   
+## Lists
+
+| Feature | Comma-Separated String | JSON / Variant Type | Native Array / List Type |
+| --- | --- | --- | --- |
+| Query Performance | Poor (Full Table Scan) | Moderate to Good (with JSON indexes) | Excellent (Optimized storage & indexing) |
+| Type Safety | None (All text) | Moderate | High |
+| Portability | Universal | High (Most modern DBs) | "Low-Moderate (Vendor specific |  e.g. |  Postgres)" |
+| Data Integrity | None | Low-Moderate | High |
+| Human Readability | High | Moderate | Moderate |
+
+# The 4 Vs
 
 - [ ] Velocity
   - [ ] Orchestration (batch with what cadence or stream) 
@@ -210,6 +411,14 @@
    1. queries connected to distinct external data sources
 2. S3 path
 3. https://raw.githubusercontent.com
+4. Data Sharing
+   1. Direct access to database > data warehouse
+   2. Internal Sharepoint to Azure ecosystem > data warehouse
+   3. Extract to Cloud storage to > data warehouse
+   4. Extract to sFTP > data warehouse
+   5. Access to APIs > data warehouse
+   6. Application view extract > data warehouse
+   7. Data scraping > data warehouse
 
 # Storage
 1. Cache / Real Time

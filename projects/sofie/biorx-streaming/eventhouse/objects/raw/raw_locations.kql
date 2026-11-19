@@ -1,0 +1,1 @@
+.create-merge table raw_locations (schema:dynamic, payload:dynamic) 

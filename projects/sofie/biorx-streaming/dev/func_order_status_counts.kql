@@ -1,0 +1,33 @@
+.create-or-alter function with (
+    docstring = "Today's order status counts (Total/Filled/Packed/Shipped/Delivered), filterable by pharmacy/client/product (reads pre-joined order_details_base)",
+    folder    = "Reporting")
+order_status_counts(_pharmacy:string = "", _client:string = "", _product:string = "")
+{
+    let _today = startofday(now());
+    let _pharmacy_list = iff(_pharmacy == "", dynamic([]), todynamic(_pharmacy));
+    let _client_list   = iff(_client   == "", dynamic([]), todynamic(_client));
+    let _product_list  = iff(_product  == "", dynamic([]), todynamic(_product));
+    //
+    order_details_base
+    | summarize arg_max(last_modified, *) by ordered_id
+    | where calibration_date == _today
+        and (_pharmacy == "" or location_name in (_pharmacy_list))
+        and (_client == "" or client_name in (_client_list))
+        and (_product == "" or product_name in (_product_list))
+    | summarize
+        ["Total Orders"]    = dcount(ordered_id),
+        ["Total Filled"]    = dcountif(ordered_id, isnotempty(filled_date)),
+        ["Total Packed"]    = dcountif(ordered_id, isnotempty(packed_date)),
+        ["Total Shipped"]   = dcountif(ordered_id, isnotempty(ship_date)),
+        ["Total Delivered"] = dcountif(ordered_id, isnotempty(delivered_date))
+    // Multi Stat needs one row per stat (Metric/Value), not one row with
+    // five columns -- pivot wide-to-long so each stat fills its own slot.
+    | project Stats = pack_array(
+        pack("Metric", "Total Orders",    "Value", ["Total Orders"]),
+        pack("Metric", "Total Filled",    "Value", ["Total Filled"]),
+        pack("Metric", "Total Packed",    "Value", ["Total Packed"]),
+        pack("Metric", "Total Shipped",   "Value", ["Total Shipped"]),
+        pack("Metric", "Total Delivered", "Value", ["Total Delivered"]))
+    | mv-expand Stats
+    | evaluate bag_unpack(Stats)
+}

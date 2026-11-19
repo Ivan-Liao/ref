@@ -1,0 +1,42 @@
+.create-or-alter function with
+(
+    folder = "CDC",
+    docstring = "Flattens raw_product MariaDB CDC payloads"
+)
+func_stg_product_flat()
+{
+    raw_product
+    | extend p = todynamic(payload)
+    | where tostring(p.source.table) == "product"
+    | where tostring(p.op) in ("r", "c", "u", "d")
+    | extend row_data = coalesce(
+        todynamic(p.after),
+        todynamic(p.before)
+    )
+    | project
+        cdc_operation = tostring(p.op),
+
+        cdc_event_datetime =
+            unixtime_milliseconds_todatetime(
+                tolong(p.ts_ms)
+            ),
+
+        source_event_datetime =
+            unixtime_milliseconds_todatetime(
+                tolong(p.source.ts_ms)
+            ),
+
+        ts_ns = coalesce(
+            tolong(p.ts_ns),
+            tolong(p.ts_ms) * 1000000
+        ),
+
+        is_deleted =
+            tostring(p.op) == "d"
+            or toint(row_data.Deleted) == 1,
+
+        product_id = tolong(row_data.Product),
+        name = tostring(row_data.Name),
+        description = tostring(row_data.Description),
+        product_guid = tostring(row_data.ProductGUID)
+}

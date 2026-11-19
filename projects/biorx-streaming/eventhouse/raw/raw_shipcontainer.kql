@@ -1,4 +1,0 @@
-.create table raw_shipcontainer(
-    payload: dynamic,
-    schema: dynamic
-);

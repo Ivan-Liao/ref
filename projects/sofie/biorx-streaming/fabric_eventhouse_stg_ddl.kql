@@ -1,0 +1,727 @@
+// ============================================================
+// STG: locations
+// ============================================================
+
+.create table stg_locations_flat
+(
+    cdc_operation: string,
+    cdc_event_datetime: datetime,
+    source_event_datetime: datetime,
+    ts_ns: long,
+    is_deleted: bool,
+
+    location_guid: string,
+    location_name: string,
+    location_ip_address: string,
+    location_database_port: int,
+    location_database_name: string,
+    location_database_user_name: string,
+    location_database_password: string,
+    local_database_name: string,
+    local_database_user_name: string,
+    local_database_password: string,
+    deleted: int,
+    local_ip_address: string,
+    synced: int,
+    rabbit_port_to_pharmacy: int,
+    rabbit_port_to_master: int,
+    mysql_port_to_pharmacy: int,
+    mysql_port_to_master: int,
+    is_retired_db: int
+)
+
+.create-or-alter function with
+(
+    folder = "CDC",
+    docstring = "Flattens raw_locations MariaDB CDC payloads"
+)
+func_stg_locations_flat()
+{
+    raw_locations
+    | extend p = todynamic(payload)
+    | where tostring(p.source.table) == "locations"
+    | where tostring(p.op) in ("r", "c", "u", "d")
+    | extend row_data = coalesce(
+        todynamic(p.after),
+        todynamic(p.before)
+    )
+    | project
+        cdc_operation = tostring(p.op),
+
+        cdc_event_datetime =
+            unixtime_milliseconds_todatetime(
+                tolong(p.ts_ms)
+            ),
+
+        source_event_datetime =
+            unixtime_milliseconds_todatetime(
+                tolong(p.source.ts_ms)
+            ),
+
+        ts_ns = coalesce(
+            tolong(p.ts_ns),
+            tolong(p.ts_ms) * 1000000
+        ),
+
+        is_deleted =
+            tostring(p.op) == "d"
+            or toint(row_data.Deleted) == 1,
+
+        location_guid = tostring(row_data.LocationGUID),
+        location_name = tostring(row_data.LocationName),
+        location_ip_address = tostring(row_data.LocationIPAddress),
+        location_database_port = toint(row_data.LocationDatabasePort),
+        location_database_name = tostring(row_data.LocationDatabaseName),
+        location_database_user_name = tostring(row_data.LocationDatabaseUserName),
+        location_database_password = tostring(row_data.LocationDatabasePassword),
+        local_database_name = tostring(row_data.LocalDatabaseName),
+        local_database_user_name = tostring(row_data.LocalDatabaseUserName),
+        local_database_password = tostring(row_data.LocalDatabasePassword),
+        deleted = toint(row_data.Deleted),
+        local_ip_address = tostring(row_data.LocalIPAddress),
+        synced = toint(row_data.Synced),
+        rabbit_port_to_pharmacy = toint(row_data.RabbitPortToPharmacy),
+        rabbit_port_to_master = toint(row_data.RabbitPortToMaster),
+        mysql_port_to_pharmacy = toint(row_data.MySQLPortToPharmacy),
+        mysql_port_to_master = toint(row_data.MySQLPortToMaster),
+        is_retired_db = toint(row_data.IsRetiredDB)
+}
+
+
+// ============================================================
+// STG: product
+// ============================================================
+
+.create table stg_product_flat
+(
+    cdc_operation: string,
+    cdc_event_datetime: datetime,
+    source_event_datetime: datetime,
+    ts_ns: long,
+    is_deleted: bool,
+
+    product_id: long,
+    name: string,
+    description: string,
+    units: string,
+    form: string,
+    unit_per_form: real,
+    physical_form: string,
+    chemical_form: string,
+    variable_amount: int,
+    half_life: real,
+    product_number: long,
+    product_code_link: string,
+    shelf_life: int,
+    expiration_offset: int,
+    cost: real,
+    default_price: real,
+    prep_fee: real,
+    radioactive_level: int,
+    deleted: int,
+    own_ammo_can: int,
+    container_slots: int,
+    product_type: int,
+    cold_kit: int,
+    isotope: string,
+    isotope_bol: string,
+    photon_abundance: real,
+    cyclotron_product: int,
+    dupont_number: long,
+    nmis_product_number: string,
+    nmis_barcode_number: string,
+    uppi_product_code: string,
+    tron_legacy_code: string,
+    weight_required: int,
+    do_qc: int,
+    mark_as_unavailable_on_receipt: int,
+    converted_product: int,
+    synced: int,
+    product_guid: string,
+    saline: int,
+    leu: int,
+    eluant: int,
+    generator_type_link_id: long,
+    generator_type_link_guid: string,
+    r_code: long,
+    client_bill_id: long,
+    require_external_id: int,
+    require_exta_lot_identifier: int,
+    scan_preferred: int
+)
+
+.create-or-alter function with
+(
+    folder = "CDC",
+    docstring = "Flattens raw_product MariaDB CDC payloads"
+)
+func_stg_product_flat()
+{
+    raw_product
+    | extend p = todynamic(payload)
+    | where tostring(p.source.table) == "product"
+    | where tostring(p.op) in ("r", "c", "u", "d")
+    | extend row_data = coalesce(
+        todynamic(p.after),
+        todynamic(p.before)
+    )
+    | project
+        cdc_operation = tostring(p.op),
+
+        cdc_event_datetime =
+            unixtime_milliseconds_todatetime(
+                tolong(p.ts_ms)
+            ),
+
+        source_event_datetime =
+            unixtime_milliseconds_todatetime(
+                tolong(p.source.ts_ms)
+            ),
+
+        ts_ns = coalesce(
+            tolong(p.ts_ns),
+            tolong(p.ts_ms) * 1000000
+        ),
+
+        is_deleted =
+            tostring(p.op) == "d"
+            or toint(row_data.Deleted) == 1,
+
+        product_id = tolong(row_data.Product),
+        name = tostring(row_data.Name),
+        description = tostring(row_data.Description),
+        units = tostring(row_data.Units),
+        form = tostring(row_data.Form),
+        unit_per_form = todouble(row_data.UnitPerForm),
+        physical_form = tostring(row_data.PhysicalForm),
+        chemical_form = tostring(row_data.ChemicalForm),
+        variable_amount = toint(row_data.VariableAmount),
+        half_life = todouble(row_data.Half_Life),
+        product_number = tolong(row_data.Product_Number),
+        product_code_link = tostring(row_data.ProductCodeLink),
+        shelf_life = toint(row_data.Shelf_Life),
+        expiration_offset = toint(row_data.ExpirationOffset),
+        cost = todouble(row_data.Cost),
+        default_price = todouble(row_data.DefaultPrice),
+        prep_fee = todouble(row_data.PrepFee),
+        radioactive_level = toint(row_data.RadioactiveLevel),
+        deleted = toint(row_data.Deleted),
+        own_ammo_can = toint(row_data.OwnAmmoCan),
+        container_slots = toint(row_data.ContainerSlots),
+        product_type = toint(row_data.ProductType),
+        cold_kit = toint(row_data.ColdKit),
+        isotope = tostring(row_data.Isotope),
+        isotope_bol = tostring(row_data.IsotopeBOL),
+        photon_abundance = todouble(row_data.PhotonAbundance),
+        cyclotron_product = toint(row_data.CyclotronProduct),
+        dupont_number = tolong(row_data.DupontNumber),
+        nmis_product_number = tostring(row_data.NMISProductNumber),
+        nmis_barcode_number = tostring(row_data.NMISBarcodeNumber),
+        uppi_product_code = tostring(row_data.UPPIProductCode),
+        tron_legacy_code = tostring(row_data.TronLegacyCode),
+        weight_required = toint(row_data.WeightRequired),
+        do_qc = toint(row_data.DoQC),
+        mark_as_unavailable_on_receipt = toint(row_data.MarkAsUnAvailableOnReceipt),
+        converted_product = toint(row_data.ConvertedProduct),
+        synced = toint(row_data.Synced),
+        product_guid = tostring(row_data.ProductGUID),
+        saline = toint(row_data.Saline),
+        leu = toint(row_data.LEU),
+        eluant = toint(row_data.Eluant),
+        generator_type_link_id = tolong(row_data.GeneratorTypeLinkID),
+        generator_type_link_guid = tostring(row_data.GeneratorTypeLinkGUID),
+        r_code = tolong(row_data.RCode),
+        client_bill_id = tolong(row_data.ClientBillID),
+        require_external_id = toint(row_data.RequireExternalID),
+        require_exta_lot_identifier = toint(row_data.RequireExtaLotIdentifier),
+        scan_preferred = toint(row_data.ScanPreferred)
+}
+
+
+// ============================================================
+// STG: reason
+// ============================================================
+
+.create table stg_reason_flat
+(
+    cdc_operation: string,
+    cdc_event_datetime: datetime,
+    source_event_datetime: datetime,
+    ts_ns: long,
+    is_deleted: bool,
+
+    location_guid: string,
+    reason_id: long,
+    reason_code_id: long,
+    table_name: string,
+    record_id: long,
+    user_id: long,
+    dt: datetime,
+    synced: int,
+    deleted: int,
+    reason_code_external_id: long
+)
+
+.create-or-alter function with
+(
+    folder = "CDC",
+    docstring = "Flattens raw_reason MariaDB CDC payloads"
+)
+func_stg_reason_flat()
+{
+    raw_reason
+    | extend p = todynamic(payload)
+    | where tostring(p.source.table) == "reason"
+    | where tostring(p.op) in ("r", "c", "u", "d")
+    | extend row_data = coalesce(
+        todynamic(p.after),
+        todynamic(p.before)
+    )
+    | project
+        cdc_operation = tostring(p.op),
+
+        cdc_event_datetime =
+            unixtime_milliseconds_todatetime(
+                tolong(p.ts_ms)
+            ),
+
+        source_event_datetime =
+            unixtime_milliseconds_todatetime(
+                tolong(p.source.ts_ms)
+            ),
+
+        ts_ns = coalesce(
+            tolong(p.ts_ns),
+            tolong(p.ts_ms) * 1000000
+        ),
+
+        is_deleted =
+            tostring(p.op) == "d"
+            or toint(row_data.Deleted) == 1,
+
+        location_guid = tostring(row_data.LocationGUID),
+        reason_id = tolong(row_data.ReasonID),
+        reason_code_id = tolong(row_data.ReasonCodeID),
+        table_name = tostring(row_data.TableName),
+        record_id = tolong(row_data.RecordID),
+        user_id = tolong(row_data.UserID),
+
+        dt =
+            unixtime_milliseconds_todatetime(
+                tolong(row_data.DT)
+            ),
+
+        synced = toint(row_data.Synced),
+        deleted = toint(row_data.Deleted),
+        reason_code_external_id = tolong(row_data.ReasonCodeExternalID)
+}
+
+
+// ============================================================
+// STG: reasoncode
+// ============================================================
+
+.create table stg_reasoncode_flat
+(
+    cdc_operation: string,
+    cdc_event_datetime: datetime,
+    source_event_datetime: datetime,
+    ts_ns: long,
+    is_deleted: bool,
+
+    reason_code_id: long,
+    reason_code_guid: string,
+    action: int,
+    code: string,
+    description: string,
+    created_dt: datetime,
+    created_by_id: long,
+    deleted_dt: datetime,
+    deleted_by_id: long,
+    synced: int,
+    deleted: int,
+    cancelled_order: int
+)
+
+.create-or-alter function with
+(
+    folder = "CDC",
+    docstring = "Flattens raw_reasoncode MariaDB CDC payloads"
+)
+func_stg_reasoncode_flat()
+{
+    raw_reasoncode
+    | extend p = todynamic(payload)
+    | where tostring(p.source.table) == "reasoncode"
+    | where tostring(p.op) in ("r", "c", "u", "d")
+    | extend row_data = coalesce(
+        todynamic(p.after),
+        todynamic(p.before)
+    )
+    | project
+        cdc_operation = tostring(p.op),
+
+        cdc_event_datetime =
+            unixtime_milliseconds_todatetime(
+                tolong(p.ts_ms)
+            ),
+
+        source_event_datetime =
+            unixtime_milliseconds_todatetime(
+                tolong(p.source.ts_ms)
+            ),
+
+        ts_ns = coalesce(
+            tolong(p.ts_ns),
+            tolong(p.ts_ms) * 1000000
+        ),
+
+        is_deleted =
+            tostring(p.op) == "d"
+            or toint(row_data.Deleted) == 1,
+
+        reason_code_id = tolong(row_data.ReasonCodeID),
+        reason_code_guid = tostring(row_data.ReasonCodeGUID),
+        action = toint(row_data.Action),
+        code = tostring(row_data.Code),
+        description = tostring(row_data.Description),
+
+        created_dt =
+            unixtime_milliseconds_todatetime(
+                tolong(row_data.CreatedDT)
+            ),
+
+        created_by_id = tolong(row_data.CreatedByID),
+
+        deleted_dt =
+            unixtime_milliseconds_todatetime(
+                tolong(row_data.DeletedDT)
+            ),
+
+        deleted_by_id = tolong(row_data.DeletedByID),
+        synced = toint(row_data.Synced),
+        deleted = toint(row_data.Deleted),
+        cancelled_order = toint(row_data.CancelledOrder)
+}
+
+
+// ============================================================
+// STG: shipcontainer
+// ============================================================
+
+.create table stg_shipcontainer_flat
+(
+    cdc_operation: string,
+    cdc_event_datetime: datetime,
+    source_event_datetime: datetime,
+    ts_ns: long,
+    is_deleted: bool,
+
+    ship_container_id: long,
+    shipper_id: long,
+    container_number: int,
+    description: string,
+    client_id: long,
+    client_verified: int,
+    delivery_date: datetime,
+    delivery_time: timespan,
+    route_id: long,
+    packed_by_id: long,
+    packed_date: datetime,
+    packed_time: timespan,
+    radioactive: int,
+    radioactive_level: int,
+    transport_index: string,
+    condition_of_container: string,
+    delivery_number: string,
+    placement_of_packages: string,
+    status: string,
+    labels_placed: int,
+    shipment_id: long,
+    survey_applicable: int,
+    survey_meter_id: long,
+    survey_background: real,
+    survey_one_meter: real,
+    survey_surface: real,
+    wipe_outside_applicable: int,
+    wipe_outside_meter_id: long,
+    wipe_outside_cpm: real,
+    wipe_outside_dpm: real,
+    wipe_area: real,
+    background_cpm: real,
+    wipe_inside_applicable: int,
+    wipe_inside_meter_id: long,
+    wipe_inside_cpm: real,
+    wipe_inside_dpm: real,
+    container_id: long,
+    returned: int,
+    returned_date: datetime,
+    returned_time: timespan,
+    returned_by_id: long,
+    return_condition_of_container: string,
+    return_labels_discarded: int,
+    return_survey_applicable: int,
+    return_survey_meter_id: long,
+    return_survey_background: real,
+    return_survey_one_meter: real,
+    return_survey_surface: real,
+    return_wipe_outside_applicable: int,
+    return_wipe_outside_meter_id: long,
+    return_wipe_outside_cpm: real,
+    return_wipe_outside_dpm: real,
+    return_wipe_area: real,
+    return_background_cpm: real,
+    return_wipe_inside_applicable: int,
+    return_wipe_inside_meter_id: long,
+    return_wipe_inside_cpm: real,
+    return_wipe_inside_dpm: real,
+    return_notes: string,
+    delivered_shipment_id: long,
+    delivered_date: datetime,
+    delivered_time: timespan,
+    deleted: int,
+    synced: int,
+    location_guid: string
+)
+
+.create-or-alter function with
+(
+    folder = "CDC",
+    docstring = "Flattens raw_shipcontainer MariaDB CDC payloads"
+)
+func_stg_shipcontainer_flat()
+{
+    raw_shipcontainer
+    | extend p = todynamic(payload)
+    | where tostring(p.source.table) == "shipcontainer"
+    | where tostring(p.op) in ("r", "c", "u", "d")
+    | extend row_data = coalesce(
+        todynamic(p.after),
+        todynamic(p.before)
+    )
+    | project
+        cdc_operation = tostring(p.op),
+
+        cdc_event_datetime =
+            unixtime_milliseconds_todatetime(
+                tolong(p.ts_ms)
+            ),
+
+        source_event_datetime =
+            unixtime_milliseconds_todatetime(
+                tolong(p.source.ts_ms)
+            ),
+
+        ts_ns = coalesce(
+            tolong(p.ts_ns),
+            tolong(p.ts_ms) * 1000000
+        ),
+
+        is_deleted =
+            tostring(p.op) == "d"
+            or toint(row_data.Deleted) == 1,
+
+        ship_container_id = tolong(row_data.ShipContainerID),
+        shipper_id = tolong(row_data.ShipperID),
+        container_number = toint(row_data.ContainerNumber),
+        description = tostring(row_data.Description),
+        client_id = tolong(row_data.ClientID),
+        client_verified = toint(row_data.ClientVerified),
+
+        delivery_date =
+            datetime(1970-01-01)
+            + tolong(row_data.DeliveryDate) * 1d,
+
+        delivery_time =
+            tolong(row_data.DeliveryTime) / 1000 * 1ms,
+
+        route_id = tolong(row_data.RouteID),
+        packed_by_id = tolong(row_data.PackedByID),
+
+        packed_date =
+            datetime(1970-01-01)
+            + tolong(row_data.PackedDate) * 1d,
+
+        packed_time =
+            tolong(row_data.PackedTime) / 1000 * 1ms,
+
+        radioactive = toint(row_data.Radioactive),
+        radioactive_level = toint(row_data.RadioactiveLevel),
+        transport_index = tostring(row_data.TransportIndex),
+        condition_of_container = tostring(row_data.ConditionOfContainer),
+        delivery_number = tostring(row_data.DeliveryNumber),
+        placement_of_packages = tostring(row_data.PlacementOfPackages),
+        status = tostring(row_data.Status),
+        labels_placed = toint(row_data.LabelsPlaced),
+        shipment_id = tolong(row_data.ShipmentID),
+        survey_applicable = toint(row_data.SurveyApplicable),
+        survey_meter_id = tolong(row_data.SurveyMeterID),
+        survey_background = todouble(row_data.SurveyBackground),
+        survey_one_meter = todouble(row_data.SurveyOneMeter),
+        survey_surface = todouble(row_data.SurveySurface),
+        wipe_outside_applicable = toint(row_data.WipeOutsideApplicable),
+        wipe_outside_meter_id = tolong(row_data.WipeOutsideMeterID),
+        wipe_outside_cpm = todouble(row_data.WipeOutsideCPM),
+        wipe_outside_dpm = todouble(row_data.WipeOutsideDPM),
+        wipe_area = todouble(row_data.WipeArea),
+        background_cpm = todouble(row_data.BackgroundCPM),
+        wipe_inside_applicable = toint(row_data.WipeInsideApplicable),
+        wipe_inside_meter_id = tolong(row_data.WipeInsideMeterID),
+        wipe_inside_cpm = todouble(row_data.WipeInsideCPM),
+        wipe_inside_dpm = todouble(row_data.WipeInsideDPM),
+        container_id = tolong(row_data.ContainerID),
+        returned = toint(row_data.Returned),
+
+        returned_date =
+            datetime(1970-01-01)
+            + tolong(row_data.ReturnedDate) * 1d,
+
+        returned_time =
+            tolong(row_data.ReturnedTime) / 1000 * 1ms,
+
+        returned_by_id = tolong(row_data.ReturnedByID),
+        return_condition_of_container = tostring(row_data.ReturnConditionOfContainer),
+        return_labels_discarded = toint(row_data.ReturnLabelsDiscarded),
+        return_survey_applicable = toint(row_data.ReturnSurveyApplicable),
+        return_survey_meter_id = tolong(row_data.ReturnSurveyMeterID),
+        return_survey_background = todouble(row_data.ReturnSurveyBackground),
+        return_survey_one_meter = todouble(row_data.ReturnSurveyOneMeter),
+        return_survey_surface = todouble(row_data.ReturnSurveySurface),
+        return_wipe_outside_applicable = toint(row_data.ReturnWipeOutsideApplicable),
+        return_wipe_outside_meter_id = tolong(row_data.ReturnWipeOutsideMeterID),
+        return_wipe_outside_cpm = todouble(row_data.ReturnWipeOutsideCPM),
+        return_wipe_outside_dpm = todouble(row_data.ReturnWipeOutsideDPM),
+        return_wipe_area = todouble(row_data.ReturnWipeArea),
+        return_background_cpm = todouble(row_data.ReturnBackgroundCPM),
+        return_wipe_inside_applicable = toint(row_data.ReturnWipeInsideApplicable),
+        return_wipe_inside_meter_id = tolong(row_data.ReturnWipeInsideMeterID),
+        return_wipe_inside_cpm = todouble(row_data.ReturnWipeInsideCPM),
+        return_wipe_inside_dpm = todouble(row_data.ReturnWipeInsideDPM),
+        return_notes = tostring(row_data.ReturnNotes),
+        delivered_shipment_id = tolong(row_data.DeliveredShipmentID),
+
+        delivered_date =
+            datetime(1970-01-01)
+            + tolong(row_data.DeliveredDate) * 1d,
+
+        delivered_time =
+            tolong(row_data.DeliveredTime) / 1000 * 1ms,
+
+        deleted = toint(row_data.Deleted),
+        synced = toint(row_data.Synced),
+        location_guid = tostring(row_data.LocationGUID)
+}
+
+
+// ============================================================
+// STG: shipment
+// ============================================================
+
+.create table stg_shipment_flat
+(
+    cdc_operation: string,
+    cdc_event_datetime: datetime,
+    source_event_datetime: datetime,
+    ts_ns: long,
+    is_deleted: bool,
+
+    shipment_id: long,
+    shipped: int,
+    shipped_by_id: long,
+    ship_date: datetime,
+    ship_time: timespan,
+    route_id: long,
+    ship_method_id: long,
+    vehicle_id: long,
+    phone_id: long,
+    shipper_id: long,
+    airbill: long,
+    aircraft_type: long,
+    departure_airport: string,
+    destination_airport: string,
+    tracking_number: string,
+    delivered: int,
+    driver_id: long,
+    delivery_date: datetime,
+    delivery_time: timespan,
+    received_by: string,
+    notes: string,
+    deleted: int,
+    synced: int,
+    location_guid: string
+)
+
+.create-or-alter function with
+(
+    folder = "CDC",
+    docstring = "Flattens raw_shipment MariaDB CDC payloads"
+)
+func_stg_shipment_flat()
+{
+    raw_shipment
+    | extend p = todynamic(payload)
+    | where tostring(p.source.table) == "shipment"
+    | where tostring(p.op) in ("r", "c", "u", "d")
+    | extend row_data = coalesce(
+        todynamic(p.after),
+        todynamic(p.before)
+    )
+    | project
+        cdc_operation = tostring(p.op),
+
+        cdc_event_datetime =
+            unixtime_milliseconds_todatetime(
+                tolong(p.ts_ms)
+            ),
+
+        source_event_datetime =
+            unixtime_milliseconds_todatetime(
+                tolong(p.source.ts_ms)
+            ),
+
+        ts_ns = coalesce(
+            tolong(p.ts_ns),
+            tolong(p.ts_ms) * 1000000
+        ),
+
+        is_deleted =
+            tostring(p.op) == "d"
+            or toint(row_data.Deleted) == 1,
+
+        shipment_id = tolong(row_data.ShipmentID),
+        shipped = toint(row_data.Shipped),
+        shipped_by_id = tolong(row_data.ShippedByID),
+
+        ship_date =
+            datetime(1970-01-01)
+            + tolong(row_data.ShipDate) * 1d,
+
+        ship_time =
+            tolong(row_data.ShipTime) / 1000 * 1ms,
+
+        route_id = tolong(row_data.RouteID),
+        ship_method_id = tolong(row_data.ShipMethodID),
+        vehicle_id = tolong(row_data.VehicleID),
+        phone_id = tolong(row_data.PhoneID),
+        shipper_id = tolong(row_data.ShipperID),
+        airbill = tolong(row_data.Airbill),
+        aircraft_type = tolong(row_data.AircraftType),
+        departure_airport = tostring(row_data.DepartureAirport),
+        destination_airport = tostring(row_data.DestinationAirport),
+        tracking_number = tostring(row_data.TrackingNumber),
+        delivered = toint(row_data.Delivered),
+        driver_id = tolong(row_data.DriverID),
+
+        delivery_date =
+            datetime(1970-01-01)
+            + tolong(row_data.DeliveryDate) * 1d,
+
+        delivery_time =
+            tolong(row_data.DeliveryTime) / 1000 * 1ms,
+
+        received_by = tostring(row_data.ReceivedBy),
+        notes = tostring(row_data.Notes),
+        deleted = toint(row_data.Deleted),
+        synced = toint(row_data.Synced),
+        location_guid = tostring(row_data.LocationGUID)
+}

@@ -1,134 +1,133 @@
-WITH
--- Reusable list of "actionable" reason codes, defined once instead of
--- repeated in two separate IN(...) clauses.
-reason_codes AS (
-    SELECT Code
-    FROM (VALUES
-        ('300'),('310'),('320'),('340'),('370'),
-        ('220'),('230'),('240'),('250'),('270'),
-        ('500'),('510'),('520')
-    ) AS rc(Code)
-),
+# Overview
+Tracing attributes for the various types of order statuses
 
--- Rank each order's reason rows newest-first (by DT) so we can later
--- isolate just the most recent reason per order.
-reason_ranking AS (
+# Query
+```sql
+WITH order_ranking AS (
     SELECT
-        r.RecordID      AS ReasonOrderedID,
-        r.ReasonCodeID,
-        r.DT            AS ReasonDT,
+        OrderedID,
+        CalibrationDate,
+        CalibrationTime,
+        ShipContainerID,
+        LocationGUID,
+        ClientID,
+        ProductID,
+        Deleted,
+        Processed,
+        Filled,
+        ROW_NUMBER() OVER (PARTITION BY OrderedID,LocationGUID ORDER BY LastModified DESC) AS OrderRank
+    FROM master.ordered
+    WHERE CalibrationDate >= DATEADD(day, -600, CAST(GETDATE() AS DATE)) -- calibration date range testing
+        AND CalibrationDate <= CAST(GETDATE() AS DATE) -- only orders calibrated today
+),current_order AS (
+    -- Keep only the most recent order (rank 1) per order.
+    SELECT
+        OrderedID,
+        CalibrationDate,
+        CalibrationTime,
+        ShipContainerID,
+        LocationGUID,
+        ClientID,
+        ProductID,
+        Deleted,
+        Processed,
+        Filled
+    FROM order_ranking
+    WHERE OrderRank = 1
+),reason_ranking AS (
+    -- Rank each order's reason rows newest-first (by DT) so we can later
+    -- isolate just the most recent reason per order.
+    SELECT
+        r.RecordID  AS ReasonOrderedID,
         r.LocationGUID,
-        ROW_NUMBER() OVER (PARTITION BY r.RecordID, r.LocationGUID ORDER BY r.DT DESC) AS ReasonRank
-    FROM biwarp_biorx_ods.dbo.reason r
+        rc.Code,
+        ROW_NUMBER() OVER (PARTITION BY r.RecordID,r.LocationGUID ORDER BY r.DT DESC) AS ReasonRank
+    FROM master.reason r
+    LEFT JOIN master.reasoncode rc
+        ON rc.ReasonCodeID = r.ReasonCodeID
     WHERE r.TableName = 'ordered'
-        -- DT is a datetime column and needs to be cast to date for the comparison
-        AND CAST(r.DT AS DATE) = CAST(DATEADD(day, -1, GETDATE()) AS DATE)
-),
-current_reason AS (
+),current_reason AS (
+    -- Keep only the most recent reason (rank 1) per order.
     SELECT
         ReasonOrderedID,
-        ReasonCodeID,
-        ReasonDT,
+        Code,
         LocationGUID
     FROM reason_ranking
     WHERE ReasonRank = 1
-),
-
--- Filter + dedupe FIRST, joining only the tables needed to evaluate the
--- WHERE clause (dim_site for LocationGUID, dim_reasoncode for Code,
--- current_reason for ReasonDT). This keeps row counts small before we
--- bring in the purely cosmetic dimension joins below.
-filtered_orders AS (
-    SELECT
-        f.Ordered_Id,
-        f.Location_SID,
-        f.Client_SID,
-        f.Product_SID,
-        f.Procedure_SID,
-        f.ReasonCode_SID,
-        f.Lot_Number,
-        f.Flag_Bulk_Order,
-        f.Flag_Redirected_Order,
-        f.Amount,
-        f.CalibrationDate,
-        f.CalibrationTime,
-        f.Order_Date,
-        f.Order_Time,
-        f.FilledDate,
-        f.FilledTime,
-        f.Order_Packed_Date,
-        f.Order_Packed_Time,
-        f.Order_Shipped_Date,
-        f.Order_Shipped_Time,
-        f.Order_Delivered_Date,
-        f.Order_Delivered_Time,
-        cr.ReasonDT,
-        ROW_NUMBER() OVER (
-            PARTITION BY f.Ordered_Id
-            ORDER BY f.LastModified DESC
-        ) AS OrderRank
-    FROM biwarp_biorx_mart.dbo.f_ordered f
-    LEFT JOIN biwarp_biorx_mart.dbo.dim_site s
-        ON f.Location_SID = s.Locations_SID
-    LEFT JOIN biwarp_biorx_mart.dbo.dim_reasoncode rc
-        ON f.ReasonCode_SID = rc.ReasonCode_SID
-    LEFT JOIN current_reason cr
-        ON f.Ordered_Id = cr.ReasonOrderedID
-        AND s.LocationGUID = cr.LocationGUID
-    WHERE
-        -- Case 1: calibrated yesterday with an actionable reason code
-        (
-            f.CalibrationDate = CAST(DATEADD(day, -1, GETDATE()) AS DATE)
-            AND rc.Code IN (SELECT Code FROM reason_codes)
-        )
-        -- Case 2: calibrated in the last 14 days, with a recent (non-null)
-        -- reason recorded, also carrying an actionable reason code
-        OR (
-            f.CalibrationDate BETWEEN
-                CAST(DATEADD(day, -14, GETDATE()) AS DATE)
-                AND CAST(DATEADD(day, -1, GETDATE()) AS DATE)
-            AND cr.ReasonDT IS NOT NULL
-            AND rc.Code IN (SELECT Code FROM reason_codes)
-        )
 )
-
--- Attach the display-only dimensions and keep just the most recent
--- version of each order.
 SELECT
-    fo.Ordered_Id                      AS "RxID",
-    s.LocationName                     AS "Pharmacy",
-    p.Name                             AS "Product",
-    procedures.Name                    AS "Procedure",
-    c.Name                             AS "Client",
-    rc.Code                            AS "Reason Code",
-    rc.Description                     AS "Reason",
-    fo.ReasonDT                        AS "ReasonDT",
-    fo.Lot_Number                      AS "LotNumber",
-    fo.Flag_Bulk_Order                 AS "MultidoseOrderFlag",
-    fo.Flag_Redirected_Order           AS "RedirectedOrderFlag",
-    fo.Amount                          AS "DoseActivity",
-    fo.CalibrationDate                 AS "CalDate",
-    fo.CalibrationTime                 AS "CalTime",
-    fo.Order_Date                      AS "OrderDate",
-    fo.Order_Time                      AS "OrderTime",
-    fo.FilledDate                      AS "FilledDate",
-    fo.FilledTime                      AS "FilledTime",
-    fo.Order_Packed_Date               AS "PackedDate",
-    fo.Order_Packed_Time               AS "PackedTime",
-    fo.Order_Shipped_Date              AS "ShippedDate",
-    fo.Order_Shipped_Time              AS "ShippedTime",
-    fo.Order_Delivered_Date            AS "DeliveryDate",
-    fo.Order_Delivered_Time            AS "DeliveryTime"
-FROM filtered_orders fo
-LEFT JOIN biwarp_biorx_mart.dbo.dim_client c
-    ON fo.Client_SID = c.Client_SID
-LEFT JOIN biwarp_biorx_mart.dbo.dim_product p
-    ON fo.Product_SID = p.Product_SID
-LEFT JOIN biwarp_biorx_mart.dbo.dim_site s
-    ON fo.Location_SID = s.Locations_SID
-LEFT JOIN biwarp_biorx_mart.dbo.dim_reasoncode rc
-    ON fo.ReasonCode_SID = rc.ReasonCode_SID
-LEFT JOIN biwarp_biorx_mart.dbo.dim_procedures procedures
-    ON fo.Procedure_SID = procedures.Procedures_SID
-WHERE fo.OrderRank = 1
-ORDER BY fo.Ordered_Id;
+    o.OrderedID     AS RxID,
+    l.LocationName  AS Pharmacy,
+    p.Name          AS Product,
+    c.Name          AS Client,
+    o.CalibrationDate,
+    o.CalibrationTime,
+    sc.ShipContainerID AS sc_ShipContainerID,
+    sc.LocationGUID AS sc_LocationGUID,
+    o.ShipContainerID AS o_ShipContainerID,
+    o.LocationGUID AS o_LocationGUID,
+    s.ShipmentID AS s_ShipmentID,
+    sc.ShipmentID AS sc_ShipmentID,
+    s.LocationGUID AS s_LocationGUID,
+    s.ShipDate AS s_ShipDate,
+    l.LocationGUID AS l_LocationGUID,
+    p.Product AS p_Product,
+    o.ProductID AS o_ProductID,
+    c.ClientID AS c_ClientID,
+    o.ClientID AS o_ClientID,
+    r.ReasonOrderedID AS r_ReasonOrderedID,
+    r.LocationGUID AS r_LocationGUID,
+    r.Code as r_Code,
+    o.Deleted AS o_Deleted,
+    o.Processed AS o_Processed,
+    o.Filled AS o_Filled,
+    ore.ExchangedID AS ore_ExchangedID
+FROM current_order o
+    -- Shipment chain: used only to check whether the order has shipped.
+    LEFT JOIN master.shipcontainer sc
+        ON sc.ShipContainerID = o.ShipContainerID
+        AND sc.LocationGUID = o.LocationGUID
+    LEFT JOIN master.shipment s
+        ON s.ShipmentID = sc.ShipmentID
+        AND s.LocationGUID = o.LocationGUID
+    LEFT JOIN master.locations l
+        ON l.LocationGUID = o.LocationGUID
+    LEFT JOIN master.product p
+        ON p.Product = o.ProductID
+        AND p.RECORD_ACTIVE_FLAG = 'Y'
+    LEFT JOIN master.client c
+        ON c.ClientID = o.ClientID
+        AND c.RECORD_ACTIVE_FLAG = 'Y'
+    -- Most recent 'ordered' reason per order, if any.
+    LEFT JOIN current_reason r
+        ON r.ReasonOrderedID = o.OrderedID
+        AND r.LocationGUID = l.LocationGUID
+    LEFT JOIN master.orderedredirect ore
+        ON ore.OrderedID = o.OrderedID
+        AND ore.LocationGUID = o.LocationGUID
+WHERE 1=1                                          -- anchor; comment out filters below individually as needed
+    -- AND s.ShipDate IS NULL                          -- not yet shipped (or no shipment record at all)
+    -- AND r.Code IS NULL                              -- no current reason code found
+    AND o.OrderedID IN (133150,133119,133798,133746,133891,133294,133149,133262)
+    AND o.LocationGUID = '265E8087-698C-447E-94D9-210E9E15891F'
+ORDER BY RxID asc
+
+```
+# References
+| LocationGUID | LocationName |
+|---|---|
+| B8E5FFE1-D87E-46DE-90C2-5C1262A301B0 | NJ2 Somerset |
+| C0D372E9-561C-4FCE-A4FC-40FDB53EB7A3 | SOFIE of Sanford |
+| FBFE29D8-37B3-4A34-9AEC-EF55F7FEBBC3 | MO1 Kansas City |
+| E9725396-A0AD-4756-8BD2-6FC4040F6EF4 | SOFIE of Oakwood |
+| 2656E0E1-2C09-412A-B043-ED8AC112F2C7 | Sofie of Romeoville |
+| 2CB0FC77-8834-4F04-91D3-476745A40F09 | NY1 Albany |
+| 3BA7134D-06E1-40C3-8B6B-86B8707A0D3C | WV2 Morgantown |
+| 9D1C956C-663C-4A4E-8BCC-D79768DB9804 | SOFIE of Decatur |
+| 4544E3DE-3DC4-4464-8251-2F3621B6DDF0 | Sterling |
+| ACEA088B-DFCE-4C64-90B2-D0F486AAC78B | SOFIE of Miami |
+| F92AB1DA-3631-4BA8-BB0F-E8CC0EE16B7F | NJ3 Totowa |
+| 44B2FFD7-C997-4C4A-AC7A-8D2279A93562 | CA1 Gilroy |
+| 265E8087-698C-447E-94D9-210E9E15891F | MA1 Haverhill |
+| B8865201-E393-4691-8093-C4800B679984 | SOFIE of Dallas |
+| 811806BA-A5CA-4EF0-B69C-6D8CC0799D0B | SOFIE of Houston |

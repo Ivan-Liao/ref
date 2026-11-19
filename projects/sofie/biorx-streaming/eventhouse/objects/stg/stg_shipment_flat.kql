@@ -1,0 +1,21 @@
+.create table stg_shipment_flat
+(
+    cdc_operation: string,
+    cdc_event_datetime: datetime,
+    source_event_datetime: datetime,
+    ts_ns: long,
+    is_deleted: bool,
+
+    shipment_id: long,
+    shipped: int,
+    shipped_by_id: long,
+    ship_date: datetime,
+    ship_time: timespan,
+    delivered: int,
+    driver_id: long,
+    delivery_date: datetime,
+    delivery_time: timespan,
+    received_by: string,
+    deleted: int,
+    location_guid: string
+)

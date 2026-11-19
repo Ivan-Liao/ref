@@ -1,0 +1,39 @@
+{
+	"before": null,
+	"after": {
+		"LocationGUID": "b8e5ffe1-d87e-46de-90c2-5c1262a301b0",
+		"ReasonID": 50755,
+		"ReasonCodeID": 53,
+		"TableName": "ordered",
+		"RecordID": 551586,
+		"UserID": 1511,
+		"DT": 1789085306000,
+		"Synced": 1,
+		"Deleted": 0,
+		"ReasonCodeExternalID": 0
+	},
+	"ts_ms": 1789099720620,
+	"ts_us": 1789099720620383,
+	"ts_ns": "1789099720620383193",
+	"source": {
+		"ts_ms": 1789099720000,
+		"ts_us": 1789099720000000,
+		"ts_ns": "1789099720000000000",
+		"version": "3.4.0.Final",
+		"connector": "mysql",
+		"name": "cdc.mysql",
+		"snapshot": "false",
+		"db": "master",
+		"sequence": null,
+		"table": "reason",
+		"server_id": 1,
+		"gtid": null,
+		"file": "az-mariadb-binlog.000034",
+		"pos": 311186662,
+		"row": 0,
+		"thread": null,
+		"query": null
+	},
+	"transaction": null,
+	"op": "c"
+}

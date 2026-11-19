@@ -1,0 +1,4 @@
+.create materialized-view with (backfill=true) mv_client_latest on table stg_client_flat
+{
+    stg_client_flat | summarize arg_max(ts_ns, *) by client_id
+}

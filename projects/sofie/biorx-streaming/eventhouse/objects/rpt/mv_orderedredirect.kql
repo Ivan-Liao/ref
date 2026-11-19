@@ -1,0 +1,4 @@
+.create async materialized-view with (backfill=true, docstring="Latest row per ordered_id") mv_orderedredirect_latest on table stg_orderedredirect_flat
+{
+    stg_orderedredirect_flat | summarize arg_max(ts_ns, *) by ordered_id
+}

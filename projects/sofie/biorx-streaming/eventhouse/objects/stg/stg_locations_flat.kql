@@ -1,0 +1,11 @@
+.create table stg_locations_flat
+(
+    cdc_operation: string,
+    cdc_event_datetime: datetime,
+    source_event_datetime: datetime,
+    ts_ns: long,
+    is_deleted: bool,
+
+    location_guid: string,
+    location_name: string
+)

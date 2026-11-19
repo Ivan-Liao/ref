@@ -1,0 +1,1 @@
+.create-merge table raw_reasoncode (schema:dynamic, payload:dynamic) 

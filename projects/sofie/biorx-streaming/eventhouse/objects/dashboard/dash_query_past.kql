@@ -1,0 +1,3 @@
+base_order_details
+| where calibration_date >= startofday(now()) - 30d
+    and calibration_date < startofday(now())

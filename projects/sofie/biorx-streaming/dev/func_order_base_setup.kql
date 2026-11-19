@@ -1,0 +1,146 @@
+// =====================================================================
+// order_details_base — pre-joined table fed by an update policy
+//
+// Every time new rows land in the raw `ordered` table, this automatically
+// re-runs the container/shipment/reason join for just the new batch and
+// appends the enriched result here. Both func_order_details() and
+// order_status_counts() then read this table directly -- no joins at
+// query time, just a cheap arg_max dedup and a filter.
+//
+// LIMITATION: this only reacts to new rows in `ordered`. If a shipment,
+// container, or reason record changes without the order itself being
+// re-ingested, order_details_base will not reflect that change until the
+// order is re-ingested (e.g. next status touch). If that lag matters,
+// the containers/shipments/reason tables would need their own update
+// policies writing into this same table -- not implemented here, flag
+// if you want that added.
+// =====================================================================
+
+
+// ---------------------------------------------------------------------
+// 1) Target table -- schema must exist before the update policy can
+//    write to it. Column order/types here match what the transform
+//    function below projects.
+// ---------------------------------------------------------------------
+.create table order_details_base (
+    ordered_id        : long,
+    location_guid     : string,
+    location_name     : string,
+    product_name      : string,
+    client_name       : string,
+    code              : string,
+    description       : string,
+    reason_dt         : datetime,
+    actual_activity   : real,
+    calibration_date  : datetime,
+    calibration_time  : timespan,
+    order_date        : datetime,
+    order_time        : timespan,
+    filled_date       : datetime,
+    filled_time       : timespan,
+    packed_date       : datetime,
+    packed_time       : timespan,
+    ship_date         : datetime,
+    ship_time         : timespan,
+    delivered_date    : datetime,
+    delivered_time    : timespan,
+    last_modified     : datetime
+)
+
+
+// ---------------------------------------------------------------------
+// 2) Transform function -- this is what the update policy runs against
+//    each newly-ingested batch of `ordered` rows.
+// ---------------------------------------------------------------------
+.create-or-alter function with (
+    docstring = "Update-policy transform: joins new ordered rows against current dimension/reason/shipping state",
+    folder    = "Reporting")
+fn_order_details_transform()
+{
+    let reasons =
+        materialized_view('mv_reason_latest')
+        | project reason_ordered_id = record_id,
+                  location_guid,
+                  reason_code_id,
+                  reason_dt = dt;
+    let reasoncodes =
+        materialized_view('mv_reasoncode_latest')
+        | project reason_code_id, code, description;
+    let current_reason =
+        reasons
+        | lookup kind=leftouter reasoncodes on reason_code_id
+        | project reason_ordered_id, location_guid, code, description, reason_dt;
+    let sites =
+        materialized_view('mv_locations_latest')
+        | project location_guid, location_name;
+    let products =
+        materialized_view('mv_product_latest')
+        | project product_id, product_name = name;
+    let clients =
+        materialized_view('mv_client_latest')
+        | project client_id, client_name = name;
+    let containers =
+        materialized_view('mv_shipcontainer_latest')
+        | project ship_container_id, shipment_id, packed_date, packed_time, delivered_shipment_id,
+                  delivered_date, delivered_time, location_guid;
+    let shipments =
+        materialized_view('mv_shipment_latest')
+        | project shipment_id, ship_date, ship_time, location_guid;
+    //
+    ordered
+    // Dedup within just this ingested batch, in case it contains more
+    // than one update for the same order.
+    | summarize arg_max(LastModified, *) by ordered_id, location_guid
+    | join kind=leftouter (containers) on
+          $left.ship_container_id == $right.ship_container_id,
+          $left.location_guid == $right.location_guid
+    | join kind=leftouter (shipments) on
+          $left.delivered_shipment_id == $right.shipment_id,
+          $left.location_guid == $right.location_guid
+    | join kind=leftouter (current_reason) on
+          $left.ordered_id == $right.reason_ordered_id,
+          $left.location_guid == $right.location_guid
+    | lookup kind=leftouter sites    on location_guid
+    | lookup kind=leftouter products on product_id
+    | lookup kind=leftouter clients  on client_id
+    | project
+        ordered_id,
+        location_guid,
+        location_name,
+        product_name,
+        client_name,
+        code,
+        description,
+        reason_dt,
+        actual_activity,
+        calibration_date,
+        calibration_time,
+        order_date,
+        order_time,
+        filled_date,
+        filled_time,
+        packed_date,
+        packed_time,
+        ship_date,
+        ship_time,
+        delivered_date,
+        delivered_time,
+        last_modified = LastModified
+}
+
+
+// ---------------------------------------------------------------------
+// 3) Attach the update policy to the raw `ordered` table.
+//    Rename `ordered` below if your raw ingestion table has a different
+//    name than the one used elsewhere in this conversation.
+// ---------------------------------------------------------------------
+.alter table ordered policy update
+```
+[{
+  "IsEnabled": true,
+  "Source": "stg_ordered_flat",
+  "Query": "fn_order_details_transform()",
+  "IsTransactional": false,
+  "PropagateIngestionProperties": false
+}]
+```

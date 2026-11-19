@@ -1,0 +1,1 @@
+mv_locations_latest | project location_name | distinct location_name | sort by location_name

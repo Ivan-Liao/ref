@@ -1,0 +1,42 @@
+.create-or-alter function with (
+    docstring = "Orders calibrated between _from and _to, optionally filtered by client/location/product (reads pre-joined order_details_base)",
+    folder    = "Reporting")
+func_order_details(_from:string = "", _to:string = "", _pharmacy:string = "", _client:string = "", _product:string = "")
+{
+    let _from_resolved = iff(_from == "", startofday(now(-30d)), todatetime(_from));
+    let _to_resolved   = iff(_to   == "", startofday(now(+30d)), todatetime(_to));
+    let _pharmacy_list = iff(_pharmacy == "", dynamic([]), todynamic(_pharmacy));
+    let _client_list   = iff(_client   == "", dynamic([]), todynamic(_client));
+    let _product_list  = iff(_product  == "", dynamic([]), todynamic(_product));
+    //
+    order_details_base
+    // Same order can appear more than once (re-ingested at different
+    // times) -- keep only the most recent version of each.
+    | summarize arg_max(last_modified, *) by ordered_id
+    | where calibration_date between (_from_resolved .. _to_resolved)
+        and (_pharmacy == "" or location_name in (_pharmacy_list))
+        and (_client == "" or client_name in (_client_list))
+        and (_product == "" or product_name in (_product_list))
+    | project
+        ["Rx ID"]        = ordered_id,
+        ["Pharmacy"]     = location_name,
+        ["Product"]      = product_name,
+        ["Client"]       = client_name,
+        ["Reason Code"]  = code,
+        ["Reason"]       = description,
+        ["ReasonDT"]     = reason_dt,
+        ["Dose Activity"]= actual_activity,
+        ["Cal Date"]     = calibration_date,
+        ["Cal Time"]     = calibration_time,
+        ["Order Date"]   = order_date,
+        ["Order Time"]   = order_time,
+        ["Filled Date"]  = filled_date,
+        ["Filled Time"]  = filled_time,
+        ["Packed Date"]  = packed_date,
+        ["Packed Time"]  = packed_time,
+        ["Shipped Date"] = ship_date,
+        ["Shipped Time"] = ship_time,
+        ["Delivery Date"]= delivered_date,
+        ["Delivery Time"]= delivered_time
+    | sort by ["Pharmacy"] asc, ["Cal Date"] desc, ["Cal Time"] desc
+}

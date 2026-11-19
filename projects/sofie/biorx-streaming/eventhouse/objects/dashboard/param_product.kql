@@ -1,0 +1,5 @@
+materialized_view('mv_ordered_latest')
+| where calibration_date == startofday(now())
+| lookup kind=leftouter (materialized_view('mv_product_latest') | project product_id, product_name = name) on product_id
+| distinct product_name
+| sort by product_name asc

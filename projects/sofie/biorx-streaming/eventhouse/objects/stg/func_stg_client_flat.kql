@@ -1,0 +1,49 @@
+.create-or-alter function with
+(
+    folder = "CDC",
+    docstring = "Flattens raw_client MariaDB CDC payloads"
+)
+func_stg_client_flat()
+{
+    raw_client
+    | extend p = todynamic(payload)
+    | where tostring(p.source.table) == "client"
+    | where tostring(p.op) in ("r", "c", "u", "d")
+    | extend row_data = coalesce(
+        todynamic(p.after),
+        todynamic(p.before)
+    )
+    | project
+        cdc_operation = tostring(p.op),
+
+        cdc_event_datetime =
+            unixtime_milliseconds_todatetime(
+                tolong(p.ts_ms)
+            ),
+
+        source_event_datetime =
+            unixtime_milliseconds_todatetime(
+                tolong(p.source.ts_ms)
+            ),
+
+        ts_ns = coalesce(
+            tolong(p.ts_ns),
+            tolong(p.ts_ms) * 1000000
+        ),
+
+        is_deleted =
+            tostring(p.op) == "d"
+            or toint(row_data.Deleted) == 1,
+
+        client_id =
+            tolong(row_data.ClientID),
+
+        client_guid =
+            tostring(row_data.ClientGUID),
+
+        client_number =
+            tolong(row_data.ClientNumber),
+
+        name =
+            tostring(row_data.Name)
+}

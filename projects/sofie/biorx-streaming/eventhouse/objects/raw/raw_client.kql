@@ -1,0 +1,1 @@
+.create-merge table raw_client (schema:dynamic, payload:dynamic) 

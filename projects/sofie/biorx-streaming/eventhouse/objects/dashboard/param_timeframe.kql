@@ -1,0 +1,10 @@
+datatable(timeframe:string, sort_order:int, description:string)
+[
+    "Today",                    1, "Orders calibrated today",
+    "Yesterday",                2, "Orders calibrated yesterday",
+    "Tomorrow",                 3, "Orders calibrated tomorrow",
+    "Current week",             4, "Monday through Sunday of this week",
+    "Past orders (45 days)",    5, "45 days ago through yesterday",
+    "Future orders (30 days)",  6, "Tomorrow through 30 days out"
+]
+| sort by sort_order asc

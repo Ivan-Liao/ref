@@ -1,0 +1,8 @@
+let eastern_now = datetime_utc_to_local(now(), "America/New_York");
+let is_business_hours = dayofweek(eastern_now) between (1d .. 5d)
+    and hourofday(eastern_now) between (4 .. 16);
+stg_ordered_flat
+| where last_modified >= eastern_now - 0.5h
+    and is_business_hours == 1
+| summarize total_events = count()
+| extend total_events = iff(is_business_hours == 0, 1, total_events)

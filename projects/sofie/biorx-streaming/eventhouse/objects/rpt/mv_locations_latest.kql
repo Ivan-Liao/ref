@@ -1,0 +1,4 @@
+.create materialized-view with (backfill=true) mv_locations_latest on table stg_locations_flat
+{
+    stg_locations_flat  | summarize arg_max(ts_ns, *) by location_guid
+}
