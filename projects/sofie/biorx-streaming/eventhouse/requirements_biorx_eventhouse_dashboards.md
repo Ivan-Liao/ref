@@ -50,9 +50,10 @@ Default text for later iteration tasks
 2.  Operations team requested the following
     1.  <-- * is_recalibrated
     2.  <-- * is_same_day_recalibrated, know that recalibration happens on impacted day or not flag because of issue today, what was impact on customer (daily_customer_impact)
-    3.  <-- * Categorical date filter "Timeframe" for Today, Yesterday, Tomorrow, Past orders (45 days), Current week, Future orders (30 days)
+    3.  <-- * recalibration_history, comma separated list of all recalibrated dates for that order>
+    4.  <-- * Categorical date filter "Timeframe" for Today, Yesterday, Tomorrow, Past orders (45 days), Current week, Future orders (30 days)
 3.  Finance team asks
-    1.  <-- * 45 day past historical data
+    1.  <-- * 45 day past and future data
     2.  Billable, unbillable logic
     3.  Reason code history
     4.  Notes field from biorx

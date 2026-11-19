@@ -108,9 +108,8 @@ flowchart TB
    2. [x] Reports Portal to Sofie BI (QA)
 2. [ ] Report Deletion and Sharepoint archiving from "To Be Deleted" tab in Migration Plan
    1. [ ] What to do with PB_prefix reports? Ajay will delete on weekend 11/21
-   2. [ ] Development sandbox deletion and notifying developers to use Sofie (QA) instead
+   2. [x] Development sandbox deletion and notifying developers to use Sofie (QA) instead
       1. EMTrend: Bharath
-         1. Also handle EMTrend in Sofie (QA)
       2. PnL: Tabby
 3. [x] Access restrictions
    1. Special case:
@@ -122,14 +121,20 @@ flowchart TB
    3. In QA: Contributors will be Ivan Liao, Bharath Narayan, Krishna, Tabassum Rahman, Ajay,
    4. In production: All others down to viewer
 4. [ ] Report Migration from "To Be Moved" tab in Migration Plan
-   1. [ ] Publish production reports from Reports Portal
+   1. [ ] Publish production reports from Sofie BI (QA) [formerly Reports Portal]
    2. [ ] Migrate QA reports from BI Warp Drive/Review
-      1. [ ] Notify developers and users for developing dashboards like John Dougherty
-   3. [ ] Migrate QA reports from Development Sandbox
-      1. [ ] Notify developers and users for developing dashboards like John Dougherty
-   4. [ ] Relinking power automate references, Notify Bharath
-5. [ ] Sharepoint archiving of production reports from "To Be Archived" tab in Migration Plan
-6. [ ] Final BI team meeting
+      1. [ ] Notify developers and users for developing dashboards like John Dougherty. Expected by next week.
+   3. [ ] Relinking power automate references, Notify Bharath
+5. [ ] Transfer Service account for publishing, scheduling, and admin work from Ajay
+   1. [ ] Make sure service account is owner for all semantic models
+6. [ ] Handle reports with manual data sourcing
+   1. Explored report level permissions (not possible, only reshare and build with data)
+   2. Options
+      1. Keep some production reports in Sofie BI (QA).  In the future, the normal deployment process can be used for these reports.
+      2. Give some developers temporary contributor access in Sofie BI
+7. [ ] Member access restriction in BI Sharepoint Power BI Reports Folder (work with Elango)
+8. [ ] Sharepoint archiving of production reports from "To Be Archived" tab in Migration Plan
+9.  [ ] Final BI team meeting
 
 ## 5.1 Implementation steps, in order:
 1. Assign access in the QA workspace "Sofie BI (QA)".
