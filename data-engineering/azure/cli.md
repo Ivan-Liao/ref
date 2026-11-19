@@ -17,6 +17,8 @@ az ad user create --display-name "Ivy Liao" \
                   --user-principal-name "ivy.liao@ivanhliaooutlook.onmicrosoft.com" \
                   --force-change-password-next-sign-in true \
                   --mail-nickname "IvyL"
+
+# CSV is also possible with Azure PowerShell or Microsoft Graph API
 ```
 
 # Storage account

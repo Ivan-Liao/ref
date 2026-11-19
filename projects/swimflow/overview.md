@@ -12,7 +12,6 @@
 7. meets
 8. organizations
 9. practice
-10. practice_attendance
 11. practice_attendance
     1.  team_id, practice_id, athlete_id
 12. season_roster

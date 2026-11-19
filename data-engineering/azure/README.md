@@ -29,6 +29,7 @@
   - [Logic Apps (!compute)](#logic-apps-compute)
   - [Marketplace](#marketplace)
   - [Microsoft Defender (!monitoring)](#microsoft-defender-monitoring)
+  - [Microsoft Entra Domain Services](#microsoft-entra-domain-services)
   - [Microsoft Entra ID (!admin)](#microsoft-entra-id-admin)
   - [Microsoft Fabric (!etl,!reporting,!storage)](#microsoft-fabric-etlreportingstorage)
   - [Microsoft Fabric Eventhouse (!etl,!storage)](#microsoft-fabric-eventhouse-etlstorage)
@@ -168,14 +169,22 @@
 
 ## Microsoft Defender (!monitoring)
 
+## Microsoft Entra Domain Services
+1. Domain services for older applications that require Windows Server AD
+   
 ## Microsoft Entra ID (!admin)
-1.  Identities
+1.  Tenant represents the org and the default directory assigned
+2.  Identities
     1.  Users are human identities
-    2.  Service Principals are machine / app identities
+    2.  Service Principals are machine / app identities 
+        1.  Containers, VMs, Applications, Services, Mobile devices, IOT, Computers, Endpoints
     3.  Groups are collections of users and services
         1.  Azure resource groups
         2.  Microsoft 365 groups for teams, sharepoint, outlook
-2.  Roles
+    4.  Microsoft Entra Agent ID
+    5.  Managed identities (system [tied to lifecycle] and user assigned)
+    6.  Hybrid identity to interact with both on prem AD and cloud Entra ID
+3.  Roles
     1.  Common roles
         1.  Owner
         2.  Contributor
@@ -183,13 +192,25 @@
     2.  Built-in roles
     3.  Custom roles
     4.  Actions (inclusionary) and Notactions (exclusionary)
-3.  Security Groups
+4.  Security Groups
     1.  Collective identity containers, allowing access management for multiple users at once.
     2.  RBAC role can be assigned to security groups
-4.  Subscriptions
-    1.  One subscription can trust only one Microsoft Entra ID directory
-    2.  One Microsoft Entra ID directory can be associated with multiple subscriptions
-5.  Misc
+5.  Microsoft 365 groups
+    1.  Shared mailbox, calendar, files, SharePoint site, etc.
+6.  Authentications
+    1.  Internal (part of host org Entra ID) vs External (guest access)
+    2.  Attended (on behalf of a human identity) vs unattended for agent identities
+7.  Subscriptions
+    1.  Both billing and security boundary
+    2.  One subscription can trust only one Microsoft Entra ID directory
+    3.  One Microsoft Entra ID directory can be associated with multiple subscriptions
+8.  Features
+9.  Licenses
+    1.  Free
+    2.  P1
+    3.  P2
+    4.  Suite
+10. Misc
     1.  Microsoft Entra Connect to integrate Windows Server Active Directory
 
 ## Microsoft Fabric (!etl,!reporting,!storage)
