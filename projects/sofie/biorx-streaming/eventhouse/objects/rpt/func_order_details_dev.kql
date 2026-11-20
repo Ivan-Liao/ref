@@ -44,8 +44,8 @@ func_order_details(
         datetime(null)
     );
 
-    let _from_resolved = coalesce(_tf_from, todatetime(_from), startofday(now(-45d)));
-    let _to_resolved   = coalesce( _tf_to, todatetime(_to), startofday(now(+45d)));
+    let _from_resolved = coalesce(_tf_from, todatetime(_from), _today - 45d);
+    let _to_resolved   = coalesce(_tf_to,   todatetime(_to),   endofday(_today + 45d));
 
     let _pharmacy_list     = iff(_pharmacy == "", dynamic([]), todynamic(_pharmacy));
     let _client_list       = iff(_client == "", dynamic([]), todynamic(_client));
@@ -128,7 +128,7 @@ func_order_details(
     // relationships.
 
     let ordered_redirect_links =
-        materialized_view('mv_ordered_latest_dev')
+        materialized_view('mv_ordered_latest')
         | project
             ordered_id,
             calibration_dt,
@@ -192,8 +192,25 @@ func_order_details(
 
     let orders_base =
         materialize(
-            materialized_view('mv_ordered_latest_dev')
+            materialized_view('mv_ordered_latest')
             | where calibration_date between (_from_resolved .. _to_resolved)
+            | where _pharmacy == ""
+                or location_guid in (
+                    sites | where location_name in (_pharmacy_list) | project location_guid)
+            | where _client == ""
+                or client_id in (
+                    clients | where client_name in (_client_list) | project client_id)
+            | where _product == ""
+                or product_id in (
+                    products | where product_name in (_product_list) | project product_id)
+            | project
+                ordered_id, location_guid, product_id, client_id,
+                ship_container_id,
+                calibration_date, calibration_time, calibration_dt,
+                min_calibration_dt, max_calibration_dt,
+                filled, is_deleted, client_bill_id, processed,
+                actual_activity,
+                order_date, order_time, filled_date, filled_time
             | extend is_recalibrated =
                 iff(min_calibration_dt != max_calibration_dt, "Yes", "No")
         );
