@@ -105,7 +105,7 @@ flowchart TB
 [Migration plan](https://zevacor365.sharepoint.com/:x:/s/BI/IQDcr_xti6V4RoYtbvcQKlrUAVMNIx9RqsHreAmXBTsVP60?e=HgpR4K) for setup up for Power BI Deployment
 1. [x] Workspace renaming
    1. [x] Warp Drive to Sofie BI
-   2. [x] Reports Portal to Sofie BI (QA)
+   2. [x] Reports **Portal** to Sofie BI (QA)
 2. [ ] Report Deletion and Sharepoint archiving from "To Be Deleted" tab in Migration Plan
    1. [ ] What to do with PB_prefix reports? Ajay will delete on weekend 11/21
    2. [x] Development sandbox deletion and notifying developers to use Sofie (QA) instead

@@ -1,17 +1,15 @@
 .create-or-alter function with (
-    docstring = "Orders calibrated by timeframe (takes precedence) or 
-    between _from and _to (default current day), 
-    optionally filtered by client/location/product",
+    docstring = "Orders calibrated by timeframe (takes precedence) or between _from and _to (default 90 day range centered on today), optionally filtered by client/location/product",
     folder = "Reporting"
 )
-func_order_details_dev(
+func_order_details(
+    _timeframe:string = "",
     _from:string = "",
     _to:string = "",
     _pharmacy:string = "",
     _order_status:string = "",
     _client:string = "",
-    _product:string = "",
-    _timeframe:string = ""
+    _product:string = ""
 ) {
     // ------------------------------------------------------------
     // 1. PARAMETERS
@@ -30,7 +28,8 @@ func_order_details_dev(
         _tf == "tomorrow",               _today + 1d,
         _tf == "past orders (45 days)",  _today - 45d,
         _tf == "current week",           _week_start,
-        _tf == "future orders (30 days)", _today + 1d,
+        _tf == "future orders (45 days)", _today + 1d,
+        _tf == "no selection",            datetime(null),
         datetime(null)
     );
 
@@ -40,19 +39,18 @@ func_order_details_dev(
         _tf == "tomorrow",               endofday(_today + 1d),
         _tf == "past orders (45 days)",  endofday(_today - 1d),
         _tf == "current week",           endofday(_week_start + 6d),
-        _tf == "future orders (30 days)", endofday(_today + 30d),
+        _tf == "future orders (45 days)", endofday(_today + 45d),
+        _tf == "no selection",            datetime(null),
         datetime(null)
     );
 
-    // Precedence: explicit _from/_to > _timeframe > original +/-45 day default
-    let _from_resolved = coalesce(todatetime(_from), _tf_from, startofday(now(-45d)));
-    let _to_resolved   = coalesce(todatetime(_to),   _tf_to,   startofday(now(+45d)));
+    let _from_resolved = coalesce(_tf_from, todatetime(_from), startofday(now(-45d)));
+    let _to_resolved   = coalesce( _tf_to, todatetime(_to), startofday(now(+45d)));
 
     let _pharmacy_list     = iff(_pharmacy == "", dynamic([]), todynamic(_pharmacy));
     let _client_list       = iff(_client == "", dynamic([]), todynamic(_client));
     let _product_list      = iff(_product == "", dynamic([]), todynamic(_product));
     let _order_status_list = iff(_order_status == "", dynamic([]), todynamic(_order_status));
-
 
     // ------------------------------------------------------------
     // 2. DIMENSION DATASETS
