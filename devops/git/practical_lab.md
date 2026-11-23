@@ -1,3 +1,20 @@
+- [**Practical Git Exercises (Two-Account Lab)**](#practical-git-exercises-two-account-lab)
+  - [**Exercise 0: Setup**](#exercise-0-setup)
+  - [**Exercise 1: The basic cycle**](#exercise-1-the-basic-cycle)
+  - [**Exercise 2: Branches and fast-forward merges**](#exercise-2-branches-and-fast-forward-merges)
+  - [**Exercise 3: Create and resolve a merge conflict**](#exercise-3-create-and-resolve-a-merge-conflict)
+  - [**Exercise 4: Rebase instead of merge**](#exercise-4-rebase-instead-of-merge)
+  - [**Exercise 5: Fix mistakes (amend, reset, revert)**](#exercise-5-fix-mistakes-amend-reset-revert)
+  - [**Exercise 6: Stash your work in progress**](#exercise-6-stash-your-work-in-progress)
+  - [**Exercise 7: Cherry-pick a single commit**](#exercise-7-cherry-pick-a-single-commit)
+  - [**Exercise 8: Recover "lost" work with the reflog**](#exercise-8-recover-lost-work-with-the-reflog)
+  - [**Exercise 9: Pull requests between two accounts**](#exercise-9-pull-requests-between-two-accounts)
+  - [**Exercise 10: Protect main and require reviews**](#exercise-10-protect-main-and-require-reviews)
+  - [**Exercise 11: Tags and releases**](#exercise-11-tags-and-releases)
+  - [**Exercise 12: Find a bug with bisect**](#exercise-12-find-a-bug-with-bisect)
+  - [**Exercise 13: Force-push and its consequences**](#exercise-13-force-push-and-its-consequences)
+  - [**Cleanup and reset**](#cleanup-and-reset)
+  - [**Quick reference**](#quick-reference)
 # **Practical Git Exercises (Two-Account Lab)**
 
 Thirteen hands-on exercises for one test repo, run across two computers, each signed in to a different GitHub account. No SSH keys and no second clone on one machine: the two computers are your two "people".
@@ -247,6 +264,7 @@ git push
 3. **\[A\]** Rebase your branch onto the updated main:
 
 ```sh
+git checkout 
 git fetch origin
 git rebase origin/main
 ```

@@ -11,6 +11,7 @@
   - [7.1 Dashboard tips and tricks](#71-dashboard-tips-and-tricks)
   - [7.2 Research on Eventhouse dashboards versus PowerBI](#72-research-on-eventhouse-dashboards-versus-powerbi)
 - [8.0 Changelog](#80-changelog)
+  - [November 20, 2026](#november-20-2026)
   - [October 9, 2026](#october-9-2026)
   - [October 7, 2026](#october-7-2026)
   - [October 1, 2026](#october-1-2026)
@@ -42,21 +43,15 @@ We want git versioned Eventhouse dashboards for realtime biorx data. Specificall
 Default text for later iteration tasks
 
 1.  The sales team has requested the following enhancements to the real-time report
-    1.  <-- * Enable the report to be accessed through Salesforce, send another email to Adam and confirm url is working and if he has any questions about the report.
-    2.  <-- ! Add Account owner as an additional filter, Adam Cooper has not gotten back yet.
-    3.  Alerts for CAEs (possible via Fabric Activator in email or Teams). Would need the rules, but it possible.
-    4.  Predictive alerts (for when order is in trouble, etc.). Would need the rules, but it possible.
-    5.  Introduce role-based views to make it easier for CAEs. They would only see rows associated with them.
+    1.  <-- ! Add Account owner as an additional filter, Adam Cooper has not gotten back yet.
+    2.  Alerts for CAEs (possible via Fabric Activator in email or Teams). Would need the rules, but it possible.
+    3.  Predictive alerts (for when order is in trouble, etc.). Would need the rules, but it possible.
+    4.  Introduce role-based views to make it easier for CAEs. They would only see rows associated with them.
 2.  Operations team requested the following
-    1.  <-- * is_recalibrated
-    2.  <-- * is_same_day_recalibrated, know that recalibration happens on impacted day or not flag because of issue today, what was impact on customer (daily_customer_impact)
-    3.  <-- * recalibration_history, comma separated list of all recalibrated dates for that order>
-    4.  <-- * Categorical date filter "Timeframe" for Today, Yesterday, Tomorrow, Past orders (45 days), Current week, Future orders (30 days)
 3.  Finance team asks
-    1.  <-- * 45 day past and future data
-    2.  Billable, unbillable logic
-    3.  Reason code history
-    4.  Notes field from biorx
+    1.  Billable, unbillable logic
+    2.  Reason code history
+    3.  Notes field from biorx
 4.  Bug Fixes
     1.  Fix discrepancy 167678, deleted at target pharmacy row but shows redirected sent shipped at source pharmacy
     2.  Fix parameter distinct list dependant on current day. Make it a week at least
@@ -154,6 +149,20 @@ ___
    5. Kusto source system costs still apply
 
 # 8.0 Changelog
+
+## November 20, 2026
+1.  There are new columns in the "Order Details" page
+    1.  is_recalibrated
+        1.  "Yes" if this order was recalibrated
+    2.  is_same_day_recalibrated
+        1.  "Yes" if there was a recalibration that happened on the same day for this order
+    3.  recalibration_history
+        1.  comma separated list of all recalibrated dates for this order
+2.  The Order Details page has a new categorical date filter "Timeframe"
+    1.  Options include: No Selection (default), Today, Yesterday, Tomorrow, Current week, Previous week, Next Week, Previous Month, Current Month, Next Month, Past orders (60 days),  Future orders (60 days)
+    2.  Note that the week begins on Monday and ends on Sunday
+    3.  Note that this filter will override any filters set in Cal Date.  You must set reset the filters or set this to "No Selection" in order to use the Cal Date filter.
+3.  The "Orders Details" page now has a max range of orders from 60 day in the past to 60 days in the future
 
 ## October 9, 2026
 1. New column "Is Redirect Recalibrated"

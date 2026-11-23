@@ -24,6 +24,19 @@ git pull
 git log --oneline --graph
 
 # Exercise 3
+## shortcut to skip git add .
+git commit -am
+
+## Bail out with `git merge --abort`. 
+
+## Also try `git checkout --ours <file path>` and `--theirs <file path>` on a conflicted file. Undo with git checkout -m on the file.
+
+# Exercise 4 using rebase
+git checkout <branch>
+git rebase origin/main
+Rebase locally, squash merge onto main branch
+
+# Exercise 5 revert, amend, reset
 
 # Low Priority
 1. Line level changes unstaged / before git add
