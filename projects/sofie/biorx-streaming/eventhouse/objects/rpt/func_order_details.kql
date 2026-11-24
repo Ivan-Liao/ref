@@ -220,7 +220,7 @@ func_order_details(
     let recal_ids =
         orders_base
         | where is_recalibrated == "Yes"
-        | project ordered_id;
+        | distinct ordered_id, location_guid;
 
 
     // ------------------------------------------------------------
@@ -234,9 +234,10 @@ func_order_details(
         materialize(
             stg_ordered_flat
             | where is_deleted == false
-            | join kind=leftsemi (recal_ids) on ordered_id
+            | join kind=leftsemi (recal_ids) on ordered_id, location_guid
             | project
                 ordered_id,
+                location_guid,
                 calibration_date,
                 calibration_time,
                 last_modified,
@@ -245,12 +246,13 @@ func_order_details(
                 calibration_date + calibration_time
             | sort by
                 ordered_id asc,
+                location_guid asc,
                 last_modified asc,
                 ts_ns asc
             | serialize
             | extend prev_calibration_dt =
                 iff(
-                    prev(ordered_id) == ordered_id,
+                    prev(ordered_id) == ordered_id and prev(location_guid) == location_guid,
                     prev(calibration_dt),
                     datetime(null)
                 )
@@ -264,7 +266,7 @@ func_order_details(
         | where isnotnull(prev_calibration_dt)
         | where calibration_dt != prev_calibration_dt
         | where calibration_date == startofday(last_modified)
-        | distinct ordered_id
+        | distinct ordered_id, location_guid
         | extend is_recalibrated_same_day = "Yes";
 
     // Generate chronological calibration history.
@@ -274,9 +276,10 @@ func_order_details(
     let recal_history =
         history
         | summarize first_recorded = min(last_modified)
-            by ordered_id, calibration_dt
+            by ordered_id, location_guid, calibration_dt
         | sort by
             ordered_id asc,
+            location_guid asc,
             first_recorded asc,
             calibration_dt asc
         | summarize recalibration_history =
@@ -286,13 +289,14 @@ func_order_details(
                 ),
                 ", "
             )
-            by ordered_id;
+            by ordered_id, location_guid;
 
     let recal_info =
         recal_history
-        | join kind=leftouter (same_day_ids) on ordered_id
+        | join kind=leftouter (same_day_ids) on ordered_id, location_guid
         | project
             ordered_id,
+            location_guid,
             recalibration_history,
             is_recalibrated_same_day;
 
@@ -302,7 +306,6 @@ func_order_details(
     // ------------------------------------------------------------
 
     orders_base
-
     // Recalibration information
     | join kind=leftouter (recal_info) on ordered_id
     | project-away ordered_id1
