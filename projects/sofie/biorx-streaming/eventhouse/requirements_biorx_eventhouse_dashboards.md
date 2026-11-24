@@ -21,7 +21,7 @@
 # 1.0 Overview
 Fabric Eventhouse dashboards are a native dashboarding solution. 
 
-Dashboard ([link](https://app.fabric.microsoft.com/groups/7ebbb5d0-48f3-42a1-a1a1-503631ad2535/kustodashboards/d37220d3-db2e-4ade-87d7-3a8bd5036890?experience=fabric-developer&extensionScenario=openArtifact&v-_pharmacy=all&v-_product=all&v-_client=all&page=9a955cbb-83e2-44ce-9971-7831f65a6d6f&v-_from=24hours&v-_to=now&v-order_status=all))
+Dashboard ([link](https://app.fabric.microsoft.com/groups/7ebbb5d0-48f3-42a1-a1a1-503631ad2535/kustodashboards/d37220d3-db2e-4ade-87d7-3a8bd5036890))
 
 # 2.0 Objectives
 We want git versioned Eventhouse dashboards for realtime biorx data. Specifically, we want to monitor the counts of the order statuses as well as the row level order details.

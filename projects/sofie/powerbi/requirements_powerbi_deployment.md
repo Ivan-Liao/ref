@@ -103,15 +103,18 @@ flowchart TB
 
 # 5.0 Next Steps
 [Migration plan](https://zevacor365.sharepoint.com/:x:/s/BI/IQDcr_xti6V4RoYtbvcQKlrUAVMNIx9RqsHreAmXBTsVP60?e=HgpR4K) for setup up for Power BI Deployment
-1. [x] Workspace renaming
+1. [x] Rename Workspaces
    1. [x] Warp Drive to Sofie BI
-   2. [x] Reports **Portal** to Sofie BI (QA)
-2. [ ] Report Deletion and Sharepoint archiving from "To Be Deleted" tab in Migration Plan
-   1. [ ] What to do with PB_prefix reports? Ajay will delete on weekend 11/21
-   2. [x] Development sandbox deletion and notifying developers to use Sofie (QA) instead
+   2. [x] Reports Portal to Sofie BI (QA)
+2. [x] Report Deletion and Sharepoint archiving from "To Be Deleted" tab in Migration Plan
+   1. [x] What to do with PB_prefix reports? Ajay will delete on weekend 11/21
+      1. Completed but PB_Order Analytics is linked outside workspace and will be retained for now.
+3. [x] Clean up Power BI workspaces
+   1. [x] Development sandbox deletion and notifying developers to use Sofie (QA) instead
       1. EMTrend: Bharath
       2. PnL: Tabby
-3. [x] Access restrictions
+   2. Other workspaces: EMTrend, P&L Demo Workspace, Sofie-development-workspace, SofieReports
+4. [x] Access restrictions
    1. Special case:
       1.  Keep as member in production: William Crisp.
       2.  BI_Azure_Prod_BA as admin.
@@ -120,21 +123,23 @@ flowchart TB
       1. Ivan and Ajay to be removed after process stabalizes
    3. In QA: Contributors will be Ivan Liao, Bharath Narayan, Krishna, Tabassum Rahman, Ajay,
    4. In production: All others down to viewer
-4. [ ] Report Migration from "To Be Moved" tab in Migration Plan
-   1. [ ] Publish production reports from Sofie BI (QA) [formerly Reports Portal]
+5. [x] Report Migration from "To Be Moved" tab in Migration Plan
+   1. [x] Publish production reports from Sofie BI (QA) [formerly Reports Portal]
+      1. In the meantime we are keeping production reports with manual flow in the QA workspace
    2. [ ] Migrate QA reports from BI Warp Drive/Review
-      1. [ ] Notify developers and users for developing dashboards like John Dougherty. Expected by next week.
+      1. [ ] Notify developers and users for developing dashboards like John Dougherty. Expected by Dec 4.
    3. [ ] Relinking power automate references, Notify Bharath
-5. [ ] Transfer Service account for publishing, scheduling, and admin work from Ajay
+6. [ ] Transfer Service account for publishing, scheduling, and admin work from Ajay
    1. [ ] Make sure service account is owner for all semantic models
-6. [ ] Handle reports with manual data sourcing
+   2. Waiting on Ajay, week after thankgiving
+7. [ ] Handle reports with manual data sourcing
    1. Explored report level permissions (not possible, only reshare and build with data)
    2. Options
       1. Keep some production reports in Sofie BI (QA).  In the future, the normal deployment process can be used for these reports.
       2. Give some developers temporary contributor access in Sofie BI
-7. [ ] Member access restriction in BI Sharepoint Power BI Reports Folder (work with Elango)
-8. [ ] Sharepoint archiving of production reports from "To Be Archived" tab in Migration Plan
-9.  [ ] Final BI team meeting
+8. [x] Restrict Access in BI Sharepoint Power BI Reports Folder (work with Elango)
+9.  [ ] Sharepoint archiving of production reports from "To Be Archived" tab in Migration Plan
+10. [ ] Final BI team meeting
 
 ## 5.1 Implementation steps, in order:
 1. Assign access in the QA workspace "Sofie BI (QA)".
