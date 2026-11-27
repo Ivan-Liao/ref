@@ -36,7 +36,26 @@ git checkout <branch>
 git rebase origin/main
 Rebase locally, squash merge onto main branch
 
-# Exercise 5 revert, amend, reset
+# Exercise 5 revert, amend, reset, restore
+```sh
+git commit --amend -m "Update notes and add extra"
+
+git reset --soft HEAD~1    # changes stay staged
+git reset HEAD~1           # (mixed) changes stay in working dir, unstaged
+git reset --hard HEAD~1    # Throw away a local commit and changes entirely
+
+git restore --source=HEAD~1 --staged <file> # soft reset equivalent on specific file
+git restore --source=<commit-hash> <file> # hard reset equivalent on specific file
+
+git log --oneline            # find the bad commit hash
+git revert <hash>
+git push
+git pull
+git log --oneline
+```
+
+# Exercise 6 Stash work
+
 
 # Low Priority
 1. Line level changes unstaged / before git add
